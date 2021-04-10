@@ -1,0 +1,6 @@
+[submodule "extensions/vscode-native-file-system"]
+	path = extensions/vscode-native-file-system
+	url = https://github.com/0xgg/vscode-native-file-system.git
+[submodule "extensions/vscode-web-playground"]
+	path = extensions/vscode-web-playground
+	url = https://github.com/microsoft/vscode-web-playground.git
