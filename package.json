@@ -10,7 +10,7 @@
     "deploy_extensions": "node ./deploy_extensions.js",
     "build": "webpack",
     "build:all": "yarn deploy_extensions && yarn build",
-    "gh-pages:deploy": "gh-pages -d $PWD/dist -o origin"
+    "gh-pages:deploy": "yarn build:all && gh-pages -d $PWD/dist -o origin"
   },
   "dependencies": {
     "semver-umd": "^5.5.7",
