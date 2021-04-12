@@ -1,0 +1,30 @@
+{
+    "name": "semver-umd",
+    "version": "5.5.7",
+    "description": "Semver as UMD module",
+    "main": "lib/semver-umd.js",
+    "typings": "semver-umd.d.ts",
+    "scripts": {
+        "build": "webpack",
+        "prepublish": "webpack"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/Microsoft/semver-umd.git"
+    },
+    "keywords": [
+        "semver",
+        "umd"
+    ],
+    "author": "Microsoft",
+    "license": "MIT",
+    "bugs": {
+        "url": "https://github.com/Microsoft/semver-umd/issues"
+    },
+    "homepage": "https://github.com/Microsoft/semver-umd#readme",
+    "devDependencies": {
+        "semver": "5.5.0",
+        "webpack": "^4.16.5",
+        "webpack-cli": "^3.1.0"
+    }
+}
