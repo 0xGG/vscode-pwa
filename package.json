@@ -9,7 +9,8 @@
     "start": "http-server dist",
     "deploy_extensions": "node ./deploy_extensions.js",
     "build": "webpack",
-    "build:all": "yarn deploy_extensions && yarn build"
+    "build:all": "yarn deploy_extensions && yarn build",
+    "gh-pages:deploy": "gh-pages -d $PWD/dist -o origin"
   },
   "dependencies": {
     "semver-umd": "^5.5.7",
@@ -31,6 +32,7 @@
     "express": "^4.17.1",
     "file-loader": "^6.2.0",
     "fs-extra": "^9.1.0",
+    "gh-pages": "^3.1.0",
     "glob": "^7.1.6",
     "html-webpack-plugin": "^5.3.1",
     "imports-loader": "^2.0.0",

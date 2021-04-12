@@ -25,7 +25,10 @@
   <body aria-label=""></body>
   <script src="./index.bundle.js"></script>
   <script>
-    const baseUri = `${window.location.origin}`;
+    const secondPath = window.location.pathname.split("/")[1];
+    const baseUri = window.location.origin.match(/0xgg\.io/)
+      ? `${window.location.origin}/${secondPath}`
+      : `${window.location.origin}`;
     self.require = {
       baseUrl: `${baseUri}/vscode-web/dist/vscode/`,
       paths: {
