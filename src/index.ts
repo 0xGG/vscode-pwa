@@ -45,14 +45,8 @@ export const product = {
   },
   folderUri: {
     scheme: "memfs",
-    path: "/",
+    path: "/Welcome",
   },
-  /*
-  folderUri: {
-    scheme: "nativefs",
-    path: "/",
-  },
-  */
   settingsSyncOptions: {
     enabled: true,
   },
@@ -73,3 +67,10 @@ const extElement: any = document.getElementById(
 );
 const extensionList = [...builtinExtensions, ...myExtensions];
 extElement.attributes["data-settings"].value = JSON.stringify(extensionList);
+
+/*
+// Init workspace
+(async function () {
+  (window as any)["workbench"] = workbench;
+})();
+*/
