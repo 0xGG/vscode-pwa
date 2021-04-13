@@ -7,10 +7,11 @@
   "license": "MIT",
   "scripts": {
     "start": "http-server dist",
-    "deploy_extensions": "node ./deploy_extensions.js",
-    "build": "webpack",
-    "build:all": "yarn deploy_extensions && yarn build",
-    "gh-pages:deploy": "yarn build:all && gh-pages -d $PWD/dist -o origin"
+    "build:extensions": "node ./deploy_extensions.js",
+    "build:website": "webpack",
+    "build:splash-screen": "npx pwa-asset-generator logo.svg ./assets -i ./index.html -m manifest.json",
+    "build": "yarn build:extensions && yarn build:website",
+    "gh-pages:deploy": "yarn build && gh-pages -d $PWD/dist -o origin"
   },
   "dependencies": {
     "semver-umd": "^5.5.7",
@@ -37,6 +38,7 @@
     "html-webpack-plugin": "^5.3.1",
     "imports-loader": "^2.0.0",
     "mocha": "^8.2.1",
+    "pwa-asset-generator": "^4.1.1",
     "style-loader": "^2.0.0",
     "ts-loader": "^8.1.0",
     "typescript": "^4.1.3",

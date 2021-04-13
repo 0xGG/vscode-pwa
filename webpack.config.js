@@ -37,6 +37,7 @@ const config = {
       // and not allow any straggling "old" SWs to hang around
       clientsClaim: true,
       skipWaiting: true,
+      maximumFileSizeToCacheInBytes: 1024 * 1024 * 10, // 10mb
     }),
     new CopyWebpackPlugin({
       patterns: [
@@ -56,6 +57,22 @@ const config = {
           from: path.resolve(__dirname, "./node_modules/vscode-web"),
           to: path.resolve(__dirname, "./dist/vscode-web"),
           filter: (resourcePath) => !resourcePath.match(/\.(exe|scpt)$/),
+        },
+        {
+          from: path.resolve(__dirname, "./logo.svg"),
+          to: path.resolve(__dirname, "./dist/logo.svg"),
+        },
+        {
+          from: path.resolve(__dirname, "./favicon.ico"),
+          to: path.resolve(__dirname, "./dist/favicon.ico"),
+        },
+        {
+          from: path.resolve(__dirname, "./manifest.json"),
+          to: path.resolve(__dirname, "./dist/manifest.json"),
+        },
+        {
+          from: path.resolve(__dirname, "./assets/"),
+          to: path.resolve(__dirname, "./dist/assets/"),
         },
       ],
     }),

@@ -3,6 +3,6 @@
 ```bash
 git submodule update --recursive --init
 yarn
-yarn build:all
+yarn build
 yarn start
 ```

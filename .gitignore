@@ -108,3 +108,4 @@ dist
 src/myExtensions.ts
 src/builtinExtensions.ts
 dist
+assets

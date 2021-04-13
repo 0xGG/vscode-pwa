@@ -1,4 +1,4 @@
-const nativeFS = require("vscode-web/dist/extensions/vscode-native-file-system/dist/nativeFS");
+const nativeFS = require("vscode-web/dist/extensions/vscode-web-fs/dist/nativeFS");
 import { extensions as builtinExtensions } from "./builtinExtensions";
 import { extensions as myExtensions } from "./myExtensions";
 
