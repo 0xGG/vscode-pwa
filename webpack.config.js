@@ -56,7 +56,14 @@ const config = {
         {
           from: path.resolve(__dirname, "./node_modules/vscode-web"),
           to: path.resolve(__dirname, "./dist/vscode-web"),
-          filter: (resourcePath) => !resourcePath.match(/\.(exe|scpt)$/),
+          filter: (resourcePath) => {
+            return !(
+              resourcePath.match(/\.(exe|scpt)$/) ||
+              resourcePath.indexOf(
+                "vscode-web/dist/extensions/vscode-api-tests/"
+              ) >= 0
+            );
+          },
         },
         {
           from: path.resolve(__dirname, "./logo.svg"),
