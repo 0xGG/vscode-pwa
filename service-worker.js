@@ -104,11 +104,107 @@ define("./service-worker.js",['./workbox-a9d37846'], function (workbox) { 'use s
    */
 
   workbox.precacheAndRoute([{
+    "url": "assets/apple-icon-180.png",
+    "revision": "d524892b908a3bc543918328abcb5150"
+  }, {
+    "url": "assets/apple-splash-1125-2436.jpg",
+    "revision": "6d192cb4c76f7a2700625f667c4e35d3"
+  }, {
+    "url": "assets/apple-splash-1136-640.jpg",
+    "revision": "b35239de8986f3649c889d06def26d91"
+  }, {
+    "url": "assets/apple-splash-1170-2532.jpg",
+    "revision": "792eaa0b78739032c8864d5d34a4f6cb"
+  }, {
+    "url": "assets/apple-splash-1242-2208.jpg",
+    "revision": "7bcf2ae257e46b38c9798b01d87d057b"
+  }, {
+    "url": "assets/apple-splash-1242-2688.jpg",
+    "revision": "764e8a7ae62857902526cd1b7d743bda"
+  }, {
+    "url": "assets/apple-splash-1284-2778.jpg",
+    "revision": "942c765fb65acaa4361b85dd70e937ed"
+  }, {
+    "url": "assets/apple-splash-1334-750.jpg",
+    "revision": "7e2ee6f1cefa16f23d2a81f7af796b9d"
+  }, {
+    "url": "assets/apple-splash-1536-2048.jpg",
+    "revision": "834779f8c584ac7775bc23f8f831c650"
+  }, {
+    "url": "assets/apple-splash-1620-2160.jpg",
+    "revision": "f65840174ceb134caa5ab6351b583cf5"
+  }, {
+    "url": "assets/apple-splash-1668-2224.jpg",
+    "revision": "3865a9449ec738e871cedca3255accb6"
+  }, {
+    "url": "assets/apple-splash-1668-2388.jpg",
+    "revision": "e217ed2e373beef96d41c15517d76e5f"
+  }, {
+    "url": "assets/apple-splash-1792-828.jpg",
+    "revision": "94716d95f73b19df5b37f52ba5418365"
+  }, {
+    "url": "assets/apple-splash-2048-1536.jpg",
+    "revision": "14b237ea3e9b9f8b66906423142ef7eb"
+  }, {
+    "url": "assets/apple-splash-2048-2732.jpg",
+    "revision": "c6005099d3ee7fa8869f07a0d6a3aefa"
+  }, {
+    "url": "assets/apple-splash-2160-1620.jpg",
+    "revision": "ef89d9486e4db235dfa8bf2f9a9de313"
+  }, {
+    "url": "assets/apple-splash-2208-1242.jpg",
+    "revision": "45d47bd5f13c63fd2089def0df9abe49"
+  }, {
+    "url": "assets/apple-splash-2224-1668.jpg",
+    "revision": "843614ed0f5e6177b17a5a16dda2cb49"
+  }, {
+    "url": "assets/apple-splash-2388-1668.jpg",
+    "revision": "51a980df187fc520975c95273d076862"
+  }, {
+    "url": "assets/apple-splash-2436-1125.jpg",
+    "revision": "d7540a752c0bbcb269b14a10a7721bf7"
+  }, {
+    "url": "assets/apple-splash-2532-1170.jpg",
+    "revision": "563ff3088bf7104b7c8139c7d7b94a1f"
+  }, {
+    "url": "assets/apple-splash-2688-1242.jpg",
+    "revision": "6c2f3e40a45f489846d759a09b00c378"
+  }, {
+    "url": "assets/apple-splash-2732-2048.jpg",
+    "revision": "1c7ee37ecd83cc2b6d7fb2648aeed8f7"
+  }, {
+    "url": "assets/apple-splash-2778-1284.jpg",
+    "revision": "39193cc3976b918d1362d08db8961c65"
+  }, {
+    "url": "assets/apple-splash-640-1136.jpg",
+    "revision": "0dd996a66dc03e9be0c53055ae64f610"
+  }, {
+    "url": "assets/apple-splash-750-1334.jpg",
+    "revision": "7466286efb12fc4cb39d76857528a928"
+  }, {
+    "url": "assets/apple-splash-828-1792.jpg",
+    "revision": "729166094228099e13a56158b647bbc6"
+  }, {
+    "url": "assets/manifest-icon-192.png",
+    "revision": "9c831a5ec618dfe662adcdb61bc3078d"
+  }, {
+    "url": "assets/manifest-icon-512.png",
+    "revision": "5a75681d72856cf6c4d4b36711f1a416"
+  }, {
+    "url": "favicon.ico",
+    "revision": "04f2252cd16507cd2530f58ace0ef1c1"
+  }, {
     "url": "index.bundle.js",
     "revision": "cec1e7cbd250adf50fab00349460dc1a"
   }, {
     "url": "index.html",
-    "revision": "c3cc5c03b1423d35f6a5014f87253f12"
+    "revision": "e121e344c8351036e35a4f1c51511973"
+  }, {
+    "url": "logo.svg",
+    "revision": "36f0e236c42ab024edd0361161f393c0"
+  }, {
+    "url": "manifest.json",
+    "revision": "ca36eaa727dcaea60f277a85a8416efe"
   }, {
     "url": "semver-umd/LICENSE",
     "revision": "b98fddd052bb2f5ddbcdbd417ffb26a8"
@@ -3662,6 +3758,9 @@ define("./service-worker.js",['./workbox-a9d37846'], function (workbox) { 'use s
     "url": "vscode-web/dist/extensions/typescript-language-features/dist/browser/typescript/protocol.d.ts",
     "revision": "f879ec5297553e5708e4541082db9b19"
   }, {
+    "url": "vscode-web/dist/extensions/typescript-language-features/dist/browser/typescript/tsserver.web.js",
+    "revision": "0d872f3df34e8ff81e5b5008dac1db8c"
+  }, {
     "url": "vscode-web/dist/extensions/typescript-language-features/dist/browser/typescript/typesMap.json",
     "revision": "2a7e30f3cb248c7fa61b89c0de5692e9"
   }, {
@@ -4120,159 +4219,6 @@ define("./service-worker.js",['./workbox-a9d37846'], function (workbox) { 'use s
   }, {
     "url": "vscode-web/dist/extensions/vb/yarn.lock",
     "revision": "dd07d22cbf9a738bdb68b591bc1bc742"
-  }, {
-    "url": "vscode-web/dist/extensions/vscode-api-tests/.gitignore",
-    "revision": "822013a9be874ff76e662d02e1dd6ed9"
-  }, {
-    "url": "vscode-web/dist/extensions/vscode-api-tests/.vscode/launch.json",
-    "revision": "1d65037ed5e73fdc98e4e477d7f2cb4c"
-  }, {
-    "url": "vscode-web/dist/extensions/vscode-api-tests/.vscode/tasks.json",
-    "revision": "d56bbee59419b9039b979c8b7becda64"
-  }, {
-    "url": "vscode-web/dist/extensions/vscode-api-tests/.vscodeignore",
-    "revision": "99bff5b629f1079dbe365f92f1d67f7b"
-  }, {
-    "url": "vscode-web/dist/extensions/vscode-api-tests/package.json",
-    "revision": "de5f4c685f841219954cd6da47670b8f"
-  }, {
-    "url": "vscode-web/dist/extensions/vscode-api-tests/src/extension.ts",
-    "revision": "9ef6256d07491a32fd436420593eb1a7"
-  }, {
-    "url": "vscode-web/dist/extensions/vscode-api-tests/src/memfs.ts",
-    "revision": "df2403d22698d4c51a84b60d5607b0fb"
-  }, {
-    "url": "vscode-web/dist/extensions/vscode-api-tests/src/singlefolder-tests/commands.test.ts",
-    "revision": "7cba70444fbe5972ffe42d910c1777b6"
-  }, {
-    "url": "vscode-web/dist/extensions/vscode-api-tests/src/singlefolder-tests/configuration.test.ts",
-    "revision": "dca0c957a987fb4363e050ce8800382d"
-  }, {
-    "url": "vscode-web/dist/extensions/vscode-api-tests/src/singlefolder-tests/debug.test.ts",
-    "revision": "af4b81284c484a1087aba8bc06a5b448"
-  }, {
-    "url": "vscode-web/dist/extensions/vscode-api-tests/src/singlefolder-tests/editor.test.ts",
-    "revision": "91c1c2ebf30bcff614224c22f02464bc"
-  }, {
-    "url": "vscode-web/dist/extensions/vscode-api-tests/src/singlefolder-tests/env.test.ts",
-    "revision": "6aa024ab019bbc798ac66e071f2e0b6d"
-  }, {
-    "url": "vscode-web/dist/extensions/vscode-api-tests/src/singlefolder-tests/extensions.test.ts",
-    "revision": "68add3402644c9d07ac21f9dd43eb7df"
-  }, {
-    "url": "vscode-web/dist/extensions/vscode-api-tests/src/singlefolder-tests/index.ts",
-    "revision": "37a6cb34b51f0f8029d9921e13202cac"
-  }, {
-    "url": "vscode-web/dist/extensions/vscode-api-tests/src/singlefolder-tests/languages.test.ts",
-    "revision": "f1523f11510deeb32bb32f2fc074b072"
-  }, {
-    "url": "vscode-web/dist/extensions/vscode-api-tests/src/singlefolder-tests/notebook.document.test.ts",
-    "revision": "9b7d55b0e16b753e775da6696852bf77"
-  }, {
-    "url": "vscode-web/dist/extensions/vscode-api-tests/src/singlefolder-tests/notebook.test.ts",
-    "revision": "f26042f1c0f11a1fc5802ba721376355"
-  }, {
-    "url": "vscode-web/dist/extensions/vscode-api-tests/src/singlefolder-tests/quickInput.test.ts",
-    "revision": "f9e903a1f87bd1ee43f785cc69060807"
-  }, {
-    "url": "vscode-web/dist/extensions/vscode-api-tests/src/singlefolder-tests/rpc.test.ts",
-    "revision": "02d9dc6ab44db5c17dcb919b49e84f17"
-  }, {
-    "url": "vscode-web/dist/extensions/vscode-api-tests/src/singlefolder-tests/terminal.test.ts",
-    "revision": "85f2a89a3eca97be0afb680436623a00"
-  }, {
-    "url": "vscode-web/dist/extensions/vscode-api-tests/src/singlefolder-tests/types.test.ts",
-    "revision": "04a885dcc5adf6fc6a6d5e053d56e925"
-  }, {
-    "url": "vscode-web/dist/extensions/vscode-api-tests/src/singlefolder-tests/webview.test.ts",
-    "revision": "9adffd56ab8f5a604aa172524a7b3cf9"
-  }, {
-    "url": "vscode-web/dist/extensions/vscode-api-tests/src/singlefolder-tests/window.test.ts",
-    "revision": "bc26c063eb2486348808ba09ca6175af"
-  }, {
-    "url": "vscode-web/dist/extensions/vscode-api-tests/src/singlefolder-tests/workspace.event.test.ts",
-    "revision": "36752cf5ef3c0c3ebb867e72e2148c69"
-  }, {
-    "url": "vscode-web/dist/extensions/vscode-api-tests/src/singlefolder-tests/workspace.fs.test.ts",
-    "revision": "706ef87c1308349ca7073e26b5b04606"
-  }, {
-    "url": "vscode-web/dist/extensions/vscode-api-tests/src/singlefolder-tests/workspace.tasks.test.ts",
-    "revision": "e794d52305af6926064989e4f83936a2"
-  }, {
-    "url": "vscode-web/dist/extensions/vscode-api-tests/src/singlefolder-tests/workspace.test.ts",
-    "revision": "819b57c6c525971998b0290f93c6f10d"
-  }, {
-    "url": "vscode-web/dist/extensions/vscode-api-tests/src/typings/ref.d.ts",
-    "revision": "7c4713dc0429405ec6a07f84afa6d2c1"
-  }, {
-    "url": "vscode-web/dist/extensions/vscode-api-tests/src/utils.ts",
-    "revision": "a8d56461a2756f72abd85909ee98452b"
-  }, {
-    "url": "vscode-web/dist/extensions/vscode-api-tests/src/workspace-tests/index.ts",
-    "revision": "8492f48df59e1f693413eb7750b935a0"
-  }, {
-    "url": "vscode-web/dist/extensions/vscode-api-tests/src/workspace-tests/workspace.test.ts",
-    "revision": "824510e08139d2cb027b575e82a17e63"
-  }, {
-    "url": "vscode-web/dist/extensions/vscode-api-tests/testWorkspace/.vscode/launch.json",
-    "revision": "611b9f20d64d76e24bddc7e1f7a45837"
-  }, {
-    "url": "vscode-web/dist/extensions/vscode-api-tests/testWorkspace/.vscode/settings.json",
-    "revision": "e1124747bf31448916a981046586f5ff"
-  }, {
-    "url": "vscode-web/dist/extensions/vscode-api-tests/testWorkspace/10linefile.ts",
-    "revision": "15f91cb69a890b452ba58eddb3b61eda"
-  }, {
-    "url": "vscode-web/dist/extensions/vscode-api-tests/testWorkspace/30linefile.ts",
-    "revision": "5f453d900db36eae7ff37c37f43957b7"
-  }, {
-    "url": "vscode-web/dist/extensions/vscode-api-tests/testWorkspace/bower.json",
-    "revision": "d47c75b48b4347f3ed6a197ea20afba1"
-  }, {
-    "url": "vscode-web/dist/extensions/vscode-api-tests/testWorkspace/debug.js",
-    "revision": "3103a01a20d2987c5f3c675f0e914100"
-  }, {
-    "url": "vscode-web/dist/extensions/vscode-api-tests/testWorkspace/far.js",
-    "revision": "242c4121b7e656f296b6e74b21f27afc"
-  }, {
-    "url": "vscode-web/dist/extensions/vscode-api-tests/testWorkspace/files-exclude/file.txt",
-    "revision": "8c7dd922ad47494fc02c388e12c00eac"
-  }, {
-    "url": "vscode-web/dist/extensions/vscode-api-tests/testWorkspace/image%.png",
-    "revision": "151380b90884de3c1c48837e69c4a353"
-  }, {
-    "url": "vscode-web/dist/extensions/vscode-api-tests/testWorkspace/image%02.png",
-    "revision": "151380b90884de3c1c48837e69c4a353"
-  }, {
-    "url": "vscode-web/dist/extensions/vscode-api-tests/testWorkspace/image.png",
-    "revision": "151380b90884de3c1c48837e69c4a353"
-  }, {
-    "url": "vscode-web/dist/extensions/vscode-api-tests/testWorkspace/lorem.txt",
-    "revision": "0e750a6c9d5b1cf3cd6681e01d5db9b2"
-  }, {
-    "url": "vscode-web/dist/extensions/vscode-api-tests/testWorkspace/search-exclude/file.txt",
-    "revision": "8c7dd922ad47494fc02c388e12c00eac"
-  }, {
-    "url": "vscode-web/dist/extensions/vscode-api-tests/testWorkspace/simple.txt",
-    "revision": "f4658c9047aee2b42681f707e23027b0"
-  }, {
-    "url": "vscode-web/dist/extensions/vscode-api-tests/testWorkspace/sub/image.png",
-    "revision": "151380b90884de3c1c48837e69c4a353"
-  }, {
-    "url": "vscode-web/dist/extensions/vscode-api-tests/testWorkspace2/.vscode/settings.json",
-    "revision": "1a62d3f0b9e1592952c3267901e16388"
-  }, {
-    "url": "vscode-web/dist/extensions/vscode-api-tests/testWorkspace2/simple.txt",
-    "revision": "f4658c9047aee2b42681f707e23027b0"
-  }, {
-    "url": "vscode-web/dist/extensions/vscode-api-tests/testworkspace.code-workspace",
-    "revision": "6554eef8f8b12f7ca597247000833892"
-  }, {
-    "url": "vscode-web/dist/extensions/vscode-api-tests/tsconfig.json",
-    "revision": "a869bf7503e61a17c092b201bf83c158"
-  }, {
-    "url": "vscode-web/dist/extensions/vscode-api-tests/yarn.lock",
-    "revision": "8369a79baea9e619217c7c76a8b24d20"
   }, {
     "url": "vscode-web/dist/extensions/vscode-colorize-tests/.gitignore",
     "revision": "822013a9be874ff76e662d02e1dd6ed9"
@@ -4871,15 +4817,6 @@ define("./service-worker.js",['./workbox-a9d37846'], function (workbox) { 'use s
     "url": "vscode-web/dist/extensions/vscode-custom-editor-tests/yarn.lock",
     "revision": "e7abb76eb0af3ab69ca4995ffe7ebb67"
   }, {
-    "url": "vscode-web/dist/extensions/vscode-native-file-system/dist/extension.js",
-    "revision": "43b3f3d18c5f074ad00fc324b7eb5913"
-  }, {
-    "url": "vscode-web/dist/extensions/vscode-native-file-system/dist/nativeFS.js",
-    "revision": "ef7d20c6a0220995ee666d3b18046d62"
-  }, {
-    "url": "vscode-web/dist/extensions/vscode-native-file-system/package.json",
-    "revision": "0b09cb4e8c427497e32ce81449ceb0ff"
-  }, {
     "url": "vscode-web/dist/extensions/vscode-notebook-tests/.vscode/launch.json",
     "revision": "65e7c829d6d4e4b2451fefe4abaa2b4c"
   }, {
@@ -5311,6 +5248,9 @@ define("./service-worker.js",['./workbox-a9d37846'], function (workbox) { 'use s
   }, {
     "url": "vscode-web/dist/vscode/vs/workbench/workbench.web.api.css",
     "revision": "9edc8cac9facc691748360a39c969c97"
+  }, {
+    "url": "vscode-web/dist/vscode/vs/workbench/workbench.web.api.js",
+    "revision": "25cfdf5a7d1c49264cff83646ffc200b"
   }, {
     "url": "vscode-web/dist/vscode/vs/workbench/workbench.web.api.nls.js",
     "revision": "38533d3bbf19a77871f60642ac4749b7"
