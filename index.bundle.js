@@ -27,7 +27,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "extensions": () => (/* binding */ extensions)
 /* harmony export */ });
-var extensions = [{ "packageJSON": { "name": "vscode-native-file-system", "displayName": "VS Code Native File System", "description": "Add Native File System support to Visual Studio Code", "version": "0.0.1", "publisher": "shd101wyy", "engines": { "vscode": "^1.54.0" }, "categories": ["Other"], "activationEvents": ["onFileSystem:memfs", "onFileSystem:nativefs", "onCommand:memfs.openFolder", "onCommand:nativefs.openFolder"], "main": "./dist/extension.js", "browser": "./dist/extension.js", "contributes": { "commands": [{ "command": "nativefs.openFolder", "title": "Open Folder", "category": "NativeFS" }, { "command": "memfs.openFolder", "title": "Open Folder", "category": "MemFS" }] }, "scripts": { "vscode:prepublish": "yarn run package", "compile": "webpack", "watch": "webpack --watch", "package": "webpack --mode production --devtool hidden-source-map", "test-compile": "tsc -p ./", "test-watch": "tsc -watch -p ./", "pretest": "yarn run test-compile && yarn run lint", "lint": "eslint src --ext ts", "test": "node ./out/test/runTest.js" }, "devDependencies": { "@types/glob": "^7.1.3", "@types/mocha": "^8.0.4", "@types/node": "^12.11.7", "@types/vscode": "^1.55.0", "@types/wicg-file-system-access": "^2020.9.1", "@typescript-eslint/eslint-plugin": "^4.14.1", "@typescript-eslint/parser": "^4.14.1", "eslint": "^7.19.0", "glob": "^7.1.6", "mocha": "^8.2.1", "path-browserify": "^1.0.1", "ts-loader": "^8.0.14", "typescript": "^4.1.3", "vscode-test": "^1.5.0", "webpack": "^5.19.0", "webpack-cli": "^4.4.0" }, "repository": { "url": "git@github.com:0xGG/vscode-native-file-system.git" }, "dependencies": { "nanoid": "^3.1.22" } }, "extensionPath": "vscode-native-file-system" }];
+var extensions = [{ "packageJSON": { "name": "vscode-web-fs", "displayName": "VS Code Web File System", "description": "File System implementation for VSCode Web", "version": "0.0.1", "publisher": "shd101wyy", "engines": { "vscode": "^1.54.0" }, "categories": ["Other"], "activationEvents": ["onFileSystem:memfs", "onFileSystem:nativefs", "onCommand:memfs.openFolder", "onCommand:nativefs.openFolder"], "main": "./dist/extension.js", "browser": "./dist/extension.js", "contributes": { "commands": [{ "command": "nativefs.openFolder", "title": "Open Folder", "category": "NativeFS" }, { "command": "memfs.openFolder", "title": "Open Folder", "category": "MemFS" }] }, "scripts": { "vscode:prepublish": "yarn run package", "compile": "webpack", "watch": "webpack --watch", "package": "webpack --mode production --devtool hidden-source-map", "test-compile": "tsc -p ./", "test-watch": "tsc -watch -p ./", "pretest": "yarn run test-compile && yarn run lint", "lint": "eslint src --ext ts", "test": "node ./out/test/runTest.js" }, "devDependencies": { "@types/glob": "^7.1.3", "@types/mocha": "^8.0.4", "@types/node": "^12.11.7", "@types/vscode": "^1.55.0", "@types/wicg-file-system-access": "^2020.9.1", "@typescript-eslint/eslint-plugin": "^4.14.1", "@typescript-eslint/parser": "^4.14.1", "eslint": "^7.19.0", "glob": "^7.1.6", "mocha": "^8.2.1", "path-browserify": "^1.0.1", "ts-loader": "^8.0.14", "typescript": "^4.1.3", "vscode-test": "^1.5.0", "webpack": "^5.19.0", "webpack-cli": "^4.4.0" }, "repository": { "url": "git@github.com:0xGG/vscode-web-fs.git" }, "dependencies": { "nanoid": "^3.1.22" } }, "extensionPath": "vscode-web-fs" }];
 
 
 /***/ })
@@ -141,29 +141,46 @@ var __spreadArray = (undefined && undefined.__spreadArray) || function (to, from
 var nativeFS = __webpack_require__(1);
 
 
-/*
 // Register service worker
 if ("serviceWorker" in navigator) {
-  window.addEventListener("load", () => {
-    navigator.serviceWorker
-      .register("/service-worker.js")
-      .then((registration) => {
-        console.log("SW registered: ", registration);
-      })
-      .catch((registrationError) => {
-        console.log("SW registration failed: ", registrationError);
-      });
-  });
+    window.addEventListener("load", function () {
+        navigator.serviceWorker
+            .register("/service-worker.js")
+            .then(function (registration) {
+            console.log("SW registered: ", registration);
+        })
+            .catch(function (registrationError) {
+            console.log("SW registration failed: ", registrationError);
+        });
+    });
 }
+// Display prompt
+var handler = function (event) {
+    try {
+        event.preventDefault();
+        event.prompt();
+        event.userChoice.then(function (choiceResult) {
+            console.log(choiceResult);
+            localStorage.removeItem("layoutModel");
+        });
+    }
+    catch (error) {
+        console.error(error);
+    }
+};
+window.addEventListener("beforeinstallprompt", handler);
+/* return () => {
+  window.removeEventListener("beforeinstallprompt", handler);
+};
 */
 var product = {
     productConfiguration: {
-        nameShort: "VSCode with Native Filesystem API support",
-        nameLong: "VSCode with Native Filesystem API support",
-        applicationName: "vscode-nativefs",
-        dataFolderName: ".vscode-nativefs-extensions",
-        version: "1.2.3",
-        date: "2021-3-30",
+        nameShort: "VSCode PWA",
+        nameLong: "VSCode PWA",
+        applicationName: "vscode-pwa",
+        dataFolderName: ".vscode-pwa-extensions",
+        version: "0.0.1",
+        date: "2021-04-13",
         portable: true,
         /*
         extensionAllowedProposedApi: [
@@ -203,12 +220,6 @@ nativeFS.registerNativeFS(product);
 var extElement = document.getElementById("vscode-workbench-builtin-extensions");
 var extensionList = __spreadArray(__spreadArray([], _builtinExtensions__WEBPACK_IMPORTED_MODULE_0__.extensions), _myExtensions__WEBPACK_IMPORTED_MODULE_1__.extensions);
 extElement.attributes["data-settings"].value = JSON.stringify(extensionList);
-/*
-// Init workspace
-(async function () {
-  (window as any)["workbench"] = workbench;
-})();
-*/
 
 })();
 

@@ -105,10 +105,10 @@ define("./service-worker.js",['./workbox-a9d37846'], function (workbox) { 'use s
 
   workbox.precacheAndRoute([{
     "url": "index.bundle.js",
-    "revision": "08fd3182ac758ea76f8f1283d9d57ae9"
+    "revision": "cec1e7cbd250adf50fab00349460dc1a"
   }, {
     "url": "index.html",
-    "revision": "b323d54dd8862c8c9d4508f3fb4aa175"
+    "revision": "c3cc5c03b1423d35f6a5014f87253f12"
   }, {
     "url": "semver-umd/LICENSE",
     "revision": "b98fddd052bb2f5ddbcdbd417ffb26a8"
@@ -4955,6 +4955,15 @@ define("./service-worker.js",['./workbox-a9d37846'], function (workbox) { 'use s
     "url": "vscode-web/dist/extensions/vscode-test-resolver/yarn.lock",
     "revision": "715315acd3f1928a4c5e2f5e19b04386"
   }, {
+    "url": "vscode-web/dist/extensions/vscode-web-fs/dist/extension.js",
+    "revision": "43b3f3d18c5f074ad00fc324b7eb5913"
+  }, {
+    "url": "vscode-web/dist/extensions/vscode-web-fs/dist/nativeFS.js",
+    "revision": "ef7d20c6a0220995ee666d3b18046d62"
+  }, {
+    "url": "vscode-web/dist/extensions/vscode-web-fs/package.json",
+    "revision": "a5210ab00e53a8299c35e3ea2450e808"
+  }, {
     "url": "vscode-web/dist/extensions/xml/.vscodeignore",
     "revision": "afee5288848e4dab176e65648d649775"
   }, {
@@ -5144,9 +5153,6 @@ define("./service-worker.js",['./workbox-a9d37846'], function (workbox) { 'use s
     "url": "vscode-web/dist/vscode/vs/platform/extensionManagement/common/media/defaultIcon.png",
     "revision": "0edfd291414194a1332fd435c2c3dfe8"
   }, {
-    "url": "vscode-web/dist/vscode/vs/platform/files/node/watcher/win32/CodeHelper.exe",
-    "revision": "ee3fdb0c7a2c6207804972a761602ff4"
-  }, {
     "url": "vscode-web/dist/vscode/vs/platform/files/node/watcher/win32/CodeHelper.md",
     "revision": "4cd363eb41ac7d921f0e7773c8738c7b"
   }, {
@@ -5194,12 +5200,6 @@ define("./service-worker.js",['./workbox-a9d37846'], function (workbox) { 'use s
   }, {
     "url": "vscode-web/dist/vscode/vs/workbench/contrib/extensions/browser/media/theme-icon.png",
     "revision": "8069970a5ba7bcd77e423f21050a873d"
-  }, {
-    "url": "vscode-web/dist/vscode/vs/workbench/contrib/externalTerminal/node/TerminalHelper.scpt",
-    "revision": "781aa20530bbdbed0ea2d1e96db4e7f2"
-  }, {
-    "url": "vscode-web/dist/vscode/vs/workbench/contrib/externalTerminal/node/iTermHelper.scpt",
-    "revision": "d33f2813107508c6ecceeaf1b512b982"
   }, {
     "url": "vscode-web/dist/vscode/vs/workbench/contrib/notebook/common/services/notebookSimpleWorker.js",
     "revision": "ce1d3b0e5de9ca70956c4f3f510b5051"
