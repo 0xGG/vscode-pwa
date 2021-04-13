@@ -5,15 +5,8 @@ const child_process = require("child_process");
 
 const extensionsToBuild = process.argv.slice(2);
 const extensions = [
-  /*
   {
-    name: "vscode-web-playground",
-    copy: ["dist", "package.json"],
-    commands: ["yarn"],
-  },
-  */
-  {
-    name: "vscode-native-file-system",
+    name: "vscode-web-fs",
     copy: ["dist", "package.json"],
     commands: ["yarn", "yarn package"],
   },

@@ -2,7 +2,6 @@ const nativeFS = require("vscode-web/dist/extensions/vscode-native-file-system/d
 import { extensions as builtinExtensions } from "./builtinExtensions";
 import { extensions as myExtensions } from "./myExtensions";
 
-/*
 // Register service worker
 if ("serviceWorker" in navigator) {
   window.addEventListener("load", () => {
@@ -16,16 +15,34 @@ if ("serviceWorker" in navigator) {
       });
   });
 }
+
+// Display prompt
+const handler = (event: any) => {
+  try {
+    event.preventDefault();
+    event.prompt();
+    event.userChoice.then((choiceResult: any) => {
+      console.log(choiceResult);
+      localStorage.removeItem("layoutModel");
+    });
+  } catch (error) {
+    console.error(error);
+  }
+};
+window.addEventListener("beforeinstallprompt", handler);
+/* return () => {
+  window.removeEventListener("beforeinstallprompt", handler);
+};
 */
 
 export const product = {
   productConfiguration: {
-    nameShort: "VSCode with Native Filesystem API support",
-    nameLong: "VSCode with Native Filesystem API support",
-    applicationName: "vscode-nativefs",
-    dataFolderName: ".vscode-nativefs-extensions",
-    version: "1.2.3",
-    date: "2021-3-30",
+    nameShort: "VSCode PWA",
+    nameLong: "VSCode PWA",
+    applicationName: "vscode-pwa",
+    dataFolderName: ".vscode-pwa-extensions",
+    version: "0.0.1",
+    date: "2021-04-13",
     portable: true,
     /*
     extensionAllowedProposedApi: [
@@ -67,10 +84,3 @@ const extElement: any = document.getElementById(
 );
 const extensionList = [...builtinExtensions, ...myExtensions];
 extElement.attributes["data-settings"].value = JSON.stringify(extensionList);
-
-/*
-// Init workspace
-(async function () {
-  (window as any)["workbench"] = workbench;
-})();
-*/
