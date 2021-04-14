@@ -60,12 +60,24 @@ const config = {
           from: path.resolve(__dirname, "./node_modules/vscode-web"),
           to: path.resolve(__dirname, "./dist/vscode-web"),
           filter: (resourcePath) => {
+            const bName = path.basename(resourcePath);
             return !(
-              resourcePath.match(/\.(exe|scpt)$/) ||
-              path.basename(resourcePath).startsWith(".") ||
+              resourcePath.match(/\.(exe|scpt|ts|lock)$/) ||
+              bName.startsWith(".") ||
+              bName.startsWith("_") ||
+              bName === "tsconfig.json" ||
               resourcePath.indexOf("/.vscode/") >= 0 ||
               resourcePath.indexOf(
+                "vscode-web/dist/extensions/vscode-colorize-tests/"
+              ) >= 0 ||
+              resourcePath.indexOf(
+                "vscode-web/dist/extensions/vscode-custom-editor-tests/"
+              ) >= 0 ||
+              resourcePath.indexOf(
                 "vscode-web/dist/extensions/vscode-api-tests/"
+              ) >= 0 ||
+              resourcePath.indexOf(
+                "vscode-web/dist/extensions/vscode-notebook-tests/"
               ) >= 0
             );
           },
