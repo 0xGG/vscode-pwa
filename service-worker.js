@@ -105,7 +105,7 @@ define("./service-worker.js",['./workbox-a9d37846'], function (workbox) { 'use s
 
   workbox.precacheAndRoute([{
     "url": "assets/apple-icon-180.png",
-    "revision": "d524892b908a3bc543918328abcb5150"
+    "revision": "7c90839d0476f6c41c6bbb566bbfa528"
   }, {
     "url": "assets/apple-splash-1125-2436.jpg",
     "revision": "6d192cb4c76f7a2700625f667c4e35d3"
@@ -185,20 +185,98 @@ define("./service-worker.js",['./workbox-a9d37846'], function (workbox) { 'use s
     "url": "assets/apple-splash-828-1792.jpg",
     "revision": "729166094228099e13a56158b647bbc6"
   }, {
+    "url": "assets/apple-splash-dark-1125-2436.jpg",
+    "revision": "6d192cb4c76f7a2700625f667c4e35d3"
+  }, {
+    "url": "assets/apple-splash-dark-1136-640.jpg",
+    "revision": "b35239de8986f3649c889d06def26d91"
+  }, {
+    "url": "assets/apple-splash-dark-1170-2532.jpg",
+    "revision": "792eaa0b78739032c8864d5d34a4f6cb"
+  }, {
+    "url": "assets/apple-splash-dark-1242-2208.jpg",
+    "revision": "7bcf2ae257e46b38c9798b01d87d057b"
+  }, {
+    "url": "assets/apple-splash-dark-1242-2688.jpg",
+    "revision": "764e8a7ae62857902526cd1b7d743bda"
+  }, {
+    "url": "assets/apple-splash-dark-1284-2778.jpg",
+    "revision": "942c765fb65acaa4361b85dd70e937ed"
+  }, {
+    "url": "assets/apple-splash-dark-1334-750.jpg",
+    "revision": "7e2ee6f1cefa16f23d2a81f7af796b9d"
+  }, {
+    "url": "assets/apple-splash-dark-1536-2048.jpg",
+    "revision": "834779f8c584ac7775bc23f8f831c650"
+  }, {
+    "url": "assets/apple-splash-dark-1620-2160.jpg",
+    "revision": "f65840174ceb134caa5ab6351b583cf5"
+  }, {
+    "url": "assets/apple-splash-dark-1668-2224.jpg",
+    "revision": "3865a9449ec738e871cedca3255accb6"
+  }, {
+    "url": "assets/apple-splash-dark-1668-2388.jpg",
+    "revision": "e217ed2e373beef96d41c15517d76e5f"
+  }, {
+    "url": "assets/apple-splash-dark-1792-828.jpg",
+    "revision": "94716d95f73b19df5b37f52ba5418365"
+  }, {
+    "url": "assets/apple-splash-dark-2048-1536.jpg",
+    "revision": "14b237ea3e9b9f8b66906423142ef7eb"
+  }, {
+    "url": "assets/apple-splash-dark-2048-2732.jpg",
+    "revision": "c6005099d3ee7fa8869f07a0d6a3aefa"
+  }, {
+    "url": "assets/apple-splash-dark-2160-1620.jpg",
+    "revision": "ef89d9486e4db235dfa8bf2f9a9de313"
+  }, {
+    "url": "assets/apple-splash-dark-2208-1242.jpg",
+    "revision": "45d47bd5f13c63fd2089def0df9abe49"
+  }, {
+    "url": "assets/apple-splash-dark-2224-1668.jpg",
+    "revision": "843614ed0f5e6177b17a5a16dda2cb49"
+  }, {
+    "url": "assets/apple-splash-dark-2388-1668.jpg",
+    "revision": "51a980df187fc520975c95273d076862"
+  }, {
+    "url": "assets/apple-splash-dark-2436-1125.jpg",
+    "revision": "d7540a752c0bbcb269b14a10a7721bf7"
+  }, {
+    "url": "assets/apple-splash-dark-2532-1170.jpg",
+    "revision": "563ff3088bf7104b7c8139c7d7b94a1f"
+  }, {
+    "url": "assets/apple-splash-dark-2688-1242.jpg",
+    "revision": "6c2f3e40a45f489846d759a09b00c378"
+  }, {
+    "url": "assets/apple-splash-dark-2732-2048.jpg",
+    "revision": "1c7ee37ecd83cc2b6d7fb2648aeed8f7"
+  }, {
+    "url": "assets/apple-splash-dark-2778-1284.jpg",
+    "revision": "39193cc3976b918d1362d08db8961c65"
+  }, {
+    "url": "assets/apple-splash-dark-640-1136.jpg",
+    "revision": "0dd996a66dc03e9be0c53055ae64f610"
+  }, {
+    "url": "assets/apple-splash-dark-750-1334.jpg",
+    "revision": "7466286efb12fc4cb39d76857528a928"
+  }, {
+    "url": "assets/apple-splash-dark-828-1792.jpg",
+    "revision": "729166094228099e13a56158b647bbc6"
+  }, {
+    "url": "assets/favicon-196.png",
+    "revision": "eb6eed672f0a6a1c004430854f6692b1"
+  }, {
     "url": "assets/manifest-icon-192.png",
-    "revision": "9c831a5ec618dfe662adcdb61bc3078d"
+    "revision": "db578a609b5805c9f6096a5235e0b974"
   }, {
     "url": "assets/manifest-icon-512.png",
-    "revision": "5a75681d72856cf6c4d4b36711f1a416"
-  }, {
-    "url": "favicon.ico",
-    "revision": "04f2252cd16507cd2530f58ace0ef1c1"
+    "revision": "a47b31385711266f583b365901936390"
   }, {
     "url": "index.bundle.js",
     "revision": "cec1e7cbd250adf50fab00349460dc1a"
   }, {
     "url": "index.html",
-    "revision": "e121e344c8351036e35a4f1c51511973"
+    "revision": "d54df4d1364eb8d89434aaa4a38bee4f"
   }, {
     "url": "logo.svg",
     "revision": "36f0e236c42ab024edd0361161f393c0"
