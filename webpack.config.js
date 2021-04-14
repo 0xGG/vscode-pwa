@@ -7,14 +7,16 @@ const path = require("path");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const WorkboxPlugin = require("workbox-webpack-plugin");
 const CopyWebpackPlugin = require("copy-webpack-plugin");
+const { DefinePlugin } = require("webpack");
 
 fs.rmdirSync(path.resolve(__dirname, "dist"), { recursive: true });
+
+const isProduction = process.env["NODE_ENV"] === "production";
 
 /**@type {import('webpack').Configuration}*/
 const config = {
   target: "webworker", // vscode extensions run in a Node.js-context 📖 -> https://webpack.js.org/configuration/node/
-  mode: "none", // this leaves the source code as close as possible to the original (when packaging we set this to 'production')
-
+  mode: isProduction ? "production" : "development",
   entry: {
     index: "./src/index.ts",
   }, // the entry point of this extension, 📖 -> https://webpack.js.org/configuration/entry-context/
@@ -78,6 +80,12 @@ const config = {
           to: path.resolve(__dirname, "./dist/assets/"),
         },
       ],
+    }),
+    new DefinePlugin({
+      "process.env.PUBLIC_URL": JSON.stringify(process.env["PUBLIC_URL"] || ""),
+      "process.env.NODE_ENV": JSON.stringify(
+        isProduction ? "production" : "development"
+      ),
     }),
   ],
   devtool: "nosources-source-map",

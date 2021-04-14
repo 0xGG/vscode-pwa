@@ -1,20 +1,10 @@
 const nativeFS = require("vscode-web/dist/extensions/vscode-web-fs/dist/nativeFS");
 import { extensions as builtinExtensions } from "./builtinExtensions";
 import { extensions as myExtensions } from "./myExtensions";
+import * as serviceWorker from "./serviceWorker";
 
 // Register service worker
-if ("serviceWorker" in navigator) {
-  window.addEventListener("load", () => {
-    navigator.serviceWorker
-      .register("/service-worker.js")
-      .then((registration) => {
-        console.log("SW registered: ", registration);
-      })
-      .catch((registrationError) => {
-        console.log("SW registration failed: ", registrationError);
-      });
-  });
-}
+serviceWorker.register();
 
 // Display prompt
 const handler = (event: any) => {
