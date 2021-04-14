@@ -62,6 +62,7 @@ const config = {
           filter: (resourcePath) => {
             return !(
               resourcePath.match(/\.(exe|scpt)$/) ||
+              resourcePath.endsWith("/.vscodeignore") ||
               resourcePath.indexOf(
                 "vscode-web/dist/extensions/vscode-api-tests/"
               ) >= 0
