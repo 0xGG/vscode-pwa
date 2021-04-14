@@ -16,7 +16,7 @@ const isProduction = process.env["NODE_ENV"] === "production";
 /**@type {import('webpack').Configuration}*/
 const config = {
   target: "webworker", // vscode extensions run in a Node.js-context 📖 -> https://webpack.js.org/configuration/node/
-  mode: isProduction ? "production" : "development",
+  mode: "none", // isProduction ? "production" : "development", -- set to 'production' is causing problem
   entry: {
     index: "./src/index.ts",
   }, // the entry point of this extension, 📖 -> https://webpack.js.org/configuration/entry-context/

@@ -4,6 +4,6 @@
 git submodule update --recursive --init
 yarn
 yarn build:splash-screen
-yarn build
+yarn build:dev
 yarn start
 ```
