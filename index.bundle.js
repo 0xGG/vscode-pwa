@@ -30,6 +30,132 @@ __webpack_require__.r(__webpack_exports__);
 var extensions = [{ "packageJSON": { "name": "vscode-web-fs", "displayName": "VS Code Web File System", "description": "File System implementation for VSCode Web", "version": "0.0.1", "publisher": "shd101wyy", "engines": { "vscode": "^1.54.0" }, "categories": ["Other"], "activationEvents": ["onFileSystem:memfs", "onFileSystem:nativefs", "onCommand:memfs.openFolder", "onCommand:nativefs.openFolder"], "main": "./dist/extension.js", "browser": "./dist/extension.js", "contributes": { "commands": [{ "command": "nativefs.openFolder", "title": "Open Folder", "category": "NativeFS" }, { "command": "memfs.openFolder", "title": "Open Folder", "category": "MemFS" }] }, "scripts": { "vscode:prepublish": "yarn run package", "compile": "webpack", "watch": "webpack --watch", "package": "webpack --mode production --devtool hidden-source-map", "test-compile": "tsc -p ./", "test-watch": "tsc -watch -p ./", "pretest": "yarn run test-compile && yarn run lint", "lint": "eslint src --ext ts", "test": "node ./out/test/runTest.js" }, "devDependencies": { "@types/glob": "^7.1.3", "@types/mocha": "^8.0.4", "@types/node": "^12.11.7", "@types/vscode": "^1.55.0", "@types/wicg-file-system-access": "^2020.9.1", "@typescript-eslint/eslint-plugin": "^4.14.1", "@typescript-eslint/parser": "^4.14.1", "eslint": "^7.19.0", "glob": "^7.1.6", "mocha": "^8.2.1", "path-browserify": "^1.0.1", "ts-loader": "^8.0.14", "typescript": "^4.1.3", "vscode-test": "^1.5.0", "webpack": "^5.19.0", "webpack-cli": "^4.4.0" }, "repository": { "url": "git@github.com:0xGG/vscode-web-fs.git" }, "dependencies": { "nanoid": "^3.1.22" } }, "extensionPath": "vscode-web-fs" }];
 
 
+/***/ }),
+/* 4 */
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "register": () => (/* binding */ register),
+/* harmony export */   "unregister": () => (/* binding */ unregister)
+/* harmony export */ });
+// This optional code is used to register a service worker.
+// register() is not called by default.
+// This lets the app load faster on subsequent visits in production, and gives
+// it offline capabilities. However, it also means that developers (and users)
+// will only see deployed updates on subsequent visits to a page, after all the
+// existing tabs open on the page have been closed, since previously cached
+// resources are updated in the background.
+// To learn more about the benefits of this model and instructions on how to
+// opt-in, read https://bit.ly/CRA-PWA
+var isLocalhost = Boolean(window.location.hostname === "localhost" ||
+    // [::1] is the IPv6 localhost address.
+    window.location.hostname === "[::1]" ||
+    // 127.0.0.1/8 is considered localhost for IPv4.
+    window.location.hostname.match(/^127(?:\.(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)){3}$/));
+function register(config) {
+    if ( true && "serviceWorker" in navigator) {
+        // The URL constructor is available in all browsers that support SW.
+        var publicUrl = new URL("/vscode-pwa", window.location.href);
+        if (publicUrl.origin !== window.location.origin) {
+            // Our service worker won't work if PUBLIC_URL is on a different origin
+            // from what our page is served on. This might happen if a CDN is used to
+            // serve assets; see https://github.com/facebook/create-react-app/issues/2374
+            return;
+        }
+        window.addEventListener("load", function () {
+            var swUrl = "/vscode-pwa" + "/service-worker.js";
+            if (isLocalhost) {
+                // This is running on localhost. Let's check if a service worker still exists or not.
+                checkValidServiceWorker(swUrl, config);
+                // Add some additional logging to localhost, pointing developers to the
+                // service worker/PWA documentation.
+                navigator.serviceWorker.ready.then(function () {
+                    console.log("This web app is being served cache-first by a service " +
+                        "worker. To learn more, visit https://bit.ly/CRA-PWA");
+                });
+            }
+            else {
+                // Is not localhost. Just register service worker
+                registerValidSW(swUrl, config);
+            }
+        });
+    }
+}
+function registerValidSW(swUrl, config) {
+    navigator.serviceWorker
+        .register(swUrl)
+        .then(function (registration) {
+        registration.onupdatefound = function () {
+            var installingWorker = registration.installing;
+            if (installingWorker == null) {
+                return;
+            }
+            installingWorker.onstatechange = function () {
+                if (installingWorker.state === "installed") {
+                    if (navigator.serviceWorker.controller) {
+                        // At this point, the updated precached content has been fetched,
+                        // but the previous service worker will still serve the older
+                        // content until all client tabs are closed.
+                        console.log("New content is available and will be used when all " +
+                            "tabs for this page are closed. See https://bit.ly/CRA-PWA.");
+                        // Execute callback
+                        if (config && config.onUpdate) {
+                            config.onUpdate(registration);
+                        }
+                    }
+                    else {
+                        // At this point, everything has been precached.
+                        // It's the perfect time to display a
+                        // "Content is cached for offline use." message.
+                        console.log("Content is cached for offline use.");
+                        // Execute callback
+                        if (config && config.onSuccess) {
+                            config.onSuccess(registration);
+                        }
+                    }
+                }
+            };
+        };
+    })
+        .catch(function (error) {
+        console.error("Error during service worker registration:", error);
+    });
+}
+function checkValidServiceWorker(swUrl, config) {
+    // Check if the service worker can be found. If it can't reload the page.
+    fetch(swUrl)
+        .then(function (response) {
+        // Ensure service worker exists, and that we really are getting a JS file.
+        var contentType = response.headers.get("content-type");
+        if (response.status === 404 ||
+            (contentType != null && contentType.indexOf("javascript") === -1)) {
+            // No service worker found. Probably a different app. Reload the page.
+            navigator.serviceWorker.ready.then(function (registration) {
+                registration.unregister().then(function () {
+                    window.location.reload();
+                });
+            });
+        }
+        else {
+            // Service worker found. Proceed as normal.
+            registerValidSW(swUrl, config);
+        }
+    })
+        .catch(function () {
+        console.log("No internet connection found. App is running in offline mode.");
+    });
+}
+function unregister() {
+    if ("serviceWorker" in navigator) {
+        navigator.serviceWorker.ready.then(function (registration) {
+            registration.unregister();
+        });
+    }
+}
+
+
 /***/ })
 /******/ 	]);
 /************************************************************************/
@@ -97,6 +223,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var _builtinExtensions__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(2);
 /* harmony import */ var _myExtensions__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(3);
+/* harmony import */ var _serviceWorker__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(4);
 var __awaiter = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -141,19 +268,9 @@ var __spreadArray = (undefined && undefined.__spreadArray) || function (to, from
 var nativeFS = __webpack_require__(1);
 
 
+
 // Register service worker
-if ("serviceWorker" in navigator) {
-    window.addEventListener("load", function () {
-        navigator.serviceWorker
-            .register("/service-worker.js")
-            .then(function (registration) {
-            console.log("SW registered: ", registration);
-        })
-            .catch(function (registrationError) {
-            console.log("SW registration failed: ", registrationError);
-        });
-    });
-}
+_serviceWorker__WEBPACK_IMPORTED_MODULE_2__.register();
 // Display prompt
 var handler = function (event) {
     try {
