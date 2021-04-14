@@ -40,6 +40,7 @@ const config = {
       clientsClaim: true,
       skipWaiting: true,
       maximumFileSizeToCacheInBytes: 1024 * 1024 * 10, // 10mb
+      mode: isProduction ? "production" : "development",
     }),
     new CopyWebpackPlugin({
       patterns: [
