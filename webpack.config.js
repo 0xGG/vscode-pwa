@@ -70,10 +70,6 @@ const config = {
           to: path.resolve(__dirname, "./dist/logo.svg"),
         },
         {
-          from: path.resolve(__dirname, "./favicon.ico"),
-          to: path.resolve(__dirname, "./dist/favicon.ico"),
-        },
-        {
           from: path.resolve(__dirname, "./manifest.json"),
           to: path.resolve(__dirname, "./dist/manifest.json"),
         },

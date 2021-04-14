@@ -9,7 +9,7 @@
     "start": "http-server dist",
     "build:extensions": "node ./deploy_extensions.js",
     "build:website": "webpack",
-    "build:splash-screen": "npx pwa-asset-generator logo.svg ./assets -i ./index.html -m manifest.json",
+    "build:splash-screen": "npx pwa-asset-generator logo.svg --favicon --opaque false --dark-mode ./assets -i ./index.html -m manifest.json",
     "build": "yarn build:extensions && yarn build:website",
     "gh-pages:deploy": "yarn build && gh-pages -d $PWD/dist -o origin"
   },
