@@ -50,9 +50,9 @@ export const product = {
         "https://az764295.vo.msecnd.net/extensions/workspaceRecommendations.json.gz",
     },
   },
-  folderUri: {
+  workspaceUri: {
     scheme: "memfs",
-    path: "/Welcome",
+    path: "/web-fs.code-workspace",
   },
   settingsSyncOptions: {
     enabled: true,

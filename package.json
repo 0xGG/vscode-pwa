@@ -8,7 +8,7 @@
   "scripts": {
     "start": "http-server dist",
     "build:extensions": "node ./deploy_extensions.js",
-    "build:splash-screen": "npx pwa-asset-generator logo.svg --favicon --opaque false --dark-mode ./assets -i ./index.html -m manifest.json",
+    "build:splash-screen": "npx pwa-asset-generator logo.svg --favicon --opaque false --dark-mode --padding '4%' ./assets -i ./index.html -m manifest.json",
     "build:dev": "yarn build:extensions && NODE_ENV='development' webpack",
     "build": "yarn build:extensions && PUBLIC_URL='/vscode-pwa' NODE_ENV='production' webpack",
     "gh-pages:deploy": "yarn build && gh-pages-clean &&  gh-pages -d $PWD/dist -o origin"
