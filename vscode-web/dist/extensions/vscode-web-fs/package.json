@@ -2,7 +2,7 @@
   "name": "vscode-web-fs",
   "displayName": "VS Code Web File System",
   "description": "File System implementation for VSCode Web",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "publisher": "shd101wyy",
   "engines": {
     "vscode": "^1.54.0"
@@ -65,6 +65,8 @@
     "url": "git@github.com:0xGG/vscode-web-fs.git"
   },
   "dependencies": {
+    "@isomorphic-git/lightning-fs": "^4.4.1",
+    "dexie": "^3.0.3",
     "nanoid": "^3.1.22"
   }
 }
