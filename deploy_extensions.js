@@ -15,6 +15,11 @@ const extensions = [
     copy: ["dist", "package.json"],
     commands: ["yarn", "yarn package"],
   },
+  {
+    name: "vscode-isomorphic-git",
+    copy: ["dist", "package.json"],
+    commands: ["yarn", "yarn package"],
+  },
 ];
 
 const myExtensions = [];

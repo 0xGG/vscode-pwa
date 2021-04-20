@@ -4,3 +4,6 @@
 [submodule "extensions/vscode-web-ui"]
 	path = extensions/vscode-web-ui
 	url = https://github.com/0xgg/vscode-web-ui
+[submodule "extensions/vscode-isomorphic-git"]
+	path = extensions/vscode-isomorphic-git
+	url = https://github.com/0xgg/vscode-isomorphic-git
