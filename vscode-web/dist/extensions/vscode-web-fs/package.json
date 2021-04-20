@@ -2,7 +2,7 @@
   "name": "vscode-web-fs",
   "displayName": "VS Code Web File System",
   "description": "File System implementation for VSCode Web",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "publisher": "shd101wyy",
   "license": "MIT",
   "enableProposedApi": true,
@@ -48,6 +48,7 @@
   "devDependencies": {
     "@types/glob": "^7.1.3",
     "@types/glob-to-regexp": "^0.4.0",
+    "@types/istextorbinary": "^2.3.0",
     "@types/mocha": "^8.0.4",
     "@types/node": "^12.11.7",
     "@types/vscode": "^1.55.0",
@@ -70,7 +71,9 @@
   "dependencies": {
     "@isomorphic-git/lightning-fs": "^4.4.1",
     "dexie": "^3.0.3",
+    "escape-string-regexp": "^5.0.0",
     "glob-to-regexp": "^0.4.1",
+    "istextorbinary": "^5.12.0",
     "nanoid": "^3.1.22"
   }
 }
