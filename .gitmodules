@@ -1,3 +1,6 @@
 [submodule "extensions/vscode-web-fs"]
 	path = extensions/vscode-web-fs
 	url = https://github.com/0xgg/vscode-web-fs
+[submodule "extensions/vscode-web-ui"]
+	path = extensions/vscode-web-ui
+	url = https://github.com/0xgg/vscode-web-ui

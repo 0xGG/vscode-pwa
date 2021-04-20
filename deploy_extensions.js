@@ -10,6 +10,11 @@ const extensions = [
     copy: ["dist", "package.json"],
     commands: ["yarn", "yarn package"],
   },
+  {
+    name: "vscode-web-ui",
+    copy: ["dist", "package.json"],
+    commands: ["yarn", "yarn package"],
+  },
 ];
 
 const myExtensions = [];
