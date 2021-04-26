@@ -24,7 +24,8 @@ Please open **Command Palette** (<kbd>ctrl-shift-p</kbd> or <kbd>cmd-shift-p</kb
 This project depends on the following extensions:
 
 * [vscode-web-fs](https://github.com/0xGG/vscode-web-fs)
-
+* [vscode-web-ui](https://github.com/0xGG/vscode-web-ui)
+* [vscode-isomorphic-git](https://github.com/0xGG/vscode-isomorphic-git)
 ## Credits
 
 * [vscode-web](https://github.com/Felx-B/vscode-web/)
