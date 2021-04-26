@@ -3,6 +3,7 @@
   "displayName": "vscode-web-ui",
   "description": "Modify the VSCode UI a bit for the web",
   "version": "0.0.1",
+  "publisher": "0xgg",
   "engines": {
     "vscode": "^1.55.0"
   },
