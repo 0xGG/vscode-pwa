@@ -139,7 +139,7 @@ class PackageDocument {
         this.document = document;
     }
     provideCompletionItems(position, _token) {
-        const location = jsonc_parser_1.getLocation(this.document.getText(), this.document.offsetAt(position));
+        const location = (0, jsonc_parser_1.getLocation)(this.document.getText(), this.document.offsetAt(position));
         if (location.path.length >= 2 && location.path[1] === 'configurationDefaults') {
             return this.provideLanguageOverridesCompletionItems(location, position);
         }

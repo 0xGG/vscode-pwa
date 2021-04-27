@@ -108,6 +108,7 @@ const serverProcess_browser_1 = __webpack_require__(102);
 const api_2 = __webpack_require__(22);
 const commandManager_1 = __webpack_require__(103);
 const plugins_1 = __webpack_require__(104);
+const activeJsTsEditorTracker_1 = __webpack_require__(105);
 class StaticVersionProvider {
     constructor(_version) {
         this._version = _version;
@@ -129,24 +130,27 @@ function activate(context) {
     context.subscriptions.push(new languageConfiguration_1.LanguageConfigurationManager());
     const onCompletionAccepted = new vscode.EventEmitter();
     context.subscriptions.push(onCompletionAccepted);
+    const activeJsTsEditorTracker = new activeJsTsEditorTracker_1.ActiveJsTsEditorTracker();
+    context.subscriptions.push(activeJsTsEditorTracker);
     const versionProvider = new StaticVersionProvider(new versionProvider_1.TypeScriptVersion("bundled" /* Bundled */, vscode.Uri.joinPath(context.extensionUri, 'dist/browser/typescript/tsserver.web.js').toString(), api_2.default.fromSimpleString('4.2.0')));
-    const lazyClientHost = lazyClientHost_1.createLazyClientHost(context, false, {
+    const lazyClientHost = (0, lazyClientHost_1.createLazyClientHost)(context, false, {
         pluginManager,
         commandManager,
         logDirectoryProvider: logDirectoryProvider_1.noopLogDirectoryProvider,
         cancellerFactory: cancellation_1.noopRequestCancellerFactory,
         versionProvider,
-        processFactory: serverProcess_browser_1.WorkerServerProcess
+        processFactory: serverProcess_browser_1.WorkerServerProcess,
+        activeJsTsEditorTracker
     }, item => {
         onCompletionAccepted.fire(item);
     });
-    index_1.registerBaseCommands(commandManager, lazyClientHost, pluginManager);
+    (0, index_1.registerBaseCommands)(commandManager, lazyClientHost, pluginManager, activeJsTsEditorTracker);
     // context.subscriptions.push(task.register(lazyClientHost.map(x => x.serviceClient)));
-    Promise.resolve().then(() => __webpack_require__(105)).then(module => {
+    Promise.resolve().then(() => __webpack_require__(106)).then(module => {
         context.subscriptions.push(module.register());
     });
-    context.subscriptions.push(lazyClientHost_1.lazilyActivateClient(lazyClientHost, pluginManager));
-    return api_1.getExtensionApi(onCompletionAccepted.event, pluginManager);
+    context.subscriptions.push((0, lazyClientHost_1.lazilyActivateClient)(lazyClientHost, pluginManager, activeJsTsEditorTracker));
+    return (0, api_1.getExtensionApi)(onCompletionAccepted.event, pluginManager);
 }
 exports.activate = activate;
 
@@ -210,14 +214,14 @@ const openTsServerLog_1 = __webpack_require__(13);
 const reloadProject_1 = __webpack_require__(14);
 const restartTsServer_1 = __webpack_require__(15);
 const selectTypeScriptVersion_1 = __webpack_require__(16);
-function registerBaseCommands(commandManager, lazyClientHost, pluginManager) {
+function registerBaseCommands(commandManager, lazyClientHost, pluginManager, activeJsTsEditorTracker) {
     commandManager.register(new reloadProject_1.ReloadTypeScriptProjectsCommand(lazyClientHost));
     commandManager.register(new reloadProject_1.ReloadJavaScriptProjectsCommand(lazyClientHost));
     commandManager.register(new selectTypeScriptVersion_1.SelectTypeScriptVersionCommand(lazyClientHost));
     commandManager.register(new openTsServerLog_1.OpenTsServerLogCommand(lazyClientHost));
     commandManager.register(new restartTsServer_1.RestartTsServerCommand(lazyClientHost));
-    commandManager.register(new goToProjectConfiguration_1.TypeScriptGoToProjectConfigCommand(lazyClientHost));
-    commandManager.register(new goToProjectConfiguration_1.JavaScriptGoToProjectConfigCommand(lazyClientHost));
+    commandManager.register(new goToProjectConfiguration_1.TypeScriptGoToProjectConfigCommand(activeJsTsEditorTracker, lazyClientHost));
+    commandManager.register(new goToProjectConfiguration_1.JavaScriptGoToProjectConfigCommand(activeJsTsEditorTracker, lazyClientHost));
     commandManager.register(new configurePlugin_1.ConfigurePluginCommand(pluginManager));
     commandManager.register(new learnMoreAboutRefactorings_1.LearnMoreAboutRefactoringsCommand());
 }
@@ -260,30 +264,31 @@ exports.ConfigurePluginCommand = ConfigurePluginCommand;
  *--------------------------------------------------------------------------------------------*/
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.JavaScriptGoToProjectConfigCommand = exports.TypeScriptGoToProjectConfigCommand = void 0;
-const vscode = __webpack_require__(1);
 const tsconfig_1 = __webpack_require__(6);
 class TypeScriptGoToProjectConfigCommand {
-    constructor(lazyClientHost) {
+    constructor(activeJsTsEditorTracker, lazyClientHost) {
+        this.activeJsTsEditorTracker = activeJsTsEditorTracker;
         this.lazyClientHost = lazyClientHost;
         this.id = 'typescript.goToProjectConfig';
     }
     execute() {
-        const editor = vscode.window.activeTextEditor;
+        const editor = this.activeJsTsEditorTracker.activeJsTsEditor;
         if (editor) {
-            tsconfig_1.openProjectConfigForFile(0 /* TypeScript */, this.lazyClientHost.value.serviceClient, editor.document.uri);
+            (0, tsconfig_1.openProjectConfigForFile)(0 /* TypeScript */, this.lazyClientHost.value.serviceClient, editor.document.uri);
         }
     }
 }
 exports.TypeScriptGoToProjectConfigCommand = TypeScriptGoToProjectConfigCommand;
 class JavaScriptGoToProjectConfigCommand {
-    constructor(lazyClientHost) {
+    constructor(activeJsTsEditorTracker, lazyClientHost) {
+        this.activeJsTsEditorTracker = activeJsTsEditorTracker;
         this.lazyClientHost = lazyClientHost;
         this.id = 'javascript.goToProjectConfig';
     }
     execute() {
-        const editor = vscode.window.activeTextEditor;
+        const editor = this.activeJsTsEditorTracker.activeJsTsEditor;
         if (editor) {
-            tsconfig_1.openProjectConfigForFile(1 /* JavaScript */, this.lazyClientHost.value.serviceClient, editor.document.uri);
+            (0, tsconfig_1.openProjectConfigForFile)(1 /* JavaScript */, this.lazyClientHost.value.serviceClient, editor.document.uri);
         }
     }
 }
@@ -1043,7 +1048,7 @@ class LearnMoreAboutRefactoringsCommand {
         this.id = LearnMoreAboutRefactoringsCommand.id;
     }
     execute() {
-        const docUrl = vscode.window.activeTextEditor && languageModeIds_1.isTypeScriptDocument(vscode.window.activeTextEditor.document)
+        const docUrl = vscode.window.activeTextEditor && (0, languageModeIds_1.isTypeScriptDocument)(vscode.window.activeTextEditor.document)
             ? 'https://go.microsoft.com/fwlink/?linkid=2114477'
             : 'https://go.microsoft.com/fwlink/?linkid=2116761';
         vscode.env.openExternal(vscode.Uri.parse(docUrl));
@@ -1209,7 +1214,7 @@ const languageModeIds = __webpack_require__(12);
 const jsTsLanguageConfiguration = {
     indentationRules: {
         decreaseIndentPattern: /^((?!.*?\/\*).*\*\/)?\s*[\}\]].*$/,
-        increaseIndentPattern: /^((?!\/\/).)*(\{[^}"'`]*|\([^)"'`]*|\[[^\]"'`]*)$/,
+        increaseIndentPattern: /^((?!\/\/).)*(\{([^}"'`]*|(\t|[ ])*\/\/.*)|\([^)"'`]*|\[[^\]"'`]*)$/,
         // e.g.  * ...| or */| or *-----*/|
         unIndentedLinePattern: /^(\t|[ ])*[ ]\*[^/]*\*\/\s*$|^(\t|[ ])*[ ]\*\/\s*$|^(\t|[ ])*[ ]\*([ ]([^\*]|\*(?!\/))*)?$/
     },
@@ -1363,16 +1368,16 @@ const languageDescription_1 = __webpack_require__(96);
 const lazy_1 = __webpack_require__(98);
 const managedFileContext_1 = __webpack_require__(99);
 function createLazyClientHost(context, onCaseInsensitiveFileSystem, services, onCompletionAccepted) {
-    return lazy_1.lazy(() => {
+    return (0, lazy_1.lazy)(() => {
         const clientHost = new typeScriptServiceClientHost_1.default(languageDescription_1.standardLanguageDescriptions, context, onCaseInsensitiveFileSystem, services, onCompletionAccepted);
         context.subscriptions.push(clientHost);
         return clientHost;
     });
 }
 exports.createLazyClientHost = createLazyClientHost;
-function lazilyActivateClient(lazyClientHost, pluginManager) {
+function lazilyActivateClient(lazyClientHost, pluginManager, activeJsTsEditorTracker) {
     const disposables = [];
-    const supportedLanguage = arrays_1.flatten([
+    const supportedLanguage = (0, arrays_1.flatten)([
         ...languageDescription_1.standardLanguageDescriptions.map(x => x.modeIds),
         ...pluginManager.plugins.map(x => x.languages)
     ]);
@@ -1382,7 +1387,7 @@ function lazilyActivateClient(lazyClientHost, pluginManager) {
             hasActivated = true;
             // Force activation
             void lazyClientHost.value;
-            disposables.push(new managedFileContext_1.default(resource => {
+            disposables.push(new managedFileContext_1.default(activeJsTsEditorTracker, resource => {
                 return lazyClientHost.value.serviceClient.toPath(resource);
             }));
             return true;
@@ -1457,7 +1462,7 @@ class TypeScriptServiceClientHost extends dispose_1.Disposable {
         }, null, this._disposables);
         this.client.onConfigDiagnosticsReceived(diag => this.configFileDiagnosticsReceived(diag), null, this._disposables);
         this.client.onResendModelsRequested(() => this.populateService(), null, this._disposables);
-        this._register(new versionStatus_1.default(this.client, services.commandManager));
+        this._register(new versionStatus_1.default(this.client, services.commandManager, services.activeJsTsEditorTracker));
         this._register(new typingsStatus_1.AtaProgressReporter(this.client));
         this.typingsStatus = this._register(new typingsStatus_1.default(this.client));
         this._register(ProjectStatus.create(this.client));
@@ -1514,7 +1519,7 @@ class TypeScriptServiceClientHost extends dispose_1.Disposable {
         this.languagePerId.set(description.id, manager);
     }
     getAllModeIds(descriptions, pluginManager) {
-        const allModeIds = arrays_1.flatten([
+        const allModeIds = (0, arrays_1.flatten)([
             ...descriptions.map(x => x.modeIds),
             ...pluginManager.plugins.map(x => x.languages)
         ]);
@@ -1595,7 +1600,7 @@ class TypeScriptServiceClientHost extends dispose_1.Disposable {
         }
         const relatedInformation = diagnostic.relatedInformation;
         if (relatedInformation) {
-            converted.relatedInformation = arrays_1.coalesce(relatedInformation.map((info) => {
+            converted.relatedInformation = (0, arrays_1.coalesce)(relatedInformation.map((info) => {
                 const span = info.span;
                 if (!span) {
                     return undefined;
@@ -1659,7 +1664,7 @@ const languageModeIds_1 = __webpack_require__(12);
 const objects_1 = __webpack_require__(25);
 const resourceMap_1 = __webpack_require__(27);
 function areFileConfigurationsEqual(a, b) {
-    return objects_1.equals(a, b);
+    return (0, objects_1.equals)(a, b);
 }
 class FileConfigurationManager extends dispose_1.Disposable {
     constructor(client, onCaseInsenitiveFileSystem) {
@@ -1737,7 +1742,7 @@ class FileConfigurationManager extends dispose_1.Disposable {
         };
     }
     getFormatOptions(document, options) {
-        const config = vscode.workspace.getConfiguration(languageModeIds_1.isTypeScriptDocument(document) ? 'typescript.format' : 'javascript.format', document.uri);
+        const config = vscode.workspace.getConfiguration((0, languageModeIds_1.isTypeScriptDocument)(document) ? 'typescript.format' : 'javascript.format', document.uri);
         return {
             tabSize: options.tabSize,
             indentSize: options.tabSize,
@@ -1767,8 +1772,8 @@ class FileConfigurationManager extends dispose_1.Disposable {
         if (this.client.apiVersion.lt(api_1.default.v290)) {
             return {};
         }
-        const config = vscode.workspace.getConfiguration(languageModeIds_1.isTypeScriptDocument(document) ? 'typescript' : 'javascript', document.uri);
-        const preferencesConfig = vscode.workspace.getConfiguration(languageModeIds_1.isTypeScriptDocument(document) ? 'typescript.preferences' : 'javascript.preferences', document.uri);
+        const config = vscode.workspace.getConfiguration((0, languageModeIds_1.isTypeScriptDocument)(document) ? 'typescript' : 'javascript', document.uri);
+        const preferencesConfig = vscode.workspace.getConfiguration((0, languageModeIds_1.isTypeScriptDocument)(document) ? 'typescript.preferences' : 'javascript.preferences', document.uri);
         const preferences = {
             quotePreference: this.getQuoteStylePreference(preferencesConfig),
             importModuleSpecifierPreference: getImportModuleSpecifierPreference(preferencesConfig),
@@ -3233,17 +3238,19 @@ function coerce(version) {
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.disabledSchemes = exports.semanticSupportedSchemes = exports.walkThroughSnippet = exports.vsls = exports.git = exports.untitled = exports.file = void 0;
+exports.disabledSchemes = exports.semanticSupportedSchemes = exports.vscodeNotebookCell = exports.walkThroughSnippet = exports.vsls = exports.git = exports.untitled = exports.file = void 0;
 exports.file = 'file';
 exports.untitled = 'untitled';
 exports.git = 'git';
 /** Live share scheme */
 exports.vsls = 'vsls';
 exports.walkThroughSnippet = 'walkThroughSnippet';
+exports.vscodeNotebookCell = 'vscode-notebook-cell';
 exports.semanticSupportedSchemes = [
     exports.file,
     exports.untitled,
     exports.walkThroughSnippet,
+    exports.vscodeNotebookCell,
 ];
 /**
  * File scheme for which JS/TS language feature should be disabled
@@ -3516,7 +3523,7 @@ class LanguageProvider extends dispose_1.Disposable {
         if (doc && this.description.modeIds.indexOf(doc.languageId) >= 0) {
             return true;
         }
-        const base = path_1.basename(resource.fsPath);
+        const base = (0, path_1.basename)(resource.fsPath);
         return !!base && (!!this.description.configFilePattern && this.description.configFilePattern.test(base));
     }
     get id() {
@@ -3683,7 +3690,7 @@ function fromProtocolCallHierarchyItem(item) {
     const name = useFileName ? path.basename(item.file) : item.name;
     const detail = useFileName ? vscode.workspace.asRelativePath(path.dirname(item.file)) : (_a = item.containerName) !== null && _a !== void 0 ? _a : '';
     const result = new vscode.CallHierarchyItem(typeConverters.SymbolKind.fromProtocolScriptElementKind(item.kind), name, detail, vscode.Uri.file(item.file), typeConverters.Range.fromTextSpan(item.span), typeConverters.Range.fromTextSpan(item.selectionSpan));
-    const kindModifiers = item.kindModifiers ? modifiers_1.parseKindModifier(item.kindModifiers) : undefined;
+    const kindModifiers = item.kindModifiers ? (0, modifiers_1.parseKindModifier)(item.kindModifiers) : undefined;
     if (kindModifiers === null || kindModifiers === void 0 ? void 0 : kindModifiers.has(PConst.KindModifiers.depreacted)) {
         result.tags = [vscode.SymbolTag.Deprecated];
     }
@@ -3696,9 +3703,9 @@ function fromProtocolCallHierarchyOutgoingCall(item) {
     return new vscode.CallHierarchyOutgoingCall(fromProtocolCallHierarchyItem(item.to), item.fromSpans.map(typeConverters.Range.fromTextSpan));
 }
 function register(selector, client) {
-    return dependentRegistration_1.conditionalRegistration([
-        dependentRegistration_1.requireMinVersion(client, TypeScriptCallHierarchySupport.minVersion),
-        dependentRegistration_1.requireSomeCapability(client, typescriptService_1.ClientCapability.Semantic),
+    return (0, dependentRegistration_1.conditionalRegistration)([
+        (0, dependentRegistration_1.requireMinVersion)(client, TypeScriptCallHierarchySupport.minVersion),
+        (0, dependentRegistration_1.requireSomeCapability)(client, typescriptService_1.ClientCapability.Semantic),
     ], () => {
         return vscode.languages.registerCallHierarchyProvider(selector.semantic, new TypeScriptCallHierarchySupport(client));
     });
@@ -4128,14 +4135,14 @@ class TypeScriptImplementationsCodeLensProvider extends baseCodeLensProvider_1.T
     extractSymbol(document, item, _parent) {
         switch (item.kind) {
             case PConst.Kind.interface:
-                return baseCodeLensProvider_1.getSymbolRange(document, item);
+                return (0, baseCodeLensProvider_1.getSymbolRange)(document, item);
             case PConst.Kind.class:
             case PConst.Kind.method:
             case PConst.Kind.memberVariable:
             case PConst.Kind.memberGetAccessor:
             case PConst.Kind.memberSetAccessor:
                 if (item.kindModifiers.match(/\babstract\b/g)) {
-                    return baseCodeLensProvider_1.getSymbolRange(document, item);
+                    return (0, baseCodeLensProvider_1.getSymbolRange)(document, item);
                 }
                 break;
         }
@@ -4144,9 +4151,9 @@ class TypeScriptImplementationsCodeLensProvider extends baseCodeLensProvider_1.T
 }
 exports.default = TypeScriptImplementationsCodeLensProvider;
 function register(selector, modeId, client, cachedResponse) {
-    return dependentRegistration_1.conditionalRegistration([
-        dependentRegistration_1.requireConfiguration(modeId, 'implementationsCodeLens.enabled'),
-        dependentRegistration_1.requireSomeCapability(client, typescriptService_1.ClientCapability.Semantic),
+    return (0, dependentRegistration_1.conditionalRegistration)([
+        (0, dependentRegistration_1.requireConfiguration)(modeId, 'implementationsCodeLens.enabled'),
+        (0, dependentRegistration_1.requireSomeCapability)(client, typescriptService_1.ClientCapability.Semantic),
     ], () => {
         return vscode.languages.registerCodeLensProvider(selector.semantic, new TypeScriptImplementationsCodeLensProvider(client, cachedResponse));
     });
@@ -4237,7 +4244,7 @@ function getSymbolRange(document, item) {
     }
     const range = typeConverters.Range.fromTextSpan(span);
     const text = document.getText(range);
-    const identifierMatch = new RegExp(`^(.*?(\\b|\\W))${regexp_1.escapeRegExp(item.text || '')}(\\b|\\W)`, 'gm');
+    const identifierMatch = new RegExp(`^(.*?(\\b|\\W))${(0, regexp_1.escapeRegExp)(item.text || '')}(\\b|\\W)`, 'gm');
     const match = identifierMatch.exec(text);
     const prefixLength = match ? match.index + match[1].length : 0;
     const startOffset = document.offsetAt(new vscode.Position(range.start.line, range.start.character)) + prefixLength;
@@ -4296,7 +4303,7 @@ class TypeScriptReferencesCodeLensProvider extends baseCodeLensProvider_1.TypeSc
         const args = typeConverters.Position.toFileLocationRequestArgs(codeLens.file, codeLens.range.start);
         const response = await this.client.execute('references', args, token, {
             lowPriority: true,
-            executionTarget: server_1.ExectuionTarget.Semantic,
+            executionTarget: server_1.ExecutionTarget.Semantic,
             cancelOnResourceChange: codeLens.document,
         });
         if (response.type !== 'response' || !response.body) {
@@ -4322,13 +4329,13 @@ class TypeScriptReferencesCodeLensProvider extends baseCodeLensProvider_1.TypeSc
     }
     extractSymbol(document, item, parent) {
         if (parent && parent.kind === PConst.Kind.enum) {
-            return baseCodeLensProvider_1.getSymbolRange(document, item);
+            return (0, baseCodeLensProvider_1.getSymbolRange)(document, item);
         }
         switch (item.kind) {
             case PConst.Kind.function:
                 const showOnAllFunctions = vscode.workspace.getConfiguration(this.modeId).get('referencesCodeLens.showOnAllFunctions');
                 if (showOnAllFunctions) {
-                    return baseCodeLensProvider_1.getSymbolRange(document, item);
+                    return (0, baseCodeLensProvider_1.getSymbolRange)(document, item);
                 }
             // fallthrough
             case PConst.Kind.const:
@@ -4336,18 +4343,18 @@ class TypeScriptReferencesCodeLensProvider extends baseCodeLensProvider_1.TypeSc
             case PConst.Kind.variable:
                 // Only show references for exported variables
                 if (/\bexport\b/.test(item.kindModifiers)) {
-                    return baseCodeLensProvider_1.getSymbolRange(document, item);
+                    return (0, baseCodeLensProvider_1.getSymbolRange)(document, item);
                 }
                 break;
             case PConst.Kind.class:
                 if (item.text === '<class>') {
                     break;
                 }
-                return baseCodeLensProvider_1.getSymbolRange(document, item);
+                return (0, baseCodeLensProvider_1.getSymbolRange)(document, item);
             case PConst.Kind.interface:
             case PConst.Kind.type:
             case PConst.Kind.enum:
-                return baseCodeLensProvider_1.getSymbolRange(document, item);
+                return (0, baseCodeLensProvider_1.getSymbolRange)(document, item);
             case PConst.Kind.method:
             case PConst.Kind.memberGetAccessor:
             case PConst.Kind.memberSetAccessor:
@@ -4364,7 +4371,7 @@ class TypeScriptReferencesCodeLensProvider extends baseCodeLensProvider_1.TypeSc
                     case PConst.Kind.class:
                     case PConst.Kind.interface:
                     case PConst.Kind.type:
-                        return baseCodeLensProvider_1.getSymbolRange(document, item);
+                        return (0, baseCodeLensProvider_1.getSymbolRange)(document, item);
                 }
                 break;
         }
@@ -4373,9 +4380,9 @@ class TypeScriptReferencesCodeLensProvider extends baseCodeLensProvider_1.TypeSc
 }
 exports.TypeScriptReferencesCodeLensProvider = TypeScriptReferencesCodeLensProvider;
 function register(selector, modeId, client, cachedResponse) {
-    return dependentRegistration_1.conditionalRegistration([
-        dependentRegistration_1.requireConfiguration(modeId, 'referencesCodeLens.enabled'),
-        dependentRegistration_1.requireSomeCapability(client, typescriptService_1.ClientCapability.Semantic),
+    return (0, dependentRegistration_1.conditionalRegistration)([
+        (0, dependentRegistration_1.requireConfiguration)(modeId, 'referencesCodeLens.enabled'),
+        (0, dependentRegistration_1.requireSomeCapability)(client, typescriptService_1.ClientCapability.Semantic),
     ], () => {
         return vscode.languages.registerCodeLensProvider(selector.semantic, new TypeScriptReferencesCodeLensProvider(client, cachedResponse, modeId));
     });
@@ -4394,7 +4401,7 @@ exports.register = register;
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.SyntaxRoutingTsServer = exports.GetErrRoutingTsServer = exports.ProcessBasedTsServer = exports.ExectuionTarget = void 0;
+exports.SyntaxRoutingTsServer = exports.GetErrRoutingTsServer = exports.ProcessBasedTsServer = exports.ExecutionTarget = void 0;
 const vscode = __webpack_require__(1);
 const protocol_const_1 = __webpack_require__(31);
 const callbackMap_1 = __webpack_require__(41);
@@ -4402,11 +4409,11 @@ const requestQueue_1 = __webpack_require__(42);
 const serverError_1 = __webpack_require__(43);
 const typescriptService_1 = __webpack_require__(32);
 const dispose_1 = __webpack_require__(18);
-var ExectuionTarget;
-(function (ExectuionTarget) {
-    ExectuionTarget[ExectuionTarget["Semantic"] = 0] = "Semantic";
-    ExectuionTarget[ExectuionTarget["Syntax"] = 1] = "Syntax";
-})(ExectuionTarget = exports.ExectuionTarget || (exports.ExectuionTarget = {}));
+var ExecutionTarget;
+(function (ExecutionTarget) {
+    ExecutionTarget[ExecutionTarget["Semantic"] = 0] = "Semantic";
+    ExecutionTarget[ExecutionTarget["Syntax"] = 1] = "Syntax";
+})(ExecutionTarget = exports.ExecutionTarget || (exports.ExecutionTarget = {}));
 class ProcessBasedTsServer extends dispose_1.Disposable {
     constructor(_serverId, _serverSource, _process, _tsServerLogFile, _requestCanceller, _version, _telemetryReporter, _tracer) {
         super();
@@ -4741,8 +4748,8 @@ class SyntaxRoutingTsServer extends dispose_1.Disposable {
                 server: this.syntaxServer,
                 canRun: (command, execInfo) => {
                     switch (execInfo.executionTarget) {
-                        case ExectuionTarget.Semantic: return false;
-                        case ExectuionTarget.Syntax: return true;
+                        case ExecutionTarget.Semantic: return false;
+                        case ExecutionTarget.Syntax: return true;
                     }
                     if (SyntaxRoutingTsServer.syntaxAlwaysCommands.has(command)) {
                         return true;
@@ -5117,7 +5124,7 @@ class MyCompletionItem extends vscode.CompletionItem {
         this.preselect = tsEntry.isRecommended;
         this.position = position;
         this.useCodeSnippet = completionContext.useCodeSnippetsOnMethodSuggest && (this.kind === vscode.CompletionItemKind.Function || this.kind === vscode.CompletionItemKind.Method);
-        this.range = this.getRangeFromReplacementSpan(tsEntry, completionContext, position);
+        this.range = this.getRangeFromReplacementSpan(tsEntry, completionContext);
         this.commitCharacters = MyCompletionItem.getCommitCharacters(completionContext, tsEntry);
         this.insertText = tsEntry.insertText;
         this.filterText = this.getFilterText(completionContext.line, tsEntry.insertText);
@@ -5138,7 +5145,7 @@ class MyCompletionItem extends vscode.CompletionItem {
             }
         }
         if (tsEntry.kindModifiers) {
-            const kindModifiers = modifiers_1.parseKindModifier(tsEntry.kindModifiers);
+            const kindModifiers = (0, modifiers_1.parseKindModifier)(tsEntry.kindModifiers);
             if (kindModifiers.has(PConst.KindModifiers.optional)) {
                 if (!this.insertText) {
                     this.insertText = this.label;
@@ -5194,7 +5201,13 @@ class MyCompletionItem extends vscode.CompletionItem {
             const args = {
                 ...typeConverters.Position.toFileLocationRequestArgs(filepath, this.position),
                 entryNames: [
-                    this.tsEntry.source ? { name: this.tsEntry.name, source: this.tsEntry.source } : this.tsEntry.name
+                    // @ts-expect-error until TypeScript 4.3 protocol update
+                    this.tsEntry.source || this.tsEntry.data ? {
+                        name: this.tsEntry.name,
+                        source: this.tsEntry.source,
+                        // @ts-expect-error until TypeScript 4.3 protocol update
+                        data: this.tsEntry.data,
+                    } : this.tsEntry.name
                 ]
             };
             const response = await client.interruptGetErr(() => client.execute('completionEntryDetails', args, requestToken.token));
@@ -5219,7 +5232,7 @@ class MyCompletionItem extends vscode.CompletionItem {
             if (this.useCodeSnippet) {
                 const shouldCompleteFunction = await this.isValidFunctionCompletionContext(client, filepath, this.position, this.document, token);
                 if (shouldCompleteFunction) {
-                    const { snippet, parameterCount } = snippetForFunctionCall_1.snippetForFunctionCall(this, detail.displayParts);
+                    const { snippet, parameterCount } = (0, snippetForFunctionCall_1.snippetForFunctionCall)(this, detail.displayParts);
                     this.insertText = snippet;
                     if (parameterCount > 0) {
                         //Fix for https://github.com/microsoft/vscode/issues/104059
@@ -5316,7 +5329,7 @@ class MyCompletionItem extends vscode.CompletionItem {
             additionalTextEdits: additionalTextEdits.length ? additionalTextEdits : undefined
         };
     }
-    getRangeFromReplacementSpan(tsEntry, completionContext, position) {
+    getRangeFromReplacementSpan(tsEntry, completionContext) {
         if (!tsEntry.replacementSpan) {
             return;
         }
@@ -5325,8 +5338,9 @@ class MyCompletionItem extends vscode.CompletionItem {
         if (!replaceRange.isSingleLine) {
             replaceRange = new vscode.Range(replaceRange.start.line, replaceRange.start.character, replaceRange.start.line, completionContext.line.length);
         }
+        // If TS returns an explicit replacement range, we should use it for both types of completion
         return {
-            inserting: new vscode.Range(replaceRange.start, position),
+            inserting: replaceRange,
             replacing: replaceRange,
         };
     }
@@ -5546,7 +5560,7 @@ class ApplyCompletionCodeActionCommand {
             return true;
         }
         if (codeActions.length === 1) {
-            return codeAction_1.applyCodeAction(this.client, codeActions[0], cancellation_1.nulToken);
+            return (0, codeAction_1.applyCodeAction)(this.client, codeActions[0], cancellation_1.nulToken);
         }
         const selection = await vscode.window.showQuickPick(codeActions.map(action => ({
             label: action.description,
@@ -5556,7 +5570,7 @@ class ApplyCompletionCodeActionCommand {
             placeHolder: localize('selectCodeAction', 'Select code action to apply')
         });
         if (selection) {
-            return codeAction_1.applyCodeAction(this.client, selection.action, cancellation_1.nulToken);
+            return (0, codeAction_1.applyCodeAction)(this.client, selection.action, cancellation_1.nulToken);
         }
         return false;
     }
@@ -5781,9 +5795,9 @@ function shouldExcludeCompletionEntry(element, completionConfiguration) {
         || (!completionConfiguration.autoImportSuggestions && element.hasAction));
 }
 function register(selector, modeId, client, typingsStatus, fileConfigurationManager, commandManager, telemetryReporter, onCompletionAccepted) {
-    return dependentRegistration_1.conditionalRegistration([
-        dependentRegistration_1.requireConfiguration(modeId, 'suggest.enabled'),
-        dependentRegistration_1.requireSomeCapability(client, typescriptService_1.ClientCapability.EnhancedSyntax, typescriptService_1.ClientCapability.Semantic),
+    return (0, dependentRegistration_1.conditionalRegistration)([
+        (0, dependentRegistration_1.requireConfiguration)(modeId, 'suggest.enabled'),
+        (0, dependentRegistration_1.requireSomeCapability)(client, typescriptService_1.ClientCapability.EnhancedSyntax, typescriptService_1.ClientCapability.Semantic),
     ], () => {
         return vscode.languages.registerCompletionItemProvider(selector.syntax, new TypeScriptCompletionItemProvider(client, modeId, typingsStatus, fileConfigurationManager, commandManager, telemetryReporter, onCompletionAccepted), ...TypeScriptCompletionItemProvider.triggerCharacters);
     });
@@ -6106,8 +6120,8 @@ class TypeScriptDefinitionProvider extends definitionProviderBase_1.default {
 }
 exports.default = TypeScriptDefinitionProvider;
 function register(selector, client) {
-    return dependentRegistration_1.conditionalRegistration([
-        dependentRegistration_1.requireSomeCapability(client, typescriptService_1.ClientCapability.EnhancedSyntax, typescriptService_1.ClientCapability.Semantic),
+    return (0, dependentRegistration_1.conditionalRegistration)([
+        (0, dependentRegistration_1.requireSomeCapability)(client, typescriptService_1.ClientCapability.EnhancedSyntax, typescriptService_1.ClientCapability.Semantic),
     ], () => {
         return vscode.languages.registerDefinitionProvider(selector.syntax, new TypeScriptDefinitionProvider(client));
     });
@@ -6246,7 +6260,7 @@ class TypeScriptDocumentHighlightProvider {
         if (response.type !== 'response' || !response.body) {
             return [];
         }
-        return arrays_1.flatten(response.body
+        return (0, arrays_1.flatten)(response.body
             .filter(highlight => highlight.file === file)
             .map(convertDocumentHighlight));
     }
@@ -6354,7 +6368,7 @@ class TypeScriptDocumentSymbolProvider {
                 break;
         }
         const symbolInfo = new vscode.DocumentSymbol(label, '', getSymbolKind(item.kind), range, range.contains(selectionRange) ? selectionRange : range);
-        const kindModifiers = modifiers_1.parseKindModifier(item.kindModifiers);
+        const kindModifiers = (0, modifiers_1.parseKindModifier)(item.kindModifiers);
         if (kindModifiers.has(PConst.KindModifiers.depreacted)) {
             symbolInfo.tags = [vscode.SymbolTag.Deprecated];
         }
@@ -6410,7 +6424,7 @@ class FileReferencesCommand {
             return;
         }
         const document = await vscode.workspace.openTextDocument(resource);
-        if (!languageModeIds_1.isSupportedLanguageMode(document)) {
+        if (!(0, languageModeIds_1.isSupportedLanguageMode)(document)) {
             vscode.window.showErrorMessage(localize('error.unsupportedLanguage', "Find file references failed. Unsupported file type."));
             return;
         }
@@ -6636,9 +6650,9 @@ TypeScriptAutoFixProvider.kindProviders = [
     SourceAddMissingImports,
 ];
 function register(selector, client, fileConfigurationManager, diagnosticsManager) {
-    return dependentRegistration_1.conditionalRegistration([
-        dependentRegistration_1.requireMinVersion(client, api_1.default.v300),
-        dependentRegistration_1.requireSomeCapability(client, typescriptService_1.ClientCapability.Semantic),
+    return (0, dependentRegistration_1.conditionalRegistration)([
+        (0, dependentRegistration_1.requireMinVersion)(client, api_1.default.v300),
+        (0, dependentRegistration_1.requireSomeCapability)(client, typescriptService_1.ClientCapability.Semantic),
     ], () => {
         const provider = new TypeScriptAutoFixProvider(client, fileConfigurationManager, diagnosticsManager);
         return vscode.languages.registerCodeActionsProvider(selector.semantic, provider, provider.metadata);
@@ -6729,7 +6743,7 @@ class TypeScriptFoldingProvider {
         if (response.type !== 'response' || !response.body) {
             return;
         }
-        return arrays_1.coalesce(response.body.map(span => this.convertOutliningSpan(span, document)));
+        return (0, arrays_1.coalesce)(response.body.map(span => this.convertOutliningSpan(span, document)));
     }
     convertOutliningSpan(span, document) {
         const range = typeConverters.Range.fromTextSpan(span.textSpan);
@@ -6768,8 +6782,8 @@ class TypeScriptFoldingProvider {
 TypeScriptFoldingProvider.minVersion = api_1.default.v280;
 TypeScriptFoldingProvider.foldEndPairCharacters = ['}', ']', ')', '`'];
 function register(selector, client) {
-    return dependentRegistration_1.conditionalRegistration([
-        dependentRegistration_1.requireMinVersion(client, TypeScriptFoldingProvider.minVersion),
+    return (0, dependentRegistration_1.conditionalRegistration)([
+        (0, dependentRegistration_1.requireMinVersion)(client, TypeScriptFoldingProvider.minVersion),
     ], () => {
         return vscode.languages.registerFoldingRangeProvider(selector.syntax, new TypeScriptFoldingProvider(client));
     });
@@ -6847,8 +6861,8 @@ class TypeScriptFormattingProvider {
     }
 }
 function register(selector, modeId, client, fileConfigurationManager) {
-    return dependentRegistration_1.conditionalRegistration([
-        dependentRegistration_1.requireConfiguration(modeId, 'format.enable'),
+    return (0, dependentRegistration_1.conditionalRegistration)([
+        (0, dependentRegistration_1.requireConfiguration)(modeId, 'format.enable'),
     ], () => {
         const formattingProvider = new TypeScriptFormattingProvider(client, fileConfigurationManager);
         return vscode.Disposable.from(vscode.languages.registerOnTypeFormattingEditProvider(selector.syntax, formattingProvider, ';', '}', '\n'), vscode.languages.registerDocumentRangeFormattingEditProvider(selector.syntax, formattingProvider));
@@ -6896,7 +6910,7 @@ class TypeScriptHoverProvider {
         if (data.displayString) {
             const displayParts = [];
             if (source === typescriptService_1.ServerType.Syntax && this.client.hasCapabilityForResource(resource, typescriptService_1.ClientCapability.Semantic)) {
-                displayParts.push(versionProvider_1.localize({
+                displayParts.push((0, versionProvider_1.localize)({
                     key: 'loadingPrefix',
                     comment: ['Prefix displayed for hover entries while the server is still loading']
                 }, "(loading...)"));
@@ -6904,13 +6918,13 @@ class TypeScriptHoverProvider {
             displayParts.push(data.displayString);
             parts.push({ language: 'typescript', value: displayParts.join(' ') });
         }
-        parts.push(previewer_1.markdownDocumentation(data.documentation, data.tags));
+        parts.push((0, previewer_1.markdownDocumentation)(data.documentation, data.tags));
         return parts;
     }
 }
 function register(selector, client) {
-    return dependentRegistration_1.conditionalRegistration([
-        dependentRegistration_1.requireSomeCapability(client, typescriptService_1.ClientCapability.EnhancedSyntax, typescriptService_1.ClientCapability.Semantic),
+    return (0, dependentRegistration_1.conditionalRegistration)([
+        (0, dependentRegistration_1.requireSomeCapability)(client, typescriptService_1.ClientCapability.EnhancedSyntax, typescriptService_1.ClientCapability.Semantic),
     ], () => {
         return vscode.languages.registerHoverProvider(selector.syntax, new TypeScriptHoverProvider(client));
     });
@@ -6963,7 +6977,7 @@ class TypeScriptVersion {
     }
     get displayName() {
         const version = this.apiVersion;
-        return version ? version.displayName : exports.localize('couldNotLoadTsVersion', 'Could not load the TypeScript version at this path');
+        return version ? version.displayName : (0, exports.localize)('couldNotLoadTsVersion', 'Could not load the TypeScript version at this path');
     }
 }
 exports.TypeScriptVersion = TypeScriptVersion;
@@ -6991,8 +7005,8 @@ class TypeScriptImplementationProvider extends definitionProviderBase_1.default 
     }
 }
 function register(selector, client) {
-    return dependentRegistration_1.conditionalRegistration([
-        dependentRegistration_1.requireSomeCapability(client, typescriptService_1.ClientCapability.Semantic),
+    return (0, dependentRegistration_1.conditionalRegistration)([
+        (0, dependentRegistration_1.requireSomeCapability)(client, typescriptService_1.ClientCapability.Semantic),
     ], () => {
         return vscode.languages.registerImplementationProvider(selector.semantic, new TypeScriptImplementationProvider(client));
     });
@@ -7101,8 +7115,8 @@ function templateToSnippet(template) {
 }
 exports.templateToSnippet = templateToSnippet;
 function register(selector, modeId, client, fileConfigurationManager) {
-    return dependentRegistration_1.conditionalRegistration([
-        dependentRegistration_1.requireConfiguration(modeId, 'suggest.completeJSDocs')
+    return (0, dependentRegistration_1.conditionalRegistration)([
+        (0, dependentRegistration_1.requireConfiguration)(modeId, 'suggest.completeJSDocs')
     ], () => {
         return vscode.languages.registerCompletionItemProvider(selector.syntax, new JsDocCompletionProvider(client, fileConfigurationManager), '*');
     });
@@ -7188,9 +7202,9 @@ class OrganizeImportsCodeActionProvider {
 exports.OrganizeImportsCodeActionProvider = OrganizeImportsCodeActionProvider;
 OrganizeImportsCodeActionProvider.minVersion = api_1.default.v280;
 function register(selector, client, commandManager, fileConfigurationManager, telemetryReporter) {
-    return dependentRegistration_1.conditionalRegistration([
-        dependentRegistration_1.requireMinVersion(client, OrganizeImportsCodeActionProvider.minVersion),
-        dependentRegistration_1.requireSomeCapability(client, typescriptService_1.ClientCapability.Semantic),
+    return (0, dependentRegistration_1.conditionalRegistration)([
+        (0, dependentRegistration_1.requireMinVersion)(client, OrganizeImportsCodeActionProvider.minVersion),
+        (0, dependentRegistration_1.requireSomeCapability)(client, typescriptService_1.ClientCapability.Semantic),
     ], () => {
         const organizeImportsProvider = new OrganizeImportsCodeActionProvider(client, commandManager, fileConfigurationManager, telemetryReporter);
         return vscode.languages.registerCodeActionsProvider(selector.semantic, organizeImportsProvider, organizeImportsProvider.metadata);
@@ -7247,7 +7261,7 @@ class ApplyCodeActionCommand {
         this.telemetryReporter.logTelemetry('quickFix.execute', {
             fixName: action.fixName
         });
-        return codeAction_1.applyCodeActionCommands(this.client, action.commands, cancellation_1.nulToken);
+        return (0, codeAction_1.applyCodeActionCommands)(this.client, action.commands, cancellation_1.nulToken);
     }
 }
 ApplyCodeActionCommand.ID = '_typescript.applyCodeActionCommand';
@@ -7270,7 +7284,7 @@ class ApplyFixAllCodeAction {
             fixName: args.action.tsAction.fixName
         });
         if (args.action.combinedResponse) {
-            await codeAction_1.applyCodeActionCommands(this.client, args.action.combinedResponse.body.commands, cancellation_1.nulToken);
+            await (0, codeAction_1.applyCodeActionCommands)(this.client, args.action.combinedResponse.body.commands, cancellation_1.nulToken);
         }
     }
 }
@@ -7322,7 +7336,7 @@ class CodeActionSet {
     }
     addAction(action) {
         for (const existing of this._actions) {
-            if (action.tsAction.fixName === existing.tsAction.fixName && objects_1.equals(action.edit, existing.edit)) {
+            if (action.tsAction.fixName === existing.tsAction.fixName && (0, objects_1.equals)(action.edit, existing.edit)) {
                 this._actions.delete(existing);
             }
         }
@@ -7437,7 +7451,7 @@ class TypeScriptQuickFixProvider {
     }
     getSingleFixForTsCodeAction(diagnostic, tsAction) {
         const codeAction = new VsCodeCodeAction(tsAction, tsAction.description, vscode.CodeActionKind.QuickFix);
-        codeAction.edit = codeAction_1.getEditForCodeAction(this.client, tsAction);
+        codeAction.edit = (0, codeAction_1.getEditForCodeAction)(this.client, tsAction);
         codeAction.diagnostics = [diagnostic];
         codeAction.command = {
             command: ApplyCodeActionCommand.ID,
@@ -7524,8 +7538,8 @@ function isPreferredFix(action, allActions) {
     });
 }
 function register(selector, client, fileConfigurationManager, commandManager, diagnosticsManager, telemetryReporter) {
-    return dependentRegistration_1.conditionalRegistration([
-        dependentRegistration_1.requireSomeCapability(client, typescriptService_1.ClientCapability.Semantic),
+    return (0, dependentRegistration_1.conditionalRegistration)([
+        (0, dependentRegistration_1.requireSomeCapability)(client, typescriptService_1.ClientCapability.Semantic),
     ], () => {
         return vscode.languages.registerCodeActionsProvider(selector.semantic, new TypeScriptQuickFixProvider(client, fileConfigurationManager, commandManager, diagnosticsManager, telemetryReporter), TypeScriptQuickFixProvider.metadata);
     });
@@ -7772,7 +7786,7 @@ class TypeScriptRefactorProvider {
         commandManager.register(new SelectRefactorCommand(this.client, didApplyRefactoringCommand));
     }
     async provideCodeActions(document, rangeOrSelection, context, token) {
-        if (!this.shouldTrigger(rangeOrSelection, context)) {
+        if (!this.shouldTrigger(context)) {
             return undefined;
         }
         if (!this.client.toOpenedFilePath(document)) {
@@ -7816,10 +7830,10 @@ class TypeScriptRefactorProvider {
         return codeAction;
     }
     toTsTriggerReason(context) {
-        if (!context.only) {
-            return;
+        if (context.triggerKind === vscode.CodeActionTriggerKind.Invoke) {
+            return 'invoked';
         }
-        return 'invoked';
+        return undefined;
     }
     convertApplicableRefactors(body, document, rangeOrSelection) {
         const actions = [];
@@ -7852,11 +7866,11 @@ class TypeScriptRefactorProvider {
         codeAction.isPreferred = TypeScriptRefactorProvider.isPreferred(action, allActions);
         return codeAction;
     }
-    shouldTrigger(rangeOrSelection, context) {
+    shouldTrigger(context) {
         if (context.only && !vscode.CodeActionKind.Refactor.contains(context.only)) {
             return false;
         }
-        return rangeOrSelection instanceof vscode.Selection;
+        return context.triggerKind === vscode.CodeActionTriggerKind.Invoke;
     }
     static getKind(refactor) {
         if (refactor.kind) {
@@ -7957,9 +7971,9 @@ TypeScriptRefactorProvider.metadata = {
     ]
 };
 function register(selector, client, formattingOptionsManager, commandManager, telemetryReporter) {
-    return dependentRegistration_1.conditionalRegistration([
-        dependentRegistration_1.requireMinVersion(client, TypeScriptRefactorProvider.minVersion),
-        dependentRegistration_1.requireSomeCapability(client, typescriptService_1.ClientCapability.Semantic),
+    return (0, dependentRegistration_1.conditionalRegistration)([
+        (0, dependentRegistration_1.requireMinVersion)(client, TypeScriptRefactorProvider.minVersion),
+        (0, dependentRegistration_1.requireSomeCapability)(client, typescriptService_1.ClientCapability.Semantic),
     ], () => {
         return vscode.languages.registerCodeActionsProvider(selector.semantic, new TypeScriptRefactorProvider(client, formattingOptionsManager, commandManager, telemetryReporter), TypeScriptRefactorProvider.metadata);
     });
@@ -8010,8 +8024,8 @@ class TypeScriptReferenceSupport {
     }
 }
 function register(selector, client) {
-    return dependentRegistration_1.conditionalRegistration([
-        dependentRegistration_1.requireSomeCapability(client, typescriptService_1.ClientCapability.EnhancedSyntax, typescriptService_1.ClientCapability.Semantic),
+    return (0, dependentRegistration_1.conditionalRegistration)([
+        (0, dependentRegistration_1.requireSomeCapability)(client, typescriptService_1.ClientCapability.EnhancedSyntax, typescriptService_1.ClientCapability.Semantic),
     ], () => {
         return vscode.languages.registerReferenceProvider(selector.syntax, new TypeScriptReferenceSupport(client));
     });
@@ -8125,8 +8139,8 @@ class TypeScriptRenameProvider {
     }
 }
 function register(selector, client, fileConfigurationManager) {
-    return dependentRegistration_1.conditionalRegistration([
-        dependentRegistration_1.requireSomeCapability(client, typescriptService_1.ClientCapability.Semantic),
+    return (0, dependentRegistration_1.conditionalRegistration)([
+        (0, dependentRegistration_1.requireSomeCapability)(client, typescriptService_1.ClientCapability.Semantic),
     ], () => {
         return vscode.languages.registerRenameProvider(selector.semantic, new TypeScriptRenameProvider(client, fileConfigurationManager));
     });
@@ -8146,6 +8160,7 @@ exports.register = register;
  *--------------------------------------------------------------------------------------------*/
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.register = void 0;
+// all constants are const
 const vscode = __webpack_require__(1);
 const typescriptService_1 = __webpack_require__(32);
 const api_1 = __webpack_require__(22);
@@ -8154,9 +8169,9 @@ const minTypeScriptVersion = api_1.default.fromVersionString(`${3 /* major */}.$
 // as we don't do deltas, for performance reasons, don't compute semantic tokens for documents above that limit
 const CONTENT_LENGTH_LIMIT = 100000;
 function register(selector, client) {
-    return dependentRegistration_1.conditionalRegistration([
-        dependentRegistration_1.requireMinVersion(client, minTypeScriptVersion),
-        dependentRegistration_1.requireSomeCapability(client, typescriptService_1.ClientCapability.Semantic),
+    return (0, dependentRegistration_1.conditionalRegistration)([
+        (0, dependentRegistration_1.requireMinVersion)(client, minTypeScriptVersion),
+        (0, dependentRegistration_1.requireSomeCapability)(client, typescriptService_1.ClientCapability.Semantic),
     ], () => {
         const provider = new DocumentSemanticTokensProvider(client);
         return vscode.Disposable.from(
@@ -8199,6 +8214,7 @@ class DocumentSemanticTokensProvider {
             return null;
         }
         const versionBeforeRequest = document.version;
+        requestArg.format = '2020';
         const response = await this.client.execute('encodedSemanticClassifications-full', requestArg, token, {
             cancelOnResourceChange: document.uri
         });
@@ -8261,8 +8277,6 @@ function waitForDocumentChangesToEnd(document) {
         }, 400);
     });
 }
-// typescript-vscode-sh-plugin encodes type and modifiers in the classification:
-// TSClassification = (TokenType + 1) << 8 + TokenModifier
 function getTokenTypeFromClassification(tsClassification) {
     if (tsClassification > 255 /* modifierMask */) {
         return (tsClassification >> 8 /* typeOffset */) - 1;
@@ -8284,7 +8298,7 @@ tokenTypes[7 /* variable */] = 'variable';
 tokenTypes[8 /* enumMember */] = 'enumMember';
 tokenTypes[9 /* property */] = 'property';
 tokenTypes[10 /* function */] = 'function';
-tokenTypes[11 /* member */] = 'method';
+tokenTypes[11 /* method */] = 'method';
 const tokenModifiers = [];
 tokenModifiers[2 /* async */] = 'async';
 tokenModifiers[0 /* declaration */] = 'declaration';
@@ -8292,13 +8306,6 @@ tokenModifiers[3 /* readonly */] = 'readonly';
 tokenModifiers[1 /* static */] = 'static';
 tokenModifiers[5 /* local */] = 'local';
 tokenModifiers[4 /* defaultLibrary */] = 'defaultLibrary';
-// make sure token types and modifiers are complete
-if (tokenTypes.filter(t => !!t).length !== 12 /* _ */) {
-    console.warn('typescript-vscode-sh-plugin has added new tokens types.');
-}
-if (tokenModifiers.filter(t => !!t).length !== 6 /* _ */) {
-    console.warn('typescript-vscode-sh-plugin has added new tokens modifiers.');
-}
 // mapping for the original ExperimentalProtocol.ClassificationType from TypeScript (only used when plugin is not available)
 const tokenTypeMap = [];
 tokenTypeMap[11 /* className */] = 0 /* class */;
@@ -8413,8 +8420,8 @@ function toTsTriggerReason(context) {
     }
 }
 function register(selector, client) {
-    return dependentRegistration_1.conditionalRegistration([
-        dependentRegistration_1.requireSomeCapability(client, typescriptService_1.ClientCapability.EnhancedSyntax, typescriptService_1.ClientCapability.Semantic),
+    return (0, dependentRegistration_1.conditionalRegistration)([
+        (0, dependentRegistration_1.requireSomeCapability)(client, typescriptService_1.ClientCapability.EnhancedSyntax, typescriptService_1.ClientCapability.Semantic),
     ], () => {
         return vscode.languages.registerSignatureHelpProvider(selector.syntax, new TypeScriptSignatureHelpProvider(client), {
             triggerCharacters: TypeScriptSignatureHelpProvider.triggerCharacters,
@@ -8466,8 +8473,8 @@ class SmartSelection {
 }
 SmartSelection.minVersion = api_1.default.v350;
 function register(selector, client) {
-    return dependentRegistration_1.conditionalRegistration([
-        dependentRegistration_1.requireMinVersion(client, SmartSelection.minVersion),
+    return (0, dependentRegistration_1.conditionalRegistration)([
+        (0, dependentRegistration_1.requireMinVersion)(client, SmartSelection.minVersion),
     ], () => {
         return vscode.languages.registerSelectionRangeProvider(selector.syntax, new SmartSelection(client));
     });
@@ -8595,9 +8602,9 @@ function requireActiveDocument(selector) {
     });
 }
 function register(selector, modeId, client) {
-    return dependentRegistration_1.conditionalRegistration([
-        dependentRegistration_1.requireMinVersion(client, TagClosing.minVersion),
-        dependentRegistration_1.requireConfiguration(modeId, 'autoClosingTags'),
+    return (0, dependentRegistration_1.conditionalRegistration)([
+        (0, dependentRegistration_1.requireMinVersion)(client, TagClosing.minVersion),
+        (0, dependentRegistration_1.requireConfiguration)(modeId, 'autoClosingTags'),
         requireActiveDocument(selector.syntax)
     ], () => new TagClosing(client));
 }
@@ -8627,8 +8634,8 @@ class TypeScriptTypeDefinitionProvider extends definitionProviderBase_1.default 
 }
 exports.default = TypeScriptTypeDefinitionProvider;
 function register(selector, client) {
-    return dependentRegistration_1.conditionalRegistration([
-        dependentRegistration_1.requireSomeCapability(client, typescriptService_1.ClientCapability.EnhancedSyntax, typescriptService_1.ClientCapability.Semantic),
+    return (0, dependentRegistration_1.conditionalRegistration)([
+        (0, dependentRegistration_1.requireSomeCapability)(client, typescriptService_1.ClientCapability.EnhancedSyntax, typescriptService_1.ClientCapability.Semantic),
     ], () => {
         return vscode.languages.registerTypeDefinitionProvider(selector.syntax, new TypeScriptTypeDefinitionProvider(client));
     });
@@ -8682,7 +8689,7 @@ class ProjectStatusCommand {
     }
     async execute() {
         const info = this._delegate();
-        const result = await vscode.window.showQuickPick(arrays_1.coalesce([
+        const result = await vscode.window.showQuickPick((0, arrays_1.coalesce)([
             this.getProjectItem(info),
             this.getVersionItem(),
             this.getHelpItem(),
@@ -8706,12 +8713,12 @@ class ProjectStatusCommand {
             return undefined;
         }
         if (info.type === 2 /* Resolved */) {
-            if (tsconfig_1.isImplicitProjectConfigFile(info.configFile)) {
+            if ((0, tsconfig_1.isImplicitProjectConfigFile)(info.configFile)) {
                 return {
                     label: localize('projectQuickPick.project.create', "Create tsconfig"),
                     detail: localize('projectQuickPick.project.create.description', "This file is currently not part of a tsconfig/jsconfig project"),
                     run: () => {
-                        tsconfig_1.openOrCreateConfig(0 /* TypeScript */, rootPath, this._client.configuration);
+                        (0, tsconfig_1.openOrCreateConfig)(0 /* TypeScript */, rootPath, this._client.configuration);
                     }
                 };
             }
@@ -8721,10 +8728,10 @@ class ProjectStatusCommand {
             description: info.type === 2 /* Resolved */ ? vscode.workspace.asRelativePath(info.configFile) : undefined,
             run: () => {
                 if (info.type === 2 /* Resolved */) {
-                    tsconfig_1.openProjectConfigOrPromptToCreate(0 /* TypeScript */, this._client, rootPath, info.configFile);
+                    (0, tsconfig_1.openProjectConfigOrPromptToCreate)(0 /* TypeScript */, this._client, rootPath, info.configFile);
                 }
                 else if (info.type === 1 /* Pending */) {
-                    tsconfig_1.openProjectConfigForFile(0 /* TypeScript */, this._client, info.resource);
+                    (0, tsconfig_1.openProjectConfigForFile)(0 /* TypeScript */, this._client, info.resource);
                 }
             }
         };
@@ -8739,9 +8746,10 @@ class ProjectStatusCommand {
     }
 }
 class VersionStatus extends dispose_1.Disposable {
-    constructor(_client, commandManager) {
+    constructor(_client, commandManager, _activeTextEditorManager) {
         super();
         this._client = _client;
+        this._activeTextEditorManager = _activeTextEditorManager;
         this._ready = false;
         this._state = ProjectInfoState.None;
         this._statusBarEntry = this._register(vscode.window.createStatusBarItem({
@@ -8753,7 +8761,7 @@ class VersionStatus extends dispose_1.Disposable {
         const command = new ProjectStatusCommand(this._client, () => this._state);
         commandManager.register(command);
         this._statusBarEntry.command = command.id;
-        vscode.window.onDidChangeActiveTextEditor(this.updateStatus, this, this._disposables);
+        _activeTextEditorManager.onDidChangeActiveJsTsEditor(this.updateStatus, this, this._disposables);
         this._client.onReady(() => {
             this._ready = true;
             this.updateStatus();
@@ -8766,12 +8774,13 @@ class VersionStatus extends dispose_1.Disposable {
         this.updateStatus();
     }
     async updateStatus() {
-        if (!vscode.window.activeTextEditor) {
+        const editor = this._activeTextEditorManager.activeJsTsEditor;
+        if (!editor) {
             this.hide();
             return;
         }
-        const doc = vscode.window.activeTextEditor.document;
-        if (languageModeIds_1.isTypeScriptDocument(doc)) {
+        const doc = editor.document;
+        if ((0, languageModeIds_1.isTypeScriptDocument)(doc)) {
             const file = this._client.toOpenedFilePath(doc, { suppressAlertOnFailure: true });
             if (file) {
                 this._statusBarEntry.show();
@@ -8789,11 +8798,6 @@ class VersionStatus extends dispose_1.Disposable {
                 }
                 return;
             }
-        }
-        if (!vscode.window.activeTextEditor.viewColumn) {
-            // viewColumn is undefined for the debug/output panel, but we still want
-            // to show the version info in the existing editor
-            return;
         }
         this.hide();
     }
@@ -8983,7 +8987,7 @@ class TypeScriptServiceClient extends dispose_1.Disposable {
         }));
     }
     get capabilities() {
-        if (platform_1.isWeb()) {
+        if ((0, platform_1.isWeb)()) {
             return new typescriptService_1.ClientCapabilities(typescriptService_1.ClientCapability.Syntax, typescriptService_1.ClientCapability.EnhancedSyntax);
         }
         if (this.apiVersion.gte(api_1.default.v400)) {
@@ -9227,7 +9231,7 @@ class TypeScriptServiceClient extends dispose_1.Disposable {
     }
     getCompilerOptionsForInferredProjects(configuration) {
         return {
-            ...tsconfig_1.inferredProjectCompilerOptions(0 /* TypeScript */, configuration),
+            ...(0, tsconfig_1.inferredProjectCompilerOptions)(0 /* TypeScript */, configuration),
             allowJs: true,
             allowSyntheticDefaultImports: true,
             allowNonTsExtensions: true,
@@ -9336,7 +9340,7 @@ class TypeScriptServiceClient extends dispose_1.Disposable {
         }
     }
     toResource(filepath) {
-        if (platform_1.isWeb()) {
+        if ((0, platform_1.isWeb)()) {
             // On web, treat absolute paths as pointing to standard lib files
             if (filepath.startsWith('/')) {
                 return vscode.Uri.joinPath(this.context.extensionUri, 'node_modules', 'typescript', 'lib', filepath.slice(1));
@@ -10092,7 +10096,7 @@ class GetErrRequest {
         this.files = files;
         this._done = false;
         this._token = new vscode.CancellationTokenSource();
-        const allFiles = arrays_1.coalesce(Array.from(files.entries)
+        const allFiles = (0, arrays_1.coalesce)(Array.from(files.entries)
             .filter(entry => client.hasCapabilityForResource(entry.resource, typescriptService_1.ClientCapability.Semantic))
             .map(entry => client.normalizedPath(entry.resource)));
         if (!allFiles.length || !client.capabilities.has(typescriptService_1.ClientCapability.Semantic)) {
@@ -10767,8 +10771,7 @@ class TypeScriptServerSpawner {
             case 1 /* Enabled */:
                 if ((_a = version.apiVersion) === null || _a === void 0 ? void 0 : _a.gte(api_1.default.v340)) {
                     return ((_b = version.apiVersion) === null || _b === void 0 ? void 0 : _b.gte(api_1.default.v400))
-                        ? 2 /* DynamicSeparateSyntax */
-                        : 1 /* SeparateSyntax */;
+                        ? 2 /* DynamicSeparateSyntax */ : 1 /* SeparateSyntax */;
                 }
                 return 0 /* Single */;
         }
@@ -10840,7 +10843,7 @@ class TypeScriptServerSpawner {
             args.push('--cancellationPipeName', cancellationPipeName + '*');
         }
         if (TypeScriptServerSpawner.isLoggingEnabled(configuration)) {
-            if (platform_1.isWeb()) {
+            if ((0, platform_1.isWeb)()) {
                 args.push('--logVerbosity', configuration_1.TsServerLogLevel.toString(configuration.tsServerLogLevel));
             }
             else {
@@ -10852,13 +10855,13 @@ class TypeScriptServerSpawner {
                 }
             }
         }
-        if (configuration.enableTsServerTracing && !platform_1.isWeb()) {
+        if (configuration.enableTsServerTracing && !(0, platform_1.isWeb)()) {
             tsServerTraceDirectory = this._logDirectoryProvider.getNewLogDirectory();
             if (tsServerTraceDirectory) {
                 args.push('--traceDirectory', tsServerTraceDirectory);
             }
         }
-        if (!platform_1.isWeb()) {
+        if (!(0, platform_1.isWeb)()) {
             const pluginPaths = this._pluginPathsProvider.getPluginPaths();
             if (pluginManager.plugins.length) {
                 args.push('--globalPlugins', pluginManager.plugins.map(x => x.name).join(','));
@@ -11181,9 +11184,24 @@ class TypeScriptVersionManager extends dispose_1.Disposable {
         this.onDidPickNewVersion = this._onDidPickNewVersion.event;
         this._currentVersion = this.versionProvider.defaultVersion;
         if (this.useWorkspaceTsdkSetting) {
-            const localVersion = this.versionProvider.localVersion;
-            if (localVersion) {
-                this._currentVersion = localVersion;
+            if (this.isWorkspaceTrusted) {
+                const localVersion = this.versionProvider.localVersion;
+                if (localVersion) {
+                    this._currentVersion = localVersion;
+                }
+            }
+            else {
+                setImmediate(() => {
+                    vscode.workspace.requireWorkspaceTrust({ modal: false })
+                        .then(trustState => {
+                        if (trustState === vscode.WorkspaceTrustState.Trusted && this.versionProvider.localVersion) {
+                            this.updateActiveVersion(this.versionProvider.localVersion);
+                        }
+                        else {
+                            this.updateActiveVersion(this.versionProvider.defaultVersion);
+                        }
+                    });
+                });
             }
         }
         if (this.isInPromptWorkspaceTsdkState(configuration)) {
@@ -11219,7 +11237,7 @@ class TypeScriptVersionManager extends dispose_1.Disposable {
     getBundledPickItem() {
         const bundledVersion = this.versionProvider.defaultVersion;
         return {
-            label: (!this.useWorkspaceTsdkSetting
+            label: (!this.useWorkspaceTsdkSetting || !this.isWorkspaceTrusted
                 ? '• '
                 : '') + localize('useVSCodeVersionOption', "Use VS Code's Version"),
             description: bundledVersion.displayName,
@@ -11233,16 +11251,19 @@ class TypeScriptVersionManager extends dispose_1.Disposable {
     getLocalPickItems() {
         return this.versionProvider.localVersions.map(version => {
             return {
-                label: (this.useWorkspaceTsdkSetting && this.currentVersion.eq(version)
+                label: (this.useWorkspaceTsdkSetting && this.isWorkspaceTrusted && this.currentVersion.eq(version)
                     ? '• '
                     : '') + localize('useWorkspaceVersionOption', "Use Workspace Version"),
                 description: version.displayName,
                 detail: version.pathLabel,
                 run: async () => {
-                    await this.workspaceState.update(useWorkspaceTsdkStorageKey, true);
-                    const tsConfig = vscode.workspace.getConfiguration('typescript');
-                    await tsConfig.update('tsdk', version.pathLabel, false);
-                    this.updateActiveVersion(version);
+                    const trustState = await vscode.workspace.requireWorkspaceTrust();
+                    if (trustState === vscode.WorkspaceTrustState.Trusted) {
+                        await this.workspaceState.update(useWorkspaceTsdkStorageKey, true);
+                        const tsConfig = vscode.workspace.getConfiguration('typescript');
+                        await tsConfig.update('tsdk', version.pathLabel, false);
+                        this.updateActiveVersion(version);
+                    }
                 },
             };
         });
@@ -11270,6 +11291,9 @@ class TypeScriptVersionManager extends dispose_1.Disposable {
         if (!oldVersion.eq(pickedVersion)) {
             this._onDidPickNewVersion.fire();
         }
+    }
+    get isWorkspaceTrusted() {
+        return vscode.workspace.trustState === vscode.WorkspaceTrustState.Trusted;
     }
     get useWorkspaceTsdkSetting() {
         return this.workspaceState.get(useWorkspaceTsdkStorageKey, false);
@@ -11652,7 +11676,7 @@ exports.AtaProgressReporter = void 0;
 const vscode = __webpack_require__(1);
 const vscode_nls_1 = __webpack_require__(9);
 const dispose_1 = __webpack_require__(18);
-const localize = vscode_nls_1.loadMessageBundle();
+const localize = (0, vscode_nls_1.loadMessageBundle)();
 const typingsInstallTimeout = 30 * 1000;
 class TypingsStatus extends dispose_1.Disposable {
     constructor(client) {
@@ -11751,7 +11775,7 @@ exports.create = void 0;
 const vscode = __webpack_require__(1);
 const vscode_nls_1 = __webpack_require__(9);
 const tsconfig_1 = __webpack_require__(6);
-const localize = vscode_nls_1.loadMessageBundle();
+const localize = (0, vscode_nls_1.loadMessageBundle)();
 class ExcludeHintItem {
     constructor(telemetryReporter) {
         this.telemetryReporter = telemetryReporter;
@@ -11813,14 +11837,14 @@ function createLargeProjectMonitorFromTypeScript(item, client) {
     });
 }
 function onConfigureExcludesSelected(client, configFileName) {
-    if (!tsconfig_1.isImplicitProjectConfigFile(configFileName)) {
+    if (!(0, tsconfig_1.isImplicitProjectConfigFile)(configFileName)) {
         vscode.workspace.openTextDocument(configFileName)
             .then(vscode.window.showTextDocument);
     }
     else {
         const root = client.getWorkspaceRootForResource(vscode.Uri.file(configFileName));
         if (root) {
-            tsconfig_1.openOrCreateConfig(/tsconfig\.?.*\.json/.test(configFileName) ? 0 /* TypeScript */ : 1 /* JavaScript */, root, client.configuration);
+            (0, tsconfig_1.openOrCreateConfig)(/tsconfig\.?.*\.json/.test(configFileName) ? 0 /* TypeScript */ : 1 /* JavaScript */, root, client.configuration);
         }
     }
 }
@@ -11951,7 +11975,7 @@ class UpdateImportsOnFileRenameHandler extends dispose_1.Disposable {
         }
     }
     getConfiguration(resource) {
-        return vscode.workspace.getConfiguration(languageDescription_1.doesResourceLookLikeATypeScriptFile(resource) ? 'typescript' : 'javascript', resource);
+        return vscode.workspace.getConfiguration((0, languageDescription_1.doesResourceLookLikeATypeScriptFile)(resource) ? 'typescript' : 'javascript', resource);
     }
     async promptUser(newResources) {
         if (!newResources.length) {
@@ -12034,7 +12058,7 @@ class UpdateImportsOnFileRenameHandler extends dispose_1.Disposable {
         const groups = new Map();
         for (const rename of renames) {
             // Group renames by type (js/ts) and by workspace.
-            const key = `${this.client.getWorkspaceRootForResource(rename.jsTsFileThatIsBeingMoved)}@@@${languageDescription_1.doesResourceLookLikeATypeScriptFile(rename.jsTsFileThatIsBeingMoved)}`;
+            const key = `${this.client.getWorkspaceRootForResource(rename.jsTsFileThatIsBeingMoved)}@@@${(0, languageDescription_1.doesResourceLookLikeATypeScriptFile)(rename.jsTsFileThatIsBeingMoved)}`;
             if (!groups.has(key)) {
                 groups.set(key, new Set());
             }
@@ -12061,9 +12085,9 @@ class UpdateImportsOnFileRenameHandler extends dispose_1.Disposable {
 }
 UpdateImportsOnFileRenameHandler.minVersion = api_1.default.v300;
 function register(client, fileConfigurationManager, handles) {
-    return dependentRegistration_1.conditionalRegistration([
-        dependentRegistration_1.requireMinVersion(client, UpdateImportsOnFileRenameHandler.minVersion),
-        dependentRegistration_1.requireSomeCapability(client, typescriptService_1.ClientCapability.Semantic),
+    return (0, dependentRegistration_1.conditionalRegistration)([
+        (0, dependentRegistration_1.requireMinVersion)(client, UpdateImportsOnFileRenameHandler.minVersion),
+        (0, dependentRegistration_1.requireSomeCapability)(client, typescriptService_1.ClientCapability.Semantic),
     ], () => {
         return new UpdateImportsOnFileRenameHandler(client, fileConfigurationManager, handles);
     });
@@ -12104,11 +12128,11 @@ exports.standardLanguageDescriptions = [
     }
 ];
 function isTsConfigFileName(fileName) {
-    return /^tsconfig\.(.+\.)?json$/i.test(path_1.basename(fileName));
+    return /^tsconfig\.(.+\.)?json$/i.test((0, path_1.basename)(fileName));
 }
 exports.isTsConfigFileName = isTsConfigFileName;
 function isJsConfigOrTsConfigFileName(fileName) {
-    return /^[jt]sconfig\.(.+\.)?json$/i.test(path_1.basename(fileName));
+    return /^[jt]sconfig\.(.+\.)?json$/i.test((0, path_1.basename)(fileName));
 }
 exports.isJsConfigOrTsConfigFileName = isJsConfigOrTsConfigFileName;
 function doesResourceLookLikeATypeScriptFile(resource) {
@@ -12195,7 +12219,7 @@ class TypeScriptWorkspaceSymbolProvider {
         if (document.uri.scheme === fileSchemes.git) {
             try {
                 const path = vscode.Uri.file((_a = JSON.parse(document.uri.query)) === null || _a === void 0 ? void 0 : _a.path);
-                if (languageDescription_1.doesResourceLookLikeATypeScriptFile(path) || languageDescription_1.doesResourceLookLikeAJavaScriptFile(path)) {
+                if ((0, languageDescription_1.doesResourceLookLikeATypeScriptFile)(path) || (0, languageDescription_1.doesResourceLookLikeAJavaScriptFile)(path)) {
                     const document = await vscode.workspace.openTextDocument(path);
                     return this.client.toOpenedFilePath(document);
                 }
@@ -12209,7 +12233,7 @@ class TypeScriptWorkspaceSymbolProvider {
     toSymbolInformation(item) {
         const label = TypeScriptWorkspaceSymbolProvider.getLabel(item);
         const info = new vscode.SymbolInformation(label, getSymbolKind(item), item.containerName || '', typeConverters.Location.fromTextSpan(this.client.toResource(item.file), item));
-        const kindModifiers = item.kindModifiers ? modifiers_1.parseKindModifier(item.kindModifiers) : undefined;
+        const kindModifiers = item.kindModifiers ? (0, modifiers_1.parseKindModifier)(item.kindModifiers) : undefined;
         if (kindModifiers === null || kindModifiers === void 0 ? void 0 : kindModifiers.has(PConst.KindModifiers.depreacted)) {
             info.tags = [vscode.SymbolTag.Deprecated];
         }
@@ -12300,20 +12324,23 @@ const vscode = __webpack_require__(1);
 const dispose_1 = __webpack_require__(18);
 const languageDescription_1 = __webpack_require__(96);
 const languageModeIds_1 = __webpack_require__(12);
-/**
+/**E
  * When clause context set when the current file is managed by vscode's built-in typescript extension.
  */
 class ManagedFileContextManager extends dispose_1.Disposable {
-    constructor(normalizePath) {
+    constructor(activeJsTsEditorTracker, normalizePath) {
         super();
         this.normalizePath = normalizePath;
         this.isInManagedFileContext = false;
-        vscode.window.onDidChangeActiveTextEditor(this.onDidChangeActiveTextEditor, this, this._disposables);
-        this.onDidChangeActiveTextEditor(vscode.window.activeTextEditor);
+        activeJsTsEditorTracker.onDidChangeActiveJsTsEditor(this.onDidChangeActiveTextEditor, this, this._disposables);
+        this.onDidChangeActiveTextEditor(activeJsTsEditorTracker.activeJsTsEditor);
     }
     onDidChangeActiveTextEditor(editor) {
         if (editor) {
             this.updateContext(this.isManagedFile(editor));
+        }
+        else {
+            this.updateContext(false);
         }
     }
     updateContext(newValue) {
@@ -12327,10 +12354,10 @@ class ManagedFileContextManager extends dispose_1.Disposable {
         return this.isManagedScriptFile(editor) || this.isManagedConfigFile(editor);
     }
     isManagedScriptFile(editor) {
-        return languageModeIds_1.isSupportedLanguageMode(editor.document) && this.normalizePath(editor.document.uri) !== null;
+        return (0, languageModeIds_1.isSupportedLanguageMode)(editor.document) && this.normalizePath(editor.document.uri) !== null;
     }
     isManagedConfigFile(editor) {
-        return languageDescription_1.isJsConfigOrTsConfigFileName(editor.document.fileName);
+        return (0, languageDescription_1.isJsConfigOrTsConfigFileName)(editor.document.fileName);
     }
 }
 exports.default = ManagedFileContextManager;
@@ -12591,8 +12618,81 @@ exports.PluginManager = PluginManager;
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.ActiveJsTsEditorTracker = void 0;
+const vscode = __webpack_require__(1);
+const dispose_1 = __webpack_require__(18);
+const languageDescription_1 = __webpack_require__(96);
+const languageModeIds_1 = __webpack_require__(12);
+/**
+ * Tracks the active JS/TS editor.
+ *
+ * This tries to handle the case where the user focuses in the output view / debug console.
+ * When this happens, we want to treat the last real focused editor as the active editor,
+ * instead of using `vscode.window.activeTextEditor`
+ */
+class ActiveJsTsEditorTracker extends dispose_1.Disposable {
+    constructor() {
+        super();
+        this._onDidChangeActiveJsTsEditor = this._register(new vscode.EventEmitter());
+        this.onDidChangeActiveJsTsEditor = this._onDidChangeActiveJsTsEditor.event;
+        vscode.window.onDidChangeActiveTextEditor(this.onDidChangeActiveTextEditor, this, this._disposables);
+        vscode.window.onDidChangeVisibleTextEditors(() => {
+            // Make sure the active editor is still in the visible set.
+            // This can happen if the output view is focused and the last active TS file is closed
+            if (this._activeJsTsEditor) {
+                if (!vscode.window.visibleTextEditors.some(visibleEditor => visibleEditor === this._activeJsTsEditor)) {
+                    this.onDidChangeActiveTextEditor(undefined);
+                }
+            }
+        }, this, this._disposables);
+        this.onDidChangeActiveTextEditor(vscode.window.activeTextEditor);
+    }
+    get activeJsTsEditor() {
+        return this._activeJsTsEditor;
+    }
+    onDidChangeActiveTextEditor(editor) {
+        if (editor === this._activeJsTsEditor) {
+            return;
+        }
+        if (editor && !editor.viewColumn) {
+            // viewColumn is undefined for the debug/output panel, but we still want
+            // to show the version info for the previous editor
+            return;
+        }
+        if (editor && this.isManagedFile(editor)) {
+            this._activeJsTsEditor = editor;
+        }
+        else {
+            this._activeJsTsEditor = undefined;
+        }
+        this._onDidChangeActiveJsTsEditor.fire(this._activeJsTsEditor);
+    }
+    isManagedFile(editor) {
+        return this.isManagedScriptFile(editor) || this.isManagedConfigFile(editor);
+    }
+    isManagedScriptFile(editor) {
+        return (0, languageModeIds_1.isSupportedLanguageMode)(editor.document);
+    }
+    isManagedConfigFile(editor) {
+        return (0, languageDescription_1.isJsConfigOrTsConfigFileName)(editor.document.fileName);
+    }
+}
+exports.ActiveJsTsEditorTracker = ActiveJsTsEditorTracker;
+
+
+/***/ }),
+/* 106 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+Object.defineProperty(exports, "__esModule", { value: true });
 exports.register = void 0;
-const jsonc = __webpack_require__(106);
+const jsonc = __webpack_require__(107);
 const path_1 = __webpack_require__(7);
 const vscode = __webpack_require__(1);
 const arrays_1 = __webpack_require__(26);
@@ -12607,7 +12707,7 @@ class TsconfigLinkProvider {
         if (!root) {
             return null;
         }
-        return arrays_1.coalesce([
+        return (0, arrays_1.coalesce)([
             this.getExtendsLink(document, root),
             ...this.getFilesLinks(document, root),
             ...this.getReferencesLinks(document, root)
@@ -12619,10 +12719,10 @@ class TsconfigLinkProvider {
             return undefined;
         }
         if (extendsNode.value.startsWith('.')) {
-            return new vscode.DocumentLink(this.getRange(document, extendsNode), vscode.Uri.file(path_1.join(path_1.dirname(document.uri.fsPath), extendsNode.value + (extendsNode.value.endsWith('.json') ? '' : '.json'))));
+            return new vscode.DocumentLink(this.getRange(document, extendsNode), vscode.Uri.file((0, path_1.join)((0, path_1.dirname)(document.uri.fsPath), extendsNode.value + (extendsNode.value.endsWith('.json') ? '' : '.json'))));
         }
         const workspaceFolderPath = vscode.workspace.getWorkspaceFolder(document.uri).uri.fsPath;
-        return new vscode.DocumentLink(this.getRange(document, extendsNode), vscode.Uri.file(path_1.join(workspaceFolderPath, 'node_modules', extendsNode.value + (extendsNode.value.endsWith('.json') ? '' : '.json'))));
+        return new vscode.DocumentLink(this.getRange(document, extendsNode), vscode.Uri.file((0, path_1.join)(workspaceFolderPath, 'node_modules', extendsNode.value + (extendsNode.value.endsWith('.json') ? '' : '.json'))));
     }
     getFilesLinks(document, root) {
         return mapChildren(jsonc.findNodeAtLocation(root, ['files']), child => this.pathNodeToLink(document, child));
@@ -12633,7 +12733,7 @@ class TsconfigLinkProvider {
             if (!this.isPathValue(pathNode)) {
                 return undefined;
             }
-            return new vscode.DocumentLink(this.getRange(document, pathNode), path_1.basename(pathNode.value).endsWith('.json')
+            return new vscode.DocumentLink(this.getRange(document, pathNode), (0, path_1.basename)(pathNode.value).endsWith('.json')
                 ? this.getFileTarget(document, pathNode)
                 : this.getFolderTarget(document, pathNode));
         });
@@ -12650,10 +12750,10 @@ class TsconfigLinkProvider {
             && !extendsNode.value.includes('*'); // don't treat globs as links.
     }
     getFileTarget(document, node) {
-        return vscode.Uri.file(path_1.join(path_1.dirname(document.uri.fsPath), node.value));
+        return vscode.Uri.file((0, path_1.join)((0, path_1.dirname)(document.uri.fsPath), node.value));
     }
     getFolderTarget(document, node) {
-        return vscode.Uri.file(path_1.join(path_1.dirname(document.uri.fsPath), node.value, 'tsconfig.json'));
+        return vscode.Uri.file((0, path_1.join)((0, path_1.dirname)(document.uri.fsPath), node.value, 'tsconfig.json'));
     }
     getRange(document, node) {
         const offset = node.offset;
@@ -12668,14 +12768,14 @@ function register() {
         '**/[jt]sconfig.*.json',
     ];
     const languages = ['json', 'jsonc'];
-    const selector = arrays_1.flatten(languages.map(language => patterns.map((pattern) => ({ language, pattern }))));
+    const selector = (0, arrays_1.flatten)(languages.map(language => patterns.map((pattern) => ({ language, pattern }))));
     return vscode.languages.registerDocumentLinkProvider(selector, new TsconfigLinkProvider());
 }
 exports.register = register;
 
 
 /***/ }),
-/* 106 */
+/* 107 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -12694,10 +12794,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "format", function() { return format; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "modify", function() { return modify; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "applyEdits", function() { return applyEdits; });
-/* harmony import */ var _impl_format__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(107);
-/* harmony import */ var _impl_edit__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(109);
-/* harmony import */ var _impl_scanner__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(108);
-/* harmony import */ var _impl_parser__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(110);
+/* harmony import */ var _impl_format__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(108);
+/* harmony import */ var _impl_edit__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(110);
+/* harmony import */ var _impl_scanner__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(109);
+/* harmony import */ var _impl_parser__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(111);
 /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
@@ -12817,14 +12917,14 @@ function applyEdits(text, edits) {
 
 
 /***/ }),
-/* 107 */
+/* 108 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "format", function() { return format; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "isEOL", function() { return isEOL; });
-/* harmony import */ var _scanner__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(108);
+/* harmony import */ var _scanner__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(109);
 /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
@@ -13022,7 +13122,7 @@ function isEOL(text, offset) {
 
 
 /***/ }),
-/* 108 */
+/* 109 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -13394,7 +13494,7 @@ function isDigit(ch) {
 
 
 /***/ }),
-/* 109 */
+/* 110 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -13403,8 +13503,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "setProperty", function() { return setProperty; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "applyEdit", function() { return applyEdit; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "isWS", function() { return isWS; });
-/* harmony import */ var _format__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(107);
-/* harmony import */ var _parser__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(110);
+/* harmony import */ var _format__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(108);
+/* harmony import */ var _parser__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(111);
 /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
@@ -13594,7 +13694,7 @@ function isWS(text, offset) {
 
 
 /***/ }),
-/* 110 */
+/* 111 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -13610,7 +13710,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "visit", function() { return visit; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "stripComments", function() { return stripComments; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getNodeType", function() { return getNodeType; });
-/* harmony import */ var _scanner__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(108);
+/* harmony import */ var _scanner__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(109);
 /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.

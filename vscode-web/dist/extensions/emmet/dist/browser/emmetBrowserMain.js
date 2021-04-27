@@ -98,7 +98,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.activate = void 0;
 const emmetCommon_1 = __webpack_require__(1);
 function activate(context) {
-    emmetCommon_1.activateEmmetExtension(context);
+    (0, emmetCommon_1.activateEmmetExtension)(context);
 }
 exports.activate = activate;
 
@@ -133,82 +133,83 @@ const util_1 = __webpack_require__(6);
 const reflectCssValue_1 = __webpack_require__(48);
 const parseDocument_1 = __webpack_require__(13);
 function activateEmmetExtension(context) {
+    (0, util_1.migrateEmmetExtensionsPath)();
     registerCompletionProviders(context);
-    util_1.updateEmmetExtensionsPath();
+    (0, util_1.updateEmmetExtensionsPath)();
     context.subscriptions.push(vscode.commands.registerCommand('editor.emmet.action.wrapWithAbbreviation', (args) => {
-        abbreviationActions_1.wrapWithAbbreviation(args);
+        (0, abbreviationActions_1.wrapWithAbbreviation)(args);
     }));
     context.subscriptions.push(vscode.commands.registerCommand('emmet.expandAbbreviation', (args) => {
-        abbreviationActions_1.expandEmmetAbbreviation(args);
+        (0, abbreviationActions_1.expandEmmetAbbreviation)(args);
     }));
     context.subscriptions.push(vscode.commands.registerCommand('editor.emmet.action.removeTag', () => {
-        return removeTag_1.removeTag();
+        return (0, removeTag_1.removeTag)();
     }));
     context.subscriptions.push(vscode.commands.registerCommand('editor.emmet.action.updateTag', (inputTag) => {
         if (inputTag && typeof inputTag === 'string') {
-            return updateTag_1.updateTag(inputTag);
+            return (0, updateTag_1.updateTag)(inputTag);
         }
         return vscode.window.showInputBox({ prompt: 'Enter Tag' }).then(tagName => {
             if (tagName) {
-                const update = updateTag_1.updateTag(tagName);
+                const update = (0, updateTag_1.updateTag)(tagName);
                 return update ? update : false;
             }
             return false;
         });
     }));
     context.subscriptions.push(vscode.commands.registerCommand('editor.emmet.action.matchTag', () => {
-        matchTag_1.matchTag();
+        (0, matchTag_1.matchTag)();
     }));
     context.subscriptions.push(vscode.commands.registerCommand('editor.emmet.action.balanceOut', () => {
-        balance_1.balanceOut();
+        (0, balance_1.balanceOut)();
     }));
     context.subscriptions.push(vscode.commands.registerCommand('editor.emmet.action.balanceIn', () => {
-        balance_1.balanceIn();
+        (0, balance_1.balanceIn)();
     }));
     context.subscriptions.push(vscode.commands.registerCommand('editor.emmet.action.splitJoinTag', () => {
-        return splitJoinTag_1.splitJoinTag();
+        return (0, splitJoinTag_1.splitJoinTag)();
     }));
     context.subscriptions.push(vscode.commands.registerCommand('editor.emmet.action.mergeLines', () => {
-        mergeLines_1.mergeLines();
+        (0, mergeLines_1.mergeLines)();
     }));
     context.subscriptions.push(vscode.commands.registerCommand('editor.emmet.action.toggleComment', () => {
-        toggleComment_1.toggleComment();
+        (0, toggleComment_1.toggleComment)();
     }));
     context.subscriptions.push(vscode.commands.registerCommand('editor.emmet.action.nextEditPoint', () => {
-        editPoint_1.fetchEditPoint('next');
+        (0, editPoint_1.fetchEditPoint)('next');
     }));
     context.subscriptions.push(vscode.commands.registerCommand('editor.emmet.action.prevEditPoint', () => {
-        editPoint_1.fetchEditPoint('prev');
+        (0, editPoint_1.fetchEditPoint)('prev');
     }));
     context.subscriptions.push(vscode.commands.registerCommand('editor.emmet.action.selectNextItem', () => {
-        selectItem_1.fetchSelectItem('next');
+        (0, selectItem_1.fetchSelectItem)('next');
     }));
     context.subscriptions.push(vscode.commands.registerCommand('editor.emmet.action.selectPrevItem', () => {
-        selectItem_1.fetchSelectItem('prev');
+        (0, selectItem_1.fetchSelectItem)('prev');
     }));
     context.subscriptions.push(vscode.commands.registerCommand('editor.emmet.action.evaluateMathExpression', () => {
-        evaluateMathExpression_1.evaluateMathExpression();
+        (0, evaluateMathExpression_1.evaluateMathExpression)();
     }));
     context.subscriptions.push(vscode.commands.registerCommand('editor.emmet.action.incrementNumberByOneTenth', () => {
-        return incrementDecrement_1.incrementDecrement(0.1);
+        return (0, incrementDecrement_1.incrementDecrement)(0.1);
     }));
     context.subscriptions.push(vscode.commands.registerCommand('editor.emmet.action.incrementNumberByOne', () => {
-        return incrementDecrement_1.incrementDecrement(1);
+        return (0, incrementDecrement_1.incrementDecrement)(1);
     }));
     context.subscriptions.push(vscode.commands.registerCommand('editor.emmet.action.incrementNumberByTen', () => {
-        return incrementDecrement_1.incrementDecrement(10);
+        return (0, incrementDecrement_1.incrementDecrement)(10);
     }));
     context.subscriptions.push(vscode.commands.registerCommand('editor.emmet.action.decrementNumberByOneTenth', () => {
-        return incrementDecrement_1.incrementDecrement(-0.1);
+        return (0, incrementDecrement_1.incrementDecrement)(-0.1);
     }));
     context.subscriptions.push(vscode.commands.registerCommand('editor.emmet.action.decrementNumberByOne', () => {
-        return incrementDecrement_1.incrementDecrement(-1);
+        return (0, incrementDecrement_1.incrementDecrement)(-1);
     }));
     context.subscriptions.push(vscode.commands.registerCommand('editor.emmet.action.decrementNumberByTen', () => {
-        return incrementDecrement_1.incrementDecrement(-10);
+        return (0, incrementDecrement_1.incrementDecrement)(-10);
     }));
     context.subscriptions.push(vscode.commands.registerCommand('editor.emmet.action.reflectCSSValue', () => {
-        return reflectCssValue_1.reflectCssValue();
+        return (0, reflectCssValue_1.reflectCssValue)();
     }));
     context.subscriptions.push(vscode.commands.registerCommand('workbench.action.showEmmetCommands', () => {
         vscode.commands.executeCommand('workbench.action.quickOpen', '>Emmet: ');
@@ -218,29 +219,29 @@ function activateEmmetExtension(context) {
             registerCompletionProviders(context);
         }
         if (e.affectsConfiguration('emmet.extensionsPath')) {
-            util_1.updateEmmetExtensionsPath();
+            (0, util_1.updateEmmetExtensionsPath)();
         }
     }));
     context.subscriptions.push(vscode.workspace.onDidSaveTextDocument((e) => {
-        const basefileName = util_1.getPathBaseName(e.fileName);
+        const basefileName = (0, util_1.getPathBaseName)(e.fileName);
         if (basefileName.startsWith('snippets') && basefileName.endsWith('.json')) {
-            util_1.updateEmmetExtensionsPath(true);
+            (0, util_1.updateEmmetExtensionsPath)(true);
         }
     }));
     context.subscriptions.push(vscode.workspace.onDidOpenTextDocument((e) => {
         var _a;
-        const emmetMode = (_a = util_1.getEmmetMode(e.languageId, [])) !== null && _a !== void 0 ? _a : '';
-        const syntaxes = util_1.getSyntaxes();
+        const emmetMode = (_a = (0, util_1.getEmmetMode)(e.languageId, [])) !== null && _a !== void 0 ? _a : '';
+        const syntaxes = (0, util_1.getSyntaxes)();
         if (syntaxes.markup.includes(emmetMode) || syntaxes.stylesheet.includes(emmetMode)) {
-            parseDocument_1.addFileToParseCache(e);
+            (0, parseDocument_1.addFileToParseCache)(e);
         }
     }));
     context.subscriptions.push(vscode.workspace.onDidCloseTextDocument((e) => {
         var _a;
-        const emmetMode = (_a = util_1.getEmmetMode(e.languageId, [])) !== null && _a !== void 0 ? _a : '';
-        const syntaxes = util_1.getSyntaxes();
+        const emmetMode = (_a = (0, util_1.getEmmetMode)(e.languageId, [])) !== null && _a !== void 0 ? _a : '';
+        const syntaxes = (0, util_1.getSyntaxes)();
         if (syntaxes.markup.includes(emmetMode) || syntaxes.stylesheet.includes(emmetMode)) {
-            parseDocument_1.removeFileFromParseCache(e);
+            (0, parseDocument_1.removeFileFromParseCache)(e);
         }
     }));
 }
@@ -252,7 +253,7 @@ const languageMappingForCompletionProviders = new Map();
 const completionProvidersMapping = new Map();
 function registerCompletionProviders(context) {
     let completionProvider = new defaultCompletionProvider_1.DefaultCompletionItemProvider();
-    let includedLanguages = util_1.getMappingForIncludedLanguages();
+    let includedLanguages = (0, util_1.getMappingForIncludedLanguages)();
     Object.keys(includedLanguages).forEach(language => {
         if (languageMappingForCompletionProviders.has(language) && languageMappingForCompletionProviders.get(language) === includedLanguages[language]) {
             return;
@@ -338,22 +339,22 @@ class DefaultCompletionItemProvider {
         if (excludedLanguages.indexOf(document.languageId) > -1) {
             return;
         }
-        const mappedLanguages = util_1.getMappingForIncludedLanguages();
+        const mappedLanguages = (0, util_1.getMappingForIncludedLanguages)();
         const isSyntaxMapped = mappedLanguages[document.languageId] ? true : false;
-        let emmetMode = util_1.getEmmetMode((isSyntaxMapped ? mappedLanguages[document.languageId] : document.languageId), excludedLanguages);
+        let emmetMode = (0, util_1.getEmmetMode)((isSyntaxMapped ? mappedLanguages[document.languageId] : document.languageId), excludedLanguages);
         if (!emmetMode
             || emmetConfig['showExpandedAbbreviation'] === 'never'
             || ((isSyntaxMapped || emmetMode === 'jsx') && emmetConfig['showExpandedAbbreviation'] !== 'always')) {
             return;
         }
         let syntax = emmetMode;
-        const helper = util_1.getEmmetHelper();
+        const helper = (0, util_1.getEmmetHelper)();
         let validateLocation = syntax === 'html' || syntax === 'jsx' || syntax === 'xml';
         let rootNode;
         let currentNode;
-        const lsDoc = util_1.toLSTextDocument(document);
+        const lsDoc = (0, util_1.toLSTextDocument)(document);
         position = document.validatePosition(position);
-        if (document.languageId === 'html') {
+        if (syntax === 'html') {
             if (context.triggerKind === vscode.CompletionTriggerKind.TriggerForIncompleteCompletions) {
                 switch (this.lastCompletionType) {
                     case 'html':
@@ -369,15 +370,15 @@ class DefaultCompletionItemProvider {
             }
             if (validateLocation) {
                 const positionOffset = document.offsetAt(position);
-                const emmetRootNode = parseDocument_1.getRootNode(document, true);
-                const foundNode = util_1.getHtmlFlatNode(document.getText(), emmetRootNode, positionOffset, false);
+                const emmetRootNode = (0, parseDocument_1.getRootNode)(document, true);
+                const foundNode = (0, util_1.getHtmlFlatNode)(document.getText(), emmetRootNode, positionOffset, false);
                 if (foundNode) {
                     if (foundNode.name === 'script') {
                         const typeNode = foundNode.attributes.find(attr => attr.name.toString() === 'type');
                         if (typeNode) {
                             const typeAttrValue = typeNode.value.toString();
                             if (typeAttrValue === 'application/javascript' || typeAttrValue === 'text/javascript') {
-                                if (!abbreviationActions_1.getSyntaxFromArgs({ language: 'javascript' })) {
+                                if (!(0, abbreviationActions_1.getSyntaxFromArgs)({ language: 'javascript' })) {
                                     return;
                                 }
                                 else {
@@ -406,7 +407,7 @@ class DefaultCompletionItemProvider {
                 }
             }
         }
-        const expandOptions = util_1.isStyleSheet(syntax) ?
+        const expandOptions = (0, util_1.isStyleSheet)(syntax) ?
             { lookAhead: false, syntax: 'stylesheet' } :
             { lookAhead: true, syntax: 'markup' };
         const extractAbbreviationResults = helper.extractAbbreviation(lsDoc, position, expandOptions);
@@ -414,23 +415,36 @@ class DefaultCompletionItemProvider {
             return;
         }
         const offset = document.offsetAt(position);
-        if (util_1.isStyleSheet(document.languageId) && context.triggerKind !== vscode.CompletionTriggerKind.TriggerForIncompleteCompletions) {
+        if ((0, util_1.isStyleSheet)(document.languageId) && context.triggerKind !== vscode.CompletionTriggerKind.TriggerForIncompleteCompletions) {
             validateLocation = true;
             let usePartialParsing = vscode.workspace.getConfiguration('emmet')['optimizeStylesheetParsing'] === true;
-            rootNode = usePartialParsing && document.lineCount > 1000 ? util_1.parsePartialStylesheet(document, position) : parseDocument_1.getRootNode(document, true);
+            rootNode = usePartialParsing && document.lineCount > 1000 ? (0, util_1.parsePartialStylesheet)(document, position) : (0, parseDocument_1.getRootNode)(document, true);
             if (!rootNode) {
                 return;
             }
-            currentNode = util_1.getFlatNode(rootNode, offset, true);
+            currentNode = (0, util_1.getFlatNode)(rootNode, offset, true);
         }
-        if (validateLocation && !abbreviationActions_1.isValidLocationForEmmetAbbreviation(document, rootNode, currentNode, syntax, offset, toRange(extractAbbreviationResults.abbreviationRange))) {
+        // Fix for https://github.com/microsoft/vscode/issues/107578
+        // Validate location if syntax is of styleSheet type to ensure that location is valid for emmet abbreviation.
+        // For an html document containing a <style> node, compute the embeddedCssNode and fetch the flattened node as currentNode.
+        if (!(0, util_1.isStyleSheet)(document.languageId) && (0, util_1.isStyleSheet)(syntax) && context.triggerKind !== vscode.CompletionTriggerKind.TriggerForIncompleteCompletions) {
+            validateLocation = true;
+            rootNode = (0, parseDocument_1.getRootNode)(document, true);
+            if (!rootNode) {
+                return;
+            }
+            let flatNode = (0, util_1.getFlatNode)(rootNode, offset, true);
+            let embeddedCssNode = (0, util_1.getEmbeddedCssNodeIfAny)(document, flatNode, position);
+            currentNode = (0, util_1.getFlatNode)(embeddedCssNode, offset, true);
+        }
+        if (validateLocation && !(0, abbreviationActions_1.isValidLocationForEmmetAbbreviation)(document, rootNode, currentNode, syntax, offset, toRange(extractAbbreviationResults.abbreviationRange))) {
             return;
         }
         let noiseCheckPromise = Promise.resolve();
         // Fix for https://github.com/microsoft/vscode/issues/32647
         // Check for document symbols in js/ts/jsx/tsx and avoid triggering emmet for abbreviations of the form symbolName.sometext
         // Presence of > or * or + in the abbreviation denotes valid abbreviation that should trigger emmet
-        if (!util_1.isStyleSheet(syntax) && (document.languageId === 'javascript' || document.languageId === 'javascriptreact' || document.languageId === 'typescript' || document.languageId === 'typescriptreact')) {
+        if (!(0, util_1.isStyleSheet)(syntax) && (document.languageId === 'javascript' || document.languageId === 'javascriptreact' || document.languageId === 'typescript' || document.languageId === 'typescriptreact')) {
             let abbreviation = extractAbbreviationResults.abbreviation;
             if (abbreviation.startsWith('this.')) {
                 noiseCheckPromise = Promise.resolve(true);
@@ -445,7 +459,7 @@ class DefaultCompletionItemProvider {
             if (noise) {
                 return;
             }
-            let result = helper.doComplete(util_1.toLSTextDocument(document), position, syntax, util_1.getEmmetConfiguration(syntax));
+            let result = helper.doComplete((0, util_1.toLSTextDocument)(document), position, syntax, (0, util_1.getEmmetConfiguration)(syntax));
             // https://github.com/microsoft/vscode/issues/86941
             if (result && result.items && result.items.length === 1) {
                 if (result.items[0].label === 'widows: ;') {
@@ -499,7 +513,7 @@ const localize = nls.loadMessageBundle();
 const trimRegex = /[\u00a0]*[\d#\-\*\u2022]+\.?/;
 const hexColorRegex = /^#[\da-fA-F]{0,6}$/;
 async function wrapWithAbbreviation(args) {
-    if (!util_1.validate(false)) {
+    if (!(0, util_1.validate)(false)) {
         return false;
     }
     const editor = vscode.window.activeTextEditor;
@@ -510,23 +524,23 @@ async function wrapWithAbbreviation(args) {
     }
     // we know it's not stylesheet due to the validate(false) call above
     const syntax = getSyntaxFromArgs(args) || 'html';
-    const rootNode = parseDocument_1.getRootNode(document, true);
-    const helper = util_1.getEmmetHelper();
+    const rootNode = (0, parseDocument_1.getRootNode)(document, true);
+    const helper = (0, util_1.getEmmetHelper)();
     const operationRanges = editor.selections.sort((a, b) => a.start.compareTo(b.start)).map(selection => {
         let rangeToReplace = selection;
         // wrap around the node if the selection falls inside its open or close tag
         {
             let { start, end } = rangeToReplace;
             const startOffset = document.offsetAt(start);
-            const startNode = util_1.getFlatNode(rootNode, startOffset, true);
-            if (startNode && util_1.isOffsetInsideOpenOrCloseTag(startNode, startOffset)) {
+            const startNode = (0, util_1.getFlatNode)(rootNode, startOffset, true);
+            if (startNode && (0, util_1.isOffsetInsideOpenOrCloseTag)(startNode, startOffset)) {
                 start = document.positionAt(startNode.start);
                 const nodeEndPosition = document.positionAt(startNode.end);
                 end = nodeEndPosition.isAfter(end) ? nodeEndPosition : end;
             }
             const endOffset = document.offsetAt(end);
-            const endNode = util_1.getFlatNode(rootNode, endOffset, true);
-            if (endNode && util_1.isOffsetInsideOpenOrCloseTag(endNode, endOffset)) {
+            const endNode = (0, util_1.getFlatNode)(rootNode, endOffset, true);
+            if (endNode && (0, util_1.isOffsetInsideOpenOrCloseTag)(endNode, endOffset)) {
                 const nodeStartPosition = document.positionAt(endNode.start);
                 start = nodeStartPosition.isBefore(start) ? nodeStartPosition : start;
                 const nodeEndPosition = document.positionAt(endNode.end);
@@ -696,7 +710,7 @@ async function wrapWithAbbreviation(args) {
 }
 exports.wrapWithAbbreviation = wrapWithAbbreviation;
 function expandEmmetAbbreviation(args) {
-    if (!util_1.validate() || !vscode.window.activeTextEditor) {
+    if (!(0, util_1.validate)() || !vscode.window.activeTextEditor) {
         return fallbackTab();
     }
     /**
@@ -736,7 +750,7 @@ function expandEmmetAbbreviation(args) {
     const abbreviationList = [];
     let firstAbbreviation;
     let allAbbreviationsSame = true;
-    const helper = util_1.getEmmetHelper();
+    const helper = (0, util_1.getEmmetHelper)();
     const getAbbreviation = (document, selection, position, syntax) => {
         position = document.validatePosition(position);
         let rangeToReplace = selection;
@@ -760,7 +774,7 @@ function expandEmmetAbbreviation(args) {
                 return [rangeToReplace, abbr, ''];
             }
         }
-        const extractedResults = helper.extractAbbreviation(util_1.toLSTextDocument(editor.document), position, { lookAhead: false });
+        const extractedResults = helper.extractAbbreviation((0, util_1.toLSTextDocument)(editor.document), position, { lookAhead: false });
         if (!extractedResults) {
             return [null, '', ''];
         }
@@ -779,11 +793,11 @@ function expandEmmetAbbreviation(args) {
             return rootNode;
         }
         const usePartialParsing = vscode.workspace.getConfiguration('emmet')['optimizeStylesheetParsing'] === true;
-        if (editor.selections.length === 1 && util_1.isStyleSheet(editor.document.languageId) && usePartialParsing && editor.document.lineCount > 1000) {
-            rootNode = util_1.parsePartialStylesheet(editor.document, editor.selection.isReversed ? editor.selection.anchor : editor.selection.active);
+        if (editor.selections.length === 1 && (0, util_1.isStyleSheet)(editor.document.languageId) && usePartialParsing && editor.document.lineCount > 1000) {
+            rootNode = (0, util_1.parsePartialStylesheet)(editor.document, editor.selection.isReversed ? editor.selection.anchor : editor.selection.active);
         }
         else {
-            rootNode = parseDocument_1.getRootNode(editor.document, true);
+            rootNode = (0, parseDocument_1.getRootNode)(editor.document, true);
         }
         return rootNode;
     }
@@ -796,19 +810,23 @@ function expandEmmetAbbreviation(args) {
         if (!helper.isAbbreviationValid(syntax, abbreviation)) {
             return;
         }
+        if ((0, util_1.isStyleSheet)(syntax) && abbreviation.endsWith(':')) {
+            // Fix for https://github.com/Microsoft/vscode/issues/1623
+            return;
+        }
         const offset = editor.document.offsetAt(position);
-        let currentNode = util_1.getFlatNode(getRootNode(), offset, true);
+        let currentNode = (0, util_1.getFlatNode)(getRootNode(), offset, true);
         let validateLocation = true;
         let syntaxToUse = syntax;
         if (editor.document.languageId === 'html') {
-            if (util_1.isStyleAttribute(currentNode, offset)) {
+            if ((0, util_1.isStyleAttribute)(currentNode, offset)) {
                 syntaxToUse = 'css';
                 validateLocation = false;
             }
             else {
-                const embeddedCssNode = util_1.getEmbeddedCssNodeIfAny(editor.document, currentNode, position);
+                const embeddedCssNode = (0, util_1.getEmbeddedCssNodeIfAny)(editor.document, currentNode, position);
                 if (embeddedCssNode) {
-                    currentNode = util_1.getFlatNode(embeddedCssNode, offset, true);
+                    currentNode = (0, util_1.getFlatNode)(embeddedCssNode, offset, true);
                     syntaxToUse = 'css';
                 }
             }
@@ -846,13 +864,21 @@ function fallbackTab() {
  * @param abbreviationRange The range of the abbreviation for which given position is being validated
  */
 function isValidLocationForEmmetAbbreviation(document, rootNode, currentNode, syntax, offset, abbreviationRange) {
-    if (util_1.isStyleSheet(syntax)) {
+    if ((0, util_1.isStyleSheet)(syntax)) {
         const stylesheet = rootNode;
         if (stylesheet && (stylesheet.comments || []).some(x => offset >= x.start && offset <= x.end)) {
             return false;
         }
         // Continue validation only if the file was parse-able and the currentNode has been found
         if (!currentNode) {
+            return true;
+        }
+        // Get the abbreviation right now
+        // Fixes https://github.com/microsoft/vscode/issues/74505
+        // Stylesheet abbreviations starting with @ should bring up suggestions
+        // even at outer-most level
+        const abbreviation = document.getText(new vscode.Range(abbreviationRange.start.line, abbreviationRange.start.character, abbreviationRange.end.line, abbreviationRange.end.character));
+        if (abbreviation.startsWith('@')) {
             return true;
         }
         // Fix for https://github.com/microsoft/vscode/issues/34162
@@ -864,7 +890,6 @@ function isValidLocationForEmmetAbbreviation(document, rootNode, currentNode, sy
                 && currentNode.parent.type !== 'at-rule') {
                 return false;
             }
-            const abbreviation = document.getText(new vscode.Range(abbreviationRange.start.line, abbreviationRange.start.character, abbreviationRange.end.line, abbreviationRange.end.character));
             const propertyNode = currentNode;
             if (propertyNode.terminatorToken
                 && propertyNode.separator
@@ -1043,8 +1068,8 @@ function expandAbbreviationInRange(editor, expandAbbrList, insertSameSnippet) {
  * Expands abbreviation as detailed in given input.
  */
 function expandAbbr(input) {
-    const helper = util_1.getEmmetHelper();
-    const expandOptions = helper.getExpandOptions(input.syntax, util_1.getEmmetConfiguration(input.syntax), input.filter);
+    const helper = (0, util_1.getEmmetHelper)();
+    const expandOptions = helper.getExpandOptions(input.syntax, (0, util_1.getEmmetConfiguration)(input.syntax), input.filter);
     if (input.textToWrap) {
         if (input.filter && input.filter.includes('t')) {
             input.textToWrap = input.textToWrap.map(line => {
@@ -1077,16 +1102,16 @@ function expandAbbr(input) {
     return expandedText;
 }
 function getSyntaxFromArgs(args) {
-    const mappedModes = util_1.getMappingForIncludedLanguages();
+    const mappedModes = (0, util_1.getMappingForIncludedLanguages)();
     const language = args['language'];
     const parentMode = args['parentMode'];
     const excludedLanguages = vscode.workspace.getConfiguration('emmet')['excludeLanguages'] ? vscode.workspace.getConfiguration('emmet')['excludeLanguages'] : [];
     if (excludedLanguages.indexOf(language) > -1) {
         return;
     }
-    let syntax = util_1.getEmmetMode((mappedModes[language] ? mappedModes[language] : language), excludedLanguages);
+    let syntax = (0, util_1.getEmmetMode)((mappedModes[language] ? mappedModes[language] : language), excludedLanguages);
     if (!syntax) {
-        syntax = util_1.getEmmetMode((mappedModes[parentMode] ? mappedModes[parentMode] : parentMode), excludedLanguages);
+        syntax = (0, util_1.getEmmetMode)((mappedModes[parentMode] ? mappedModes[parentMode] : parentMode), excludedLanguages);
     }
     return syntax;
 }
@@ -1190,7 +1215,7 @@ exports.config = config;
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getSyntaxes = exports.getPathBaseName = exports.toLSTextDocument = exports.isNumber = exports.isStyleAttribute = exports.getEmbeddedCssNodeIfAny = exports.getCssPropertyFromDocument = exports.getCssPropertyFromRule = exports.iterateCSSToken = exports.getEmmetConfiguration = exports.sameNodes = exports.getNodesInBetween = exports.findPrevWord = exports.findNextWord = exports.getDeepestFlatNode = exports.offsetRangeToVsRange = exports.offsetRangeToSelection = exports.isOffsetInsideOpenOrCloseTag = exports.getHtmlFlatNode = exports.allowedMimeTypesInScriptTag = exports.getFlatNode = exports.parsePartialStylesheet = exports.getEmmetMode = exports.getMappingForIncludedLanguages = exports.validate = exports.isStyleSheet = exports.LANGUAGE_MODES = exports.updateEmmetExtensionsPath = exports.getEmmetHelper = exports.setHomeDir = void 0;
+exports.getSyntaxes = exports.getPathBaseName = exports.toLSTextDocument = exports.isNumber = exports.isStyleAttribute = exports.getEmbeddedCssNodeIfAny = exports.getCssPropertyFromDocument = exports.getCssPropertyFromRule = exports.iterateCSSToken = exports.getEmmetConfiguration = exports.sameNodes = exports.getNodesInBetween = exports.findPrevWord = exports.findNextWord = exports.getDeepestFlatNode = exports.offsetRangeToVsRange = exports.offsetRangeToSelection = exports.isOffsetInsideOpenOrCloseTag = exports.getHtmlFlatNode = exports.allowedMimeTypesInScriptTag = exports.getFlatNode = exports.parsePartialStylesheet = exports.getEmmetMode = exports.getMappingForIncludedLanguages = exports.validate = exports.isStyleSheet = exports.LANGUAGE_MODES = exports.migrateEmmetExtensionsPath = exports.updateEmmetExtensionsPath = exports.getEmmetHelper = exports.setHomeDir = void 0;
 const vscode = __webpack_require__(2);
 const html_matcher_1 = __webpack_require__(7);
 const css_parser_1 = __webpack_require__(10);
@@ -1198,7 +1223,7 @@ const bufferStream_1 = __webpack_require__(11);
 const vscode_languageserver_textdocument_1 = __webpack_require__(12);
 const parseDocument_1 = __webpack_require__(13);
 let _emmetHelper;
-let _currentExtensionsPath = undefined;
+let _currentExtensionsPath;
 let _homeDir;
 function setHomeDir(homeDir) {
     _homeDir = homeDir;
@@ -1218,7 +1243,10 @@ exports.getEmmetHelper = getEmmetHelper;
  */
 function updateEmmetExtensionsPath(forceRefresh = false) {
     const helper = getEmmetHelper();
-    let extensionsPath = vscode.workspace.getConfiguration('emmet')['extensionsPath'];
+    let extensionsPath = vscode.workspace.getConfiguration('emmet').get('extensionsPath');
+    if (!extensionsPath) {
+        extensionsPath = [];
+    }
     if (forceRefresh || _currentExtensionsPath !== extensionsPath) {
         _currentExtensionsPath = extensionsPath;
         if (!vscode.workspace.workspaceFolders || vscode.workspace.workspaceFolders.length === 0) {
@@ -1227,11 +1255,45 @@ function updateEmmetExtensionsPath(forceRefresh = false) {
         else {
             const rootPath = vscode.workspace.workspaceFolders[0].uri;
             const fileSystem = vscode.workspace.fs;
-            helper.updateExtensionsPath(extensionsPath, fileSystem, rootPath, _homeDir).catch(err => vscode.window.showErrorMessage(err.message));
+            helper.updateExtensionsPath(extensionsPath, fileSystem, rootPath, _homeDir).catch(err => {
+                if (Array.isArray(extensionsPath) && extensionsPath.length) {
+                    vscode.window.showErrorMessage(err.message);
+                }
+            });
         }
     }
 }
 exports.updateEmmetExtensionsPath = updateEmmetExtensionsPath;
+/**
+ * Migrate old configuration(string) for extensionsPath to new type(string[])
+ * https://github.com/microsoft/vscode/issues/117517
+ */
+function migrateEmmetExtensionsPath() {
+    // Get the detail info of emmet.extensionsPath setting
+    let config = vscode.workspace.getConfiguration().inspect('emmet.extensionsPath');
+    // Update Global setting if the value type is string or the value is null
+    if (typeof (config === null || config === void 0 ? void 0 : config.globalValue) === 'string') {
+        vscode.workspace.getConfiguration().update('emmet.extensionsPath', [config.globalValue], true);
+    }
+    else if ((config === null || config === void 0 ? void 0 : config.globalValue) === null) {
+        vscode.workspace.getConfiguration().update('emmet.extensionsPath', [], true);
+    }
+    // Update Workspace setting if the value type is string or the value is null
+    if (typeof (config === null || config === void 0 ? void 0 : config.workspaceValue) === 'string') {
+        vscode.workspace.getConfiguration().update('emmet.extensionsPath', [config.workspaceValue], false);
+    }
+    else if ((config === null || config === void 0 ? void 0 : config.workspaceValue) === null) {
+        vscode.workspace.getConfiguration().update('emmet.extensionsPath', [], false);
+    }
+    // Update WorkspaceFolder setting if the value type is string or the value is null
+    if (typeof (config === null || config === void 0 ? void 0 : config.workspaceFolderValue) === 'string') {
+        vscode.workspace.getConfiguration().update('emmet.extensionsPath', [config.workspaceFolderValue]);
+    }
+    else if ((config === null || config === void 0 ? void 0 : config.workspaceFolderValue) === null) {
+        vscode.workspace.getConfiguration().update('emmet.extensionsPath', []);
+    }
+}
+exports.migrateEmmetExtensionsPath = migrateEmmetExtensionsPath;
 /**
  * Mapping between languages that support Emmet and completion trigger characters
  */
@@ -1459,7 +1521,7 @@ function parsePartialStylesheet(document, position) {
     }
     try {
         const buffer = ' '.repeat(startOffset) + document.getText().substring(startOffset, endOffset);
-        return css_parser_1.default(buffer);
+        return (0, css_parser_1.default)(buffer);
     }
     catch (e) {
         return;
@@ -1529,7 +1591,7 @@ function getHtmlFlatNode(documentText, root, offset, includeNodeBoundary) {
         const beforePadding = ' '.repeat(currentNode.open.end);
         const endToUse = currentNode.close ? currentNode.close.start : currentNode.end;
         const scriptBodyText = beforePadding + documentText.substring(currentNode.open.end, endToUse);
-        const innerRoot = html_matcher_1.default(scriptBodyText);
+        const innerRoot = (0, html_matcher_1.default)(scriptBodyText);
         const scriptBodyNode = getHtmlFlatNode(scriptBodyText, innerRoot, offset, includeNodeBoundary);
         if (scriptBodyNode) {
             scriptBodyNode.parent = currentNode;
@@ -1744,7 +1806,7 @@ exports.getCssPropertyFromRule = getCssPropertyFromRule;
  */
 function getCssPropertyFromDocument(editor, position) {
     const document = editor.document;
-    const rootNode = parseDocument_1.getRootNode(document, true);
+    const rootNode = (0, parseDocument_1.getRootNode)(document, true);
     const offset = document.offsetAt(position);
     const node = getFlatNode(rootNode, offset, true);
     if (isStyleSheet(editor.document.languageId)) {
@@ -1758,7 +1820,7 @@ function getCssPropertyFromDocument(editor, position) {
         && htmlNode.close.start > offset) {
         const buffer = ' '.repeat(htmlNode.start) +
             document.getText().substring(htmlNode.start, htmlNode.end);
-        const innerRootNode = css_parser_1.default(buffer);
+        const innerRootNode = (0, css_parser_1.default)(buffer);
         const innerNode = getFlatNode(innerRootNode, offset, true);
         return (innerNode && innerNode.type === 'property') ? innerNode : null;
     }
@@ -1777,7 +1839,7 @@ function getEmbeddedCssNodeIfAny(document, currentNode, position) {
                 && currentHtmlNode.open.end < offset
                 && currentHtmlNode.close.start > offset) {
                 const buffer = ' '.repeat(currentHtmlNode.open.end) + document.getText().substring(currentHtmlNode.open.end, currentHtmlNode.close.start);
-                return css_parser_1.default(buffer);
+                return (0, css_parser_1.default)(buffer);
             }
         }
     }
@@ -4832,7 +4894,7 @@ function getRootNode(document, useCache) {
             return result.value;
         }
     }
-    const parseContent = util_1.isStyleSheet(document.languageId) ? css_parser_1.default : html_matcher_1.default;
+    const parseContent = (0, util_1.isStyleSheet)(document.languageId) ? css_parser_1.default : html_matcher_1.default;
     const rootNode = parseContent(document.getText());
     if (useCache) {
         _parseCache.set(key, { key: documentVersion, value: rootNode });
@@ -4918,6 +4980,8 @@ const snippetKeyCache = new Map();
 let markupSnippetKeys;
 const stylesheetCustomSnippetsKeyCache = new Map();
 const htmlAbbreviationStartRegex = /^[a-z,A-Z,!,(,[,#,\.\{]/;
+// take off { for jsx because it interferes with the language
+const jsxAbbreviationStartRegex = /^[a-z,A-Z,!,(,[,#,\.]/;
 const cssAbbreviationRegex = /^-?[a-z,A-Z,!,@,#]/;
 const htmlAbbreviationRegex = /[a-z,A-Z\.]/;
 const commonlyUsedTags = [..._data__WEBPACK_IMPORTED_MODULE_2__["htmlData"].tags, 'lorem'];
@@ -4985,7 +5049,7 @@ function doComplete(document, position, syntax, emmetConfig) {
         }
         catch (e) {
         }
-        if (!expandedText || isExpandedTextNoise(syntax, abbr, expandedText)) {
+        if (!expandedText || isExpandedTextNoise(syntax, abbr, expandedText, expandOptions.options)) {
             return;
         }
         expandedAbbr = vscode_languageserver_types__WEBPACK_IMPORTED_MODULE_0__["CompletionItem"].create(abbr);
@@ -5038,8 +5102,10 @@ function doComplete(document, position, syntax, emmetConfig) {
         if (newTagMatches && newTagMatches.length === 3) {
             tagToFindMoreSuggestionsFor = newTagMatches[2];
         }
-        const commonlyUsedTagSuggestions = makeSnippetSuggestion(commonlyUsedTags, tagToFindMoreSuggestionsFor, abbreviation, abbreviationRange, expandOptions, 'Emmet Abbreviation');
-        completionItems = completionItems.concat(commonlyUsedTagSuggestions);
+        if (syntax !== 'xml') {
+            const commonlyUsedTagSuggestions = makeSnippetSuggestion(commonlyUsedTags, tagToFindMoreSuggestionsFor, abbreviation, abbreviationRange, expandOptions, 'Emmet Abbreviation');
+            completionItems = completionItems.concat(commonlyUsedTagSuggestions);
+        }
         if (emmetConfig.showAbbreviationSuggestions === true) {
             const abbreviationSuggestions = makeSnippetSuggestion(markupSnippetKeys.filter(x => !commonlyUsedTags.includes(x)), tagToFindMoreSuggestionsFor, abbreviation, abbreviationRange, expandOptions, 'Emmet Abbreviation');
             // Workaround for the main expanded abbr not appearing before the snippet suggestions
@@ -5305,10 +5371,6 @@ function isAbbreviationValid(syntax, abbreviation) {
         return false;
     }
     if (isStyleSheet(syntax)) {
-        // Fix for https://github.com/Microsoft/vscode/issues/1623 in new emmet
-        if (abbreviation.endsWith(':')) {
-            return false;
-        }
         if (abbreviation.includes('#')) {
             if (abbreviation.startsWith('#')) {
                 return hexColorRegex.test(abbreviation);
@@ -5327,21 +5389,37 @@ function isAbbreviationValid(syntax, abbreviation) {
     if ((/\(/.test(abbreviation) || /\)/.test(abbreviation)) && !/\{[^\}\{]*[\(\)]+[^\}\{]*\}(?:[>\+\*\^]|$)/.test(abbreviation) && !/\(.*\)[>\+\*\^]/.test(abbreviation) && !/[>\+\*\^]\(.*\)/.test(abbreviation)) {
         return false;
     }
+    if (syntax === 'jsx') {
+        return (jsxAbbreviationStartRegex.test(abbreviation) && htmlAbbreviationRegex.test(abbreviation));
+    }
     return (htmlAbbreviationStartRegex.test(abbreviation) && htmlAbbreviationRegex.test(abbreviation));
 }
-function isExpandedTextNoise(syntax, abbreviation, expandedText) {
+function isExpandedTextNoise(syntax, abbreviation, expandedText, options) {
+    var _a, _b;
     // Unresolved css abbreviations get expanded to a blank property value
     // Eg: abc -> abc: ; or abc:d -> abc: d; which is noise if it gets suggested for every word typed
     if (isStyleSheet(syntax)) {
-        const after = (syntax === 'sass' || syntax === 'stylus') ? '' : ';';
-        return expandedText === `${abbreviation}: \${0}${after}` ||
+        const between = (_a = options['stylesheet.between']) !== null && _a !== void 0 ? _a : ': ';
+        const after = (_b = options['stylesheet.after']) !== null && _b !== void 0 ? _b : ';';
+        // Remove overlapping between `abbreviation` and `between`, if any
+        let endPrefixIndex = abbreviation.indexOf(between[0], Math.max(abbreviation.length - between.length, 0));
+        endPrefixIndex = endPrefixIndex >= 0 ? endPrefixIndex : abbreviation.length;
+        const abbr = abbreviation.substring(0, endPrefixIndex);
+        return expandedText === `${abbr}${between}\${0}${after}` ||
             expandedText.replace(/\s/g, '') === abbreviation.replace(/\s/g, '') + after;
     }
-    if (commonlyUsedTags.includes(abbreviation.toLowerCase()) || markupSnippetKeys.includes(abbreviation)) {
+    // we don't want common html tags suggested for xml
+    if (syntax === 'xml' &&
+        commonlyUsedTags.some(tag => tag.startsWith(abbreviation.toLowerCase()))) {
+        return true;
+    }
+    if (commonlyUsedTags.includes(abbreviation.toLowerCase()) ||
+        markupSnippetKeys.includes(abbreviation)) {
         return false;
     }
     // Custom tags can have - or :
-    if (/[-,:]/.test(abbreviation) && !/--|::/.test(abbreviation) && !abbreviation.endsWith(':')) {
+    if (/[-,:]/.test(abbreviation) && !/--|::/.test(abbreviation) &&
+        !abbreviation.endsWith(':')) {
         return false;
     }
     // Its common for users to type some text and end it with period, this should not be treated as an abbreviation
@@ -5748,16 +5826,14 @@ function getFormatters(syntax, preferences) {
  */
 function updateExtensionsPath(emmetExtensionsPathSetting, fs, workspaceFolderPath, homeDir) {
     return __awaiter(this, void 0, void 0, function* () {
-        let emmetExtensionsArray;
-        if (Array.isArray(emmetExtensionsPathSetting)) {
-            emmetExtensionsArray = emmetExtensionsPathSetting;
-        }
-        else {
-            emmetExtensionsArray = [emmetExtensionsPathSetting];
+        if (!emmetExtensionsPathSetting.length) {
+            // Do nothing if the input array is an empty arra, since it means that users don't specify any settings
+            resetSettingsFromFile();
+            return Promise.resolve();
         }
         let emmetExtensionsPathUri;
         let hasValidPath = false;
-        for (let emmetExtensionsPath of emmetExtensionsArray) {
+        for (let emmetExtensionsPath of emmetExtensionsPathSetting) {
             if (emmetExtensionsPath) {
                 emmetExtensionsPath = emmetExtensionsPath.trim();
             }
@@ -9494,7 +9570,7 @@ const htmlData = {
         "body", "head", "html",
         "address", "blockquote", "dd", "div", "section", "article", "aside", "header", "footer", "nav", "menu", "dl", "dt", "fieldset", "form", "frame", "frameset", "h1", "h2", "h3", "h4", "h5", "h6", "iframe", "noframes", "object", "ol", "p", "ul", "applet", "center", "dir", "hr", "pre",
         "a", "abbr", "acronym", "area", "b", "base", "basefont", "bdo", "big", "br", "button", "caption", "cite", "code", "col", "colgroup", "del", "dfn", "em", "font", "i", "img", "input", "ins", "isindex", "kbd", "label", "legend", "li", "link", "map", "meta", "noscript", "optgroup", "option", "param", "q", "s", "samp", "script", "select", "small", "span", "strike", "strong", "style", "sub", "sup", "table", "tbody", "td", "textarea", "tfoot", "th", "thead", "title", "tr", "tt", "u", "var",
-        "canvas", "main", "figure", "plaintext", "figcaption"
+        "canvas", "main", "figure", "plaintext", "figcaption", "hgroup"
     ]
 };
 //# sourceMappingURL=data.js.map
@@ -13563,7 +13639,7 @@ var markupSnippets = {
 };
 
 var stylesheetSnippets = {
-	"@f": "@font-face {\n\tfont-family: ${1};\n\tsrc: url(${1});\n}",
+	"@f": "@font-face {\n\tfont-family: ${1};\n\tsrc: url(${2});\n}",
 	"@ff": "@font-face {\n\tfont-family: '${1:FontName}';\n\tsrc: url('${2:FileName}.eot');\n\tsrc: url('${2:FileName}.eot?#iefix') format('embedded-opentype'),\n\t\t url('${2:FileName}.woff') format('woff'),\n\t\t url('${2:FileName}.ttf') format('truetype'),\n\t\t url('${2:FileName}.svg#${1:FontName}') format('svg');\n\tfont-style: ${3:normal};\n\tfont-weight: ${4:normal};\n}",
 	"@i|@import": "@import url(${0});",
 	"@kf": "@keyframes ${1:identifier} {\n\t${2}\n}",
@@ -14902,7 +14978,8 @@ function whiteSpace(scanner) {
         return {
             type: 'WhiteSpace',
             start,
-            end: scanner.pos
+            end: scanner.pos,
+            value: scanner.substring(start, scanner.pos)
         };
     }
 }
@@ -15229,8 +15306,8 @@ const tokenVisitor = {
         }
         return result;
     },
-    WhiteSpace() {
-        return ' ';
+    WhiteSpace(token) {
+        return token.value;
     }
 };
 /**
@@ -16142,7 +16219,7 @@ function isBracket(code) {
     return code === 40 /* RoundBracketOpen */ || code === 41 /* RoundBracketClose */;
 }
 function isLiteral(code) {
-    return Object(_emmetio_scanner__WEBPACK_IMPORTED_MODULE_0__["isAlphaWord"])(code) || code === 37 /* Percent */;
+    return Object(_emmetio_scanner__WEBPACK_IMPORTED_MODULE_0__["isAlphaWord"])(code) || code === 37 /* Percent */ || code === 47 /* Slash */;
 }
 /**
  * Parses given color value from abbreviation into RGBA format
@@ -16488,12 +16565,12 @@ const vscode = __webpack_require__(2);
 const parseDocument_1 = __webpack_require__(13);
 const util_1 = __webpack_require__(6);
 function removeTag() {
-    if (!util_1.validate(false) || !vscode.window.activeTextEditor) {
+    if (!(0, util_1.validate)(false) || !vscode.window.activeTextEditor) {
         return;
     }
     const editor = vscode.window.activeTextEditor;
     const document = editor.document;
-    const rootNode = parseDocument_1.getRootNode(document, true);
+    const rootNode = (0, parseDocument_1.getRootNode)(document, true);
     if (!rootNode) {
         return;
     }
@@ -16513,17 +16590,17 @@ exports.removeTag = removeTag;
  */
 function getRangesToRemove(document, rootNode, selection) {
     const offset = document.offsetAt(selection.start);
-    const nodeToUpdate = util_1.getHtmlFlatNode(document.getText(), rootNode, offset, true);
+    const nodeToUpdate = (0, util_1.getHtmlFlatNode)(document.getText(), rootNode, offset, true);
     if (!nodeToUpdate) {
         return [];
     }
     let openTagRange;
     if (nodeToUpdate.open) {
-        openTagRange = util_1.offsetRangeToVsRange(document, nodeToUpdate.open.start, nodeToUpdate.open.end);
+        openTagRange = (0, util_1.offsetRangeToVsRange)(document, nodeToUpdate.open.start, nodeToUpdate.open.end);
     }
     let closeTagRange;
     if (nodeToUpdate.close) {
-        closeTagRange = util_1.offsetRangeToVsRange(document, nodeToUpdate.close.start, nodeToUpdate.close.end);
+        closeTagRange = (0, util_1.offsetRangeToVsRange)(document, nodeToUpdate.close.start, nodeToUpdate.close.end);
     }
     let rangesToRemove = [];
     if (openTagRange) {
@@ -16580,12 +16657,12 @@ const vscode = __webpack_require__(2);
 const util_1 = __webpack_require__(6);
 const parseDocument_1 = __webpack_require__(13);
 function updateTag(tagName) {
-    if (!util_1.validate(false) || !vscode.window.activeTextEditor) {
+    if (!(0, util_1.validate)(false) || !vscode.window.activeTextEditor) {
         return;
     }
     const editor = vscode.window.activeTextEditor;
     const document = editor.document;
-    const rootNode = parseDocument_1.getRootNode(document, true);
+    const rootNode = (0, parseDocument_1.getRootNode)(document, true);
     if (!rootNode) {
         return;
     }
@@ -16614,7 +16691,7 @@ function getRangesFromNode(node, document) {
 function getRangesToUpdate(document, selection, rootNode) {
     const documentText = document.getText();
     const offset = document.offsetAt(selection.start);
-    const nodeToUpdate = util_1.getHtmlFlatNode(documentText, rootNode, offset, true);
+    const nodeToUpdate = (0, util_1.getHtmlFlatNode)(documentText, rootNode, offset, true);
     if (!nodeToUpdate) {
         return [];
     }
@@ -16638,12 +16715,12 @@ const vscode = __webpack_require__(2);
 const util_1 = __webpack_require__(6);
 const parseDocument_1 = __webpack_require__(13);
 function matchTag() {
-    if (!util_1.validate(false) || !vscode.window.activeTextEditor) {
+    if (!(0, util_1.validate)(false) || !vscode.window.activeTextEditor) {
         return;
     }
     const editor = vscode.window.activeTextEditor;
     const document = editor.document;
-    const rootNode = parseDocument_1.getRootNode(document, true);
+    const rootNode = (0, parseDocument_1.getRootNode)(document, true);
     if (!rootNode) {
         return;
     }
@@ -16662,7 +16739,7 @@ function matchTag() {
 exports.matchTag = matchTag;
 function getUpdatedSelections(document, rootNode, position) {
     const offset = document.offsetAt(position);
-    const currentNode = util_1.getHtmlFlatNode(document.getText(), rootNode, offset, true);
+    const currentNode = (0, util_1.getHtmlFlatNode)(document.getText(), rootNode, offset, true);
     if (!currentNode) {
         return;
     }
@@ -16674,7 +16751,7 @@ function getUpdatedSelections(document, rootNode, position) {
     }
     // Place cursor inside the close tag if cursor is inside the open tag, else place it inside the open tag
     const finalOffset = (offset <= currentNode.open.end) ? currentNode.close.start + 2 : currentNode.start + 1;
-    return util_1.offsetRangeToSelection(document, finalOffset, finalOffset);
+    return (0, util_1.offsetRangeToSelection)(document, finalOffset, finalOffset);
 }
 
 
@@ -16704,12 +16781,12 @@ function balanceIn() {
 }
 exports.balanceIn = balanceIn;
 function balance(out) {
-    if (!util_1.validate(false) || !vscode.window.activeTextEditor) {
+    if (!(0, util_1.validate)(false) || !vscode.window.activeTextEditor) {
         return;
     }
     const editor = vscode.window.activeTextEditor;
     const document = editor.document;
-    const rootNode = parseDocument_1.getRootNode(document, true);
+    const rootNode = (0, parseDocument_1.getRootNode)(document, true);
     if (!rootNode) {
         return;
     }
@@ -16741,15 +16818,15 @@ function balance(out) {
 }
 function getRangeToBalanceOut(document, rootNode, selection) {
     const offset = document.offsetAt(selection.start);
-    const nodeToBalance = util_1.getHtmlFlatNode(document.getText(), rootNode, offset, false);
+    const nodeToBalance = (0, util_1.getHtmlFlatNode)(document.getText(), rootNode, offset, false);
     if (!nodeToBalance) {
         return selection;
     }
     if (!nodeToBalance.open || !nodeToBalance.close) {
-        return util_1.offsetRangeToSelection(document, nodeToBalance.start, nodeToBalance.end);
+        return (0, util_1.offsetRangeToSelection)(document, nodeToBalance.start, nodeToBalance.end);
     }
-    const innerSelection = util_1.offsetRangeToSelection(document, nodeToBalance.open.end, nodeToBalance.close.start);
-    const outerSelection = util_1.offsetRangeToSelection(document, nodeToBalance.open.start, nodeToBalance.close.end);
+    const innerSelection = (0, util_1.offsetRangeToSelection)(document, nodeToBalance.open.end, nodeToBalance.close.start);
+    const outerSelection = (0, util_1.offsetRangeToSelection)(document, nodeToBalance.open.start, nodeToBalance.close.end);
     if (innerSelection.contains(selection) && !innerSelection.isEqual(selection)) {
         return innerSelection;
     }
@@ -16760,7 +16837,7 @@ function getRangeToBalanceOut(document, rootNode, selection) {
 }
 function getRangeToBalanceIn(document, rootNode, selection) {
     const offset = document.offsetAt(selection.start);
-    const nodeToBalance = util_1.getHtmlFlatNode(document.getText(), rootNode, offset, true);
+    const nodeToBalance = (0, util_1.getHtmlFlatNode)(document.getText(), rootNode, offset, true);
     if (!nodeToBalance) {
         return selection;
     }
@@ -16771,7 +16848,7 @@ function getRangeToBalanceIn(document, rootNode, selection) {
         const startInOpenTag = selectionStart > nodeToBalance.open.start && selectionStart < nodeToBalance.open.end;
         const startInCloseTag = selectionStart > nodeToBalance.close.start && selectionStart < nodeToBalance.close.end;
         if (entireNodeSelected || startInOpenTag || startInCloseTag) {
-            return util_1.offsetRangeToSelection(document, nodeToBalance.open.end, nodeToBalance.close.start);
+            return (0, util_1.offsetRangeToSelection)(document, nodeToBalance.open.end, nodeToBalance.close.start);
         }
     }
     if (!nodeToBalance.firstChild) {
@@ -16782,9 +16859,9 @@ function getRangeToBalanceIn(document, rootNode, selection) {
         && selectionEnd === firstChild.end
         && firstChild.open
         && firstChild.close) {
-        return util_1.offsetRangeToSelection(document, firstChild.open.end, firstChild.close.start);
+        return (0, util_1.offsetRangeToSelection)(document, firstChild.open.end, firstChild.close.start);
     }
-    return util_1.offsetRangeToSelection(document, firstChild.start, firstChild.end);
+    return (0, util_1.offsetRangeToSelection)(document, firstChild.start, firstChild.end);
 }
 function areSameSelections(a, b) {
     if (a.length !== b.length) {
@@ -16815,12 +16892,12 @@ const vscode = __webpack_require__(2);
 const util_1 = __webpack_require__(6);
 const parseDocument_1 = __webpack_require__(13);
 function splitJoinTag() {
-    if (!util_1.validate(false) || !vscode.window.activeTextEditor) {
+    if (!(0, util_1.validate)(false) || !vscode.window.activeTextEditor) {
         return;
     }
     const editor = vscode.window.activeTextEditor;
     const document = editor.document;
-    const rootNode = parseDocument_1.getRootNode(editor.document, true);
+    const rootNode = (0, parseDocument_1.getRootNode)(editor.document, true);
     if (!rootNode) {
         return;
     }
@@ -16828,7 +16905,7 @@ function splitJoinTag() {
         editor.selections.reverse().forEach(selection => {
             const documentText = document.getText();
             const offset = document.offsetAt(selection.start);
-            const nodeToUpdate = util_1.getHtmlFlatNode(documentText, rootNode, offset, true);
+            const nodeToUpdate = (0, util_1.getHtmlFlatNode)(documentText, rootNode, offset, true);
             if (nodeToUpdate) {
                 const textEdit = getRangesToReplace(document, nodeToUpdate);
                 editBuilder.replace(textEdit.range, textEdit.newText);
@@ -16846,17 +16923,17 @@ function getRangesToReplace(document, nodeToUpdate) {
         const m = nodeText.match(/(\s*\/)?>$/);
         const end = nodeToUpdate.end;
         const start = m ? end - m[0].length : end;
-        rangeToReplace = util_1.offsetRangeToVsRange(document, start, end);
+        rangeToReplace = (0, util_1.offsetRangeToVsRange)(document, start, end);
         textToReplaceWith = `></${nodeToUpdate.name}>`;
     }
     else {
         // Join Tag
         const start = nodeToUpdate.open.end - 1;
         const end = nodeToUpdate.end;
-        rangeToReplace = util_1.offsetRangeToVsRange(document, start, end);
+        rangeToReplace = (0, util_1.offsetRangeToVsRange)(document, start, end);
         textToReplaceWith = '/>';
-        const emmetMode = util_1.getEmmetMode(document.languageId, []) || '';
-        const emmetConfig = util_1.getEmmetConfiguration(emmetMode);
+        const emmetMode = (0, util_1.getEmmetMode)(document.languageId, []) || '';
+        const emmetConfig = (0, util_1.getEmmetConfiguration)(emmetMode);
         if (emmetMode && emmetConfig.syntaxProfiles[emmetMode] &&
             (emmetConfig.syntaxProfiles[emmetMode]['selfClosingStyle'] === 'xhtml' || emmetConfig.syntaxProfiles[emmetMode]['self_closing_tag'] === 'xhtml')) {
             textToReplaceWith = ' ' + textToReplaceWith;
@@ -16882,11 +16959,11 @@ const vscode = __webpack_require__(2);
 const util_1 = __webpack_require__(6);
 const parseDocument_1 = __webpack_require__(13);
 function mergeLines() {
-    if (!util_1.validate(false) || !vscode.window.activeTextEditor) {
+    if (!(0, util_1.validate)(false) || !vscode.window.activeTextEditor) {
         return;
     }
     const editor = vscode.window.activeTextEditor;
-    const rootNode = parseDocument_1.getRootNode(editor.document, true);
+    const rootNode = (0, parseDocument_1.getRootNode)(editor.document, true);
     if (!rootNode) {
         return;
     }
@@ -16906,11 +16983,11 @@ function getRangesToReplace(document, selection, rootNode) {
     const selectionStart = document.offsetAt(selection.start);
     const selectionEnd = document.offsetAt(selection.end);
     if (selection.isEmpty) {
-        startNodeToUpdate = endNodeToUpdate = util_1.getFlatNode(rootNode, selectionStart, true);
+        startNodeToUpdate = endNodeToUpdate = (0, util_1.getFlatNode)(rootNode, selectionStart, true);
     }
     else {
-        startNodeToUpdate = util_1.getFlatNode(rootNode, selectionStart, true);
-        endNodeToUpdate = util_1.getFlatNode(rootNode, selectionEnd, true);
+        startNodeToUpdate = (0, util_1.getFlatNode)(rootNode, selectionStart, true);
+        endNodeToUpdate = (0, util_1.getFlatNode)(rootNode, selectionEnd, true);
     }
     if (!startNodeToUpdate || !endNodeToUpdate) {
         return;
@@ -16923,7 +17000,7 @@ function getRangesToReplace(document, selection, rootNode) {
     if (startLine === endLine) {
         return;
     }
-    const rangeToReplace = util_1.offsetRangeToVsRange(document, startNodeToUpdate.start, endNodeToUpdate.end);
+    const rangeToReplace = (0, util_1.offsetRangeToVsRange)(document, startNodeToUpdate.start, endNodeToUpdate.end);
     let textToReplaceWith = document.lineAt(startLine).text.substr(startChar);
     for (let i = startLine + 1; i <= endLine; i++) {
         textToReplaceWith += document.lineAt(i).text.trim();
@@ -16953,19 +17030,19 @@ let endCommentStylesheet;
 let startCommentHTML;
 let endCommentHTML;
 function toggleComment() {
-    if (!util_1.validate() || !vscode.window.activeTextEditor) {
+    if (!(0, util_1.validate)() || !vscode.window.activeTextEditor) {
         return;
     }
     setupCommentSpacing();
     const editor = vscode.window.activeTextEditor;
-    const rootNode = parseDocument_1.getRootNode(editor.document, true);
+    const rootNode = (0, parseDocument_1.getRootNode)(editor.document, true);
     if (!rootNode) {
         return;
     }
     return editor.edit(editBuilder => {
         let allEdits = [];
         editor.selections.reverse().forEach(selection => {
-            const edits = util_1.isStyleSheet(editor.document.languageId) ? toggleCommentStylesheet(editor.document, selection, rootNode) : toggleCommentHTML(editor.document, selection, rootNode);
+            const edits = (0, util_1.isStyleSheet)(editor.document.languageId) ? toggleCommentStylesheet(editor.document, selection, rootNode) : toggleCommentHTML(editor.document, selection, rootNode);
             if (edits.length > 0) {
                 allEdits.push(edits);
             }
@@ -16993,21 +17070,21 @@ function toggleCommentHTML(document, selection, rootNode) {
     const selectionStartOffset = document.offsetAt(selectionStart);
     const selectionEndOffset = document.offsetAt(selectionEnd);
     const documentText = document.getText();
-    const startNode = util_1.getHtmlFlatNode(documentText, rootNode, selectionStartOffset, true);
-    const endNode = util_1.getHtmlFlatNode(documentText, rootNode, selectionEndOffset, true);
+    const startNode = (0, util_1.getHtmlFlatNode)(documentText, rootNode, selectionStartOffset, true);
+    const endNode = (0, util_1.getHtmlFlatNode)(documentText, rootNode, selectionEndOffset, true);
     if (!startNode || !endNode) {
         return [];
     }
-    if (util_1.sameNodes(startNode, endNode) && startNode.name === 'style'
+    if ((0, util_1.sameNodes)(startNode, endNode) && startNode.name === 'style'
         && startNode.open && startNode.close
         && startNode.open.end < selectionStartOffset
         && startNode.close.start > selectionEndOffset) {
         const buffer = ' '.repeat(startNode.open.end) +
             documentText.substring(startNode.open.end, startNode.close.start);
-        const cssRootNode = css_parser_1.default(buffer);
+        const cssRootNode = (0, css_parser_1.default)(buffer);
         return toggleCommentStylesheet(document, selection, cssRootNode);
     }
-    let allNodes = util_1.getNodesInBetween(startNode, endNode);
+    let allNodes = (0, util_1.getNodesInBetween)(startNode, endNode);
     let edits = [];
     allNodes.forEach(node => {
         edits = edits.concat(getRangesToUnCommentHTML(node, document));
@@ -17015,16 +17092,16 @@ function toggleCommentHTML(document, selection, rootNode) {
     if (startNode.type === 'comment') {
         return edits;
     }
-    edits.push(new vscode.TextEdit(util_1.offsetRangeToVsRange(document, allNodes[0].start, allNodes[0].start), startCommentHTML));
-    edits.push(new vscode.TextEdit(util_1.offsetRangeToVsRange(document, allNodes[allNodes.length - 1].end, allNodes[allNodes.length - 1].end), endCommentHTML));
+    edits.push(new vscode.TextEdit((0, util_1.offsetRangeToVsRange)(document, allNodes[0].start, allNodes[0].start), startCommentHTML));
+    edits.push(new vscode.TextEdit((0, util_1.offsetRangeToVsRange)(document, allNodes[allNodes.length - 1].end, allNodes[allNodes.length - 1].end), endCommentHTML));
     return edits;
 }
 function getRangesToUnCommentHTML(node, document) {
     let unCommentTextEdits = [];
     // If current node is commented, then uncomment and return
     if (node.type === 'comment') {
-        unCommentTextEdits.push(new vscode.TextEdit(util_1.offsetRangeToVsRange(document, node.start, node.start + startCommentHTML.length), ''));
-        unCommentTextEdits.push(new vscode.TextEdit(util_1.offsetRangeToVsRange(document, node.end - endCommentHTML.length, node.end), ''));
+        unCommentTextEdits.push(new vscode.TextEdit((0, util_1.offsetRangeToVsRange)(document, node.start, node.start + startCommentHTML.length), ''));
+        unCommentTextEdits.push(new vscode.TextEdit((0, util_1.offsetRangeToVsRange)(document, node.end - endCommentHTML.length, node.end), ''));
         return unCommentTextEdits;
     }
     // All children of current node should be uncommented
@@ -17038,27 +17115,27 @@ function toggleCommentStylesheet(document, selection, rootNode) {
     const selectionEnd = selection.isReversed ? selection.anchor : selection.active;
     let selectionStartOffset = document.offsetAt(selectionStart);
     let selectionEndOffset = document.offsetAt(selectionEnd);
-    const startNode = util_1.getFlatNode(rootNode, selectionStartOffset, true);
-    const endNode = util_1.getFlatNode(rootNode, selectionEndOffset, true);
+    const startNode = (0, util_1.getFlatNode)(rootNode, selectionStartOffset, true);
+    const endNode = (0, util_1.getFlatNode)(rootNode, selectionEndOffset, true);
     if (!selection.isEmpty) {
         selectionStartOffset = adjustStartNodeCss(startNode, selectionStartOffset, rootNode);
         selectionEndOffset = adjustEndNodeCss(endNode, selectionEndOffset, rootNode);
-        selection = util_1.offsetRangeToSelection(document, selectionStartOffset, selectionEndOffset);
+        selection = (0, util_1.offsetRangeToSelection)(document, selectionStartOffset, selectionEndOffset);
     }
     else if (startNode) {
         selectionStartOffset = startNode.start;
         selectionEndOffset = startNode.end;
-        selection = util_1.offsetRangeToSelection(document, selectionStartOffset, selectionEndOffset);
+        selection = (0, util_1.offsetRangeToSelection)(document, selectionStartOffset, selectionEndOffset);
     }
     // Uncomment the comments that intersect with the selection.
     let rangesToUnComment = [];
     let edits = [];
     rootNode.comments.forEach(comment => {
-        const commentRange = util_1.offsetRangeToVsRange(document, comment.start, comment.end);
+        const commentRange = (0, util_1.offsetRangeToVsRange)(document, comment.start, comment.end);
         if (selection.intersection(commentRange)) {
             rangesToUnComment.push(commentRange);
-            edits.push(new vscode.TextEdit(util_1.offsetRangeToVsRange(document, comment.start, comment.start + startCommentStylesheet.length), ''));
-            edits.push(new vscode.TextEdit(util_1.offsetRangeToVsRange(document, comment.end - endCommentStylesheet.length, comment.end), ''));
+            edits.push(new vscode.TextEdit((0, util_1.offsetRangeToVsRange)(document, comment.start, comment.start + startCommentStylesheet.length), ''));
+            edits.push(new vscode.TextEdit((0, util_1.offsetRangeToVsRange)(document, comment.end - endCommentStylesheet.length, comment.end), ''));
         }
     });
     if (edits.length > 0) {
@@ -17151,7 +17228,7 @@ exports.fetchEditPoint = void 0;
 const vscode = __webpack_require__(2);
 const util_1 = __webpack_require__(6);
 function fetchEditPoint(direction) {
-    if (!util_1.validate() || !vscode.window.activeTextEditor) {
+    if (!(0, util_1.validate)() || !vscode.window.activeTextEditor) {
         return;
     }
     const editor = vscode.window.activeTextEditor;
@@ -17228,12 +17305,12 @@ const selectItemHTML_1 = __webpack_require__(43);
 const selectItemStylesheet_1 = __webpack_require__(44);
 const parseDocument_1 = __webpack_require__(13);
 function fetchSelectItem(direction) {
-    if (!util_1.validate() || !vscode.window.activeTextEditor) {
+    if (!(0, util_1.validate)() || !vscode.window.activeTextEditor) {
         return;
     }
     const editor = vscode.window.activeTextEditor;
     const document = editor.document;
-    const rootNode = parseDocument_1.getRootNode(document, true);
+    const rootNode = (0, parseDocument_1.getRootNode)(document, true);
     if (!rootNode) {
         return;
     }
@@ -17242,15 +17319,15 @@ function fetchSelectItem(direction) {
         const selectionStart = selection.isReversed ? selection.active : selection.anchor;
         const selectionEnd = selection.isReversed ? selection.anchor : selection.active;
         let updatedSelection;
-        if (util_1.isStyleSheet(editor.document.languageId)) {
+        if ((0, util_1.isStyleSheet)(editor.document.languageId)) {
             updatedSelection = direction === 'next' ?
-                selectItemStylesheet_1.nextItemStylesheet(document, selectionStart, selectionEnd, rootNode) :
-                selectItemStylesheet_1.prevItemStylesheet(document, selectionStart, selectionEnd, rootNode);
+                (0, selectItemStylesheet_1.nextItemStylesheet)(document, selectionStart, selectionEnd, rootNode) :
+                (0, selectItemStylesheet_1.prevItemStylesheet)(document, selectionStart, selectionEnd, rootNode);
         }
         else {
             updatedSelection = direction === 'next' ?
-                selectItemHTML_1.nextItemHTML(document, selectionStart, selectionEnd, rootNode) :
-                selectItemHTML_1.prevItemHTML(document, selectionStart, selectionEnd, rootNode);
+                (0, selectItemHTML_1.nextItemHTML)(document, selectionStart, selectionEnd, rootNode) :
+                (0, selectItemHTML_1.prevItemHTML)(document, selectionStart, selectionEnd, rootNode);
         }
         newSelections.push(updatedSelection ? updatedSelection : selection);
     });
@@ -17275,7 +17352,7 @@ exports.prevItemHTML = exports.nextItemHTML = void 0;
 const util_1 = __webpack_require__(6);
 function nextItemHTML(document, selectionStart, selectionEnd, rootNode) {
     const selectionEndOffset = document.offsetAt(selectionEnd);
-    let currentNode = util_1.getHtmlFlatNode(document.getText(), rootNode, selectionEndOffset, false);
+    let currentNode = (0, util_1.getHtmlFlatNode)(document.getText(), rootNode, selectionEndOffset, false);
     let nextNode = undefined;
     if (!currentNode) {
         return;
@@ -17320,7 +17397,7 @@ function nextItemHTML(document, selectionStart, selectionEnd, rootNode) {
 exports.nextItemHTML = nextItemHTML;
 function prevItemHTML(document, selectionStart, selectionEnd, rootNode) {
     const selectionStartOffset = document.offsetAt(selectionStart);
-    let currentNode = util_1.getHtmlFlatNode(document.getText(), rootNode, selectionStartOffset, false);
+    let currentNode = (0, util_1.getHtmlFlatNode)(document.getText(), rootNode, selectionStartOffset, false);
     let prevNode = undefined;
     if (!currentNode) {
         return;
@@ -17342,14 +17419,14 @@ function prevItemHTML(document, selectionStart, selectionEnd, rootNode) {
                 }
                 prevNode = prevNode.nextSibling;
             }
-            prevNode = util_1.getDeepestFlatNode((prevNode && prevNode.type !== 'comment') ? prevNode : oldOption);
+            prevNode = (0, util_1.getDeepestFlatNode)((prevNode && prevNode.type !== 'comment') ? prevNode : oldOption);
         }
     }
     // Select previous sibling which is not a comment. If none found, then select parent
     while (!prevNode && currentNode) {
         if (currentNode.previousSibling) {
             if (currentNode.previousSibling.type !== 'comment') {
-                prevNode = util_1.getDeepestFlatNode(currentNode.previousSibling);
+                prevNode = (0, util_1.getDeepestFlatNode)(currentNode.previousSibling);
             }
             else {
                 currentNode = currentNode.previousSibling;
@@ -17370,7 +17447,7 @@ function getSelectionFromNode(document, node) {
     if (node && node.open) {
         const selectionStart = node.open.start + 1;
         const selectionEnd = selectionStart + node.name.length;
-        return util_1.offsetRangeToSelection(document, selectionStart, selectionEnd);
+        return (0, util_1.offsetRangeToSelection)(document, selectionStart, selectionEnd);
     }
     return undefined;
 }
@@ -17381,7 +17458,7 @@ function getNextAttribute(document, selectionStart, selectionEnd, node) {
     for (const attr of node.attributes) {
         if (selectionEnd < attr.start) {
             // select full attr
-            return util_1.offsetRangeToSelection(document, attr.start, attr.end);
+            return (0, util_1.offsetRangeToSelection)(document, attr.start, attr.end);
         }
         if (!attr.value || attr.value.start === attr.value.end) {
             // No attr value to select
@@ -17390,7 +17467,7 @@ function getNextAttribute(document, selectionStart, selectionEnd, node) {
         if ((selectionStart === attr.start && selectionEnd === attr.end) ||
             selectionEnd < attr.value.start) {
             // cursor is in attr name,  so select full attr value
-            return util_1.offsetRangeToSelection(document, attr.value.start, attr.value.end);
+            return (0, util_1.offsetRangeToSelection)(document, attr.value.start, attr.value.end);
         }
         // Fetch the next word in the attr value
         if (attr.value.toString().indexOf(' ') === -1) {
@@ -17407,14 +17484,14 @@ function getNextAttribute(document, selectionStart, selectionEnd, node) {
             pos = selectionEndCharacter - attrValueStartCharacter - 1;
         }
         if (pos !== undefined) {
-            const [newSelectionStartOffset, newSelectionEndOffset] = util_1.findNextWord(attr.value.toString(), pos);
+            const [newSelectionStartOffset, newSelectionEndOffset] = (0, util_1.findNextWord)(attr.value.toString(), pos);
             if (newSelectionStartOffset === undefined || newSelectionEndOffset === undefined) {
                 return;
             }
             if (newSelectionStartOffset >= 0 && newSelectionEndOffset >= 0) {
                 const newSelectionStart = attr.value.start + newSelectionStartOffset;
                 const newSelectionEnd = attr.value.start + newSelectionEndOffset;
-                return util_1.offsetRangeToSelection(document, newSelectionStart, newSelectionEnd);
+                return (0, util_1.offsetRangeToSelection)(document, newSelectionStart, newSelectionEnd);
             }
         }
     }
@@ -17431,29 +17508,29 @@ function getPrevAttribute(document, selectionStart, selectionEnd, node) {
         }
         if (!attr.value || attr.value.start === attr.value.end || selectionStart < attr.value.start) {
             // select full attr
-            return util_1.offsetRangeToSelection(document, attr.start, attr.end);
+            return (0, util_1.offsetRangeToSelection)(document, attr.start, attr.end);
         }
         if (selectionStart === attr.value.start) {
             if (selectionEnd >= attr.value.end) {
                 // select full attr
-                return util_1.offsetRangeToSelection(document, attr.start, attr.end);
+                return (0, util_1.offsetRangeToSelection)(document, attr.start, attr.end);
             }
             // select attr value
-            return util_1.offsetRangeToSelection(document, attr.value.start, attr.value.end);
+            return (0, util_1.offsetRangeToSelection)(document, attr.value.start, attr.value.end);
         }
         // Fetch the prev word in the attr value
         const selectionStartCharacter = document.positionAt(selectionStart).character;
         const attrValueStartCharacter = document.positionAt(attr.value.start).character;
         const pos = selectionStart > attr.value.end ? attr.value.toString().length :
             selectionStartCharacter - attrValueStartCharacter;
-        const [newSelectionStartOffset, newSelectionEndOffset] = util_1.findPrevWord(attr.value.toString(), pos);
+        const [newSelectionStartOffset, newSelectionEndOffset] = (0, util_1.findPrevWord)(attr.value.toString(), pos);
         if (newSelectionStartOffset === undefined || newSelectionEndOffset === undefined) {
             return;
         }
         if (newSelectionStartOffset >= 0 && newSelectionEndOffset >= 0) {
             const newSelectionStart = attr.value.start + newSelectionStartOffset;
             const newSelectionEnd = attr.value.start + newSelectionEndOffset;
-            return util_1.offsetRangeToSelection(document, newSelectionStart, newSelectionEnd);
+            return (0, util_1.offsetRangeToSelection)(document, newSelectionStart, newSelectionEnd);
         }
     }
     return;
@@ -17477,7 +17554,7 @@ const util_1 = __webpack_require__(6);
 function nextItemStylesheet(document, startPosition, endPosition, rootNode) {
     const startOffset = document.offsetAt(startPosition);
     const endOffset = document.offsetAt(endPosition);
-    let currentNode = util_1.getFlatNode(rootNode, endOffset, true);
+    let currentNode = (0, util_1.getFlatNode)(rootNode, endOffset, true);
     if (!currentNode) {
         currentNode = rootNode;
     }
@@ -17520,7 +17597,7 @@ exports.nextItemStylesheet = nextItemStylesheet;
 function prevItemStylesheet(document, startPosition, endPosition, rootNode) {
     const startOffset = document.offsetAt(startPosition);
     const endOffset = document.offsetAt(endPosition);
-    let currentNode = util_1.getFlatNode(rootNode, startOffset, false);
+    let currentNode = (0, util_1.getFlatNode)(rootNode, startOffset, false);
     if (!currentNode) {
         currentNode = rootNode;
     }
@@ -17551,7 +17628,7 @@ function prevItemStylesheet(document, startPosition, endPosition, rootNode) {
     while (prevNode.nextSibling && startOffset >= prevNode.nextSibling.end) {
         prevNode = prevNode.nextSibling;
     }
-    prevNode = util_1.getDeepestFlatNode(prevNode);
+    prevNode = (0, util_1.getDeepestFlatNode)(prevNode);
     return getSelectionFromProperty(document, prevNode, startOffset, endOffset, false, 'prev');
 }
 exports.prevItemStylesheet = prevItemStylesheet;
@@ -17560,7 +17637,7 @@ function getSelectionFromNode(document, node) {
         return;
     }
     const nodeToSelect = node.type === 'rule' ? node.selectorToken : node;
-    return util_1.offsetRangeToSelection(document, nodeToSelect.start, nodeToSelect.end);
+    return (0, util_1.offsetRangeToSelection)(document, nodeToSelect.start, nodeToSelect.end);
 }
 function getSelectionFromProperty(document, node, selectionStart, selectionEnd, selectFullValue, direction) {
     if (!node || node.type !== 'property') {
@@ -17571,7 +17648,7 @@ function getSelectionFromProperty(document, node, selectionStart, selectionEnd, 
     selectFullValue = selectFullValue ||
         (direction === 'prev' && selectionStart === propertyNode.valueToken.start && selectionEnd < propertyNode.valueToken.end);
     if (selectFullValue) {
-        return util_1.offsetRangeToSelection(document, propertyNode.valueToken.start, propertyNode.valueToken.end);
+        return (0, util_1.offsetRangeToSelection)(document, propertyNode.valueToken.start, propertyNode.valueToken.end);
     }
     let pos = -1;
     if (direction === 'prev') {
@@ -17593,7 +17670,7 @@ function getSelectionFromProperty(document, node, selectionStart, selectionEnd, 
         pos = selectionEnd === propertyNode.valueToken.end ? -1 :
             selectionEndChar - tokenStartChar - 1;
     }
-    let [newSelectionStartOffset, newSelectionEndOffset] = direction === 'prev' ? util_1.findPrevWord(propertyValue, pos) : util_1.findNextWord(propertyValue, pos);
+    let [newSelectionStartOffset, newSelectionEndOffset] = direction === 'prev' ? (0, util_1.findPrevWord)(propertyValue, pos) : (0, util_1.findNextWord)(propertyValue, pos);
     if (!newSelectionStartOffset && !newSelectionEndOffset) {
         return;
     }
@@ -17634,17 +17711,17 @@ function evaluateMathExpression() {
             try {
                 if (selectionText) {
                     // respect selections
-                    const result = String(math_expression_1.default(selectionText));
+                    const result = String((0, math_expression_1.default)(selectionText));
                     editBuilder.replace(new vscode.Range(startpos, endpos), result);
                 }
                 else {
                     // no selection made, extract expression from line
                     const lineToSelectionEnd = editor.document.getText(new vscode.Range(new vscode.Position(selection.end.line, 0), endpos));
-                    const extractedIndices = math_expression_1.extract(lineToSelectionEnd);
+                    const extractedIndices = (0, math_expression_1.extract)(lineToSelectionEnd);
                     if (!extractedIndices) {
                         throw new Error('Invalid extracted indices');
                     }
-                    const result = String(math_expression_1.default(lineToSelectionEnd.substr(extractedIndices[0], extractedIndices[1])));
+                    const result = String((0, math_expression_1.default)(lineToSelectionEnd.substr(extractedIndices[0], extractedIndices[1])));
                     const rangeToReplace = new vscode.Range(new vscode.Position(selection.end.line, extractedIndices[0]), new vscode.Position(selection.end.line, extractedIndices[1]));
                     editBuilder.replace(rangeToReplace, result);
                 }
@@ -18109,7 +18186,7 @@ function reflectCssValue() {
         vscode_1.window.showInformationMessage('No editor is active.');
         return;
     }
-    const node = util_1.getCssPropertyFromDocument(editor, editor.selection.active);
+    const node = (0, util_1.getCssPropertyFromDocument)(editor, editor.selection.active);
     if (!node) {
         return;
     }
@@ -18134,9 +18211,9 @@ function updateCSSNode(editor, property) {
             if (prefix === currentPrefix) {
                 return;
             }
-            const vendorProperty = util_1.getCssPropertyFromRule(rule, prefix + propertyName);
+            const vendorProperty = (0, util_1.getCssPropertyFromRule)(rule, prefix + propertyName);
             if (vendorProperty) {
-                const rangeToReplace = util_1.offsetRangeToVsRange(editor.document, vendorProperty.valueToken.start, vendorProperty.valueToken.end);
+                const rangeToReplace = (0, util_1.offsetRangeToVsRange)(editor.document, vendorProperty.valueToken.start, vendorProperty.valueToken.end);
                 builder.replace(rangeToReplace, propertyValue);
             }
         });

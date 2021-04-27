@@ -407,15 +407,17 @@ class AzureActiveDirectoryService {
             logger_1.default.info('Warning: The \'offline_access\' scope was not included, so the generated token will not be able to be refreshed.');
         }
         return new Promise(async (resolve, reject) => {
-            if (vscode.env.remoteName !== undefined) {
+            const runsRemote = vscode.env.remoteName !== undefined;
+            const runsServerless = vscode.env.remoteName === undefined && vscode.env.uiKind === vscode.UIKind.Web;
+            if (runsRemote || runsServerless) {
                 resolve(this.loginWithoutLocalServer(scope));
                 return;
             }
             const nonce = randomBytes(16).toString('base64');
-            const { server, redirectPromise, codePromise } = authServer_1.createServer(nonce);
+            const { server, redirectPromise, codePromise } = (0, authServer_1.createServer)(nonce);
             let token;
             try {
-                const port = await authServer_1.startServer(server);
+                const port = await (0, authServer_1.startServer)(server);
                 vscode.env.openExternal(vscode.Uri.parse(`http://localhost:${port}/signin?nonce=${encodeURIComponent(nonce)}`));
                 const redirectReq = await redirectPromise;
                 if ('err' in redirectReq) {
@@ -428,8 +430,8 @@ class AzureActiveDirectoryService {
                 const updatedPortStr = (/^[^:]+:(\d+)$/.exec(Array.isArray(host) ? host[0] : host) || [])[1];
                 const updatedPort = updatedPortStr ? parseInt(updatedPortStr, 10) : port;
                 const state = `${updatedPort},${encodeURIComponent(nonce)}`;
-                const codeVerifier = utils_1.toBase64UrlEncoding(randomBytes(32).toString('base64'));
-                const codeChallenge = utils_1.toBase64UrlEncoding(await sha256_1.sha256(codeVerifier));
+                const codeVerifier = (0, utils_1.toBase64UrlEncoding)(randomBytes(32).toString('base64'));
+                const codeChallenge = (0, utils_1.toBase64UrlEncoding)(await (0, sha256_1.sha256)(codeVerifier));
                 const loginUrl = `${loginEndpointUrl}${tenant}/oauth2/v2.0/authorize?response_type=code&response_mode=query&client_id=${encodeURIComponent(clientId)}&redirect_uri=${encodeURIComponent(redirectUrl)}&state=${state}&scope=${encodeURIComponent(scope)}&prompt=select_account&code_challenge_method=S256&code_challenge=${codeChallenge}`;
                 await redirectReq.res.writeHead(302, { Location: loginUrl });
                 redirectReq.res.end();
@@ -495,8 +497,8 @@ class AzureActiveDirectoryService {
         const state = `${callbackEnvironment}${port},${encodeURIComponent(nonce)},${encodeURIComponent(callbackUri.query)}`;
         const signInUrl = `${loginEndpointUrl}${tenant}/oauth2/v2.0/authorize`;
         let uri = vscode.Uri.parse(signInUrl);
-        const codeVerifier = utils_1.toBase64UrlEncoding(randomBytes(32).toString('base64'));
-        const codeChallenge = utils_1.toBase64UrlEncoding(await sha256_1.sha256(codeVerifier));
+        const codeVerifier = (0, utils_1.toBase64UrlEncoding)(randomBytes(32).toString('base64'));
+        const codeChallenge = (0, utils_1.toBase64UrlEncoding)(await (0, sha256_1.sha256)(codeVerifier));
         uri = uri.with({
             query: `response_type=code&client_id=${encodeURIComponent(clientId)}&response_mode=query&redirect_uri=${redirectUrl}&state=${state}&scope=${scope}&prompt=select_account&code_challenge_method=S256&code_challenge=${codeChallenge}`
         });
@@ -610,7 +612,7 @@ class AzureActiveDirectoryService {
             idToken: json.id_token,
             refreshToken: json.refresh_token,
             scope,
-            sessionId: existingId || `${claims.tid}/${(claims.oid || (claims.altsecid || '' + claims.ipd || ''))}/${uuid_1.v4()}`,
+            sessionId: existingId || `${claims.tid}/${(claims.oid || (claims.altsecid || '' + claims.ipd || ''))}/${(0, uuid_1.v4)()}`,
             account: {
                 label: claims.email || claims.unique_name || claims.preferred_username || 'user@example.com',
                 id: `${claims.tid}/${(claims.oid || (claims.altsecid || '' + claims.ipd || ''))}`
@@ -630,7 +632,7 @@ class AzureActiveDirectoryService {
             });
             const proxyEndpoints = await vscode.commands.executeCommand('workbench.getCodeExchangeProxyEndpoints');
             const endpoint = proxyEndpoints && proxyEndpoints['microsoft'] || `${loginEndpointUrl}${tenant}/oauth2/v2.0/token`;
-            const result = await node_fetch_1.default(endpoint, {
+            const result = await (0, node_fetch_1.default)(endpoint, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/x-www-form-urlencoded',
@@ -663,7 +665,7 @@ class AzureActiveDirectoryService {
         });
         let result;
         try {
-            result = await node_fetch_1.default(`https://login.microsoftonline.com/${tenant}/oauth2/v2.0/token`, {
+            result = await (0, node_fetch_1.default)(`https://login.microsoftonline.com/${tenant}/oauth2/v2.0/token`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/x-www-form-urlencoded',
@@ -715,7 +717,8 @@ class AzureActiveDirectoryService {
         this.clearSessionTimeout(sessionId);
         this._refreshTimeouts.set(sessionId, setTimeout(async () => {
             try {
-                await this.refreshToken(refreshToken, scope, sessionId);
+                const refreshedToken = await this.refreshToken(refreshToken, scope, sessionId);
+                exports.onDidChangeSessions.fire({ added: [], removed: [], changed: [this.convertToSessionSync(refreshedToken)] });
             }
             catch (e) {
                 this.pollForReconnect(sessionId, refreshToken, scope);
@@ -728,18 +731,12 @@ class AzureActiveDirectoryService {
                 logger_1.default.error('Token refresh failed after 3 attempts');
                 return resolve(false);
             }
-            if (attempts === 1) {
-                const token = this._tokens.find(token => token.sessionId === sessionId);
-                if (token) {
-                    token.accessToken = undefined;
-                    exports.onDidChangeSessions.fire({ added: [], removed: [], changed: [this.convertToSessionSync(token)] });
-                }
-            }
             const delayBeforeRetry = 5 * attempts * attempts;
             this.clearSessionTimeout(sessionId);
             this._refreshTimeouts.set(sessionId, setTimeout(async () => {
                 try {
-                    await this.refreshToken(refreshToken, scope, sessionId);
+                    const refreshedToken = await this.refreshToken(refreshToken, scope, sessionId);
+                    exports.onDidChangeSessions.fire({ added: [], removed: [], changed: [this.convertToSessionSync(refreshedToken)] });
                     return resolve(true);
                 }
                 catch (e) {
@@ -5705,7 +5702,7 @@ exports.default = TelemetryReporter;
 /* 44 */
 /***/ (function(module) {
 
-module.exports = JSON.parse("{\"name\":\"microsoft-authentication\",\"publisher\":\"vscode\",\"license\":\"MIT\",\"displayName\":\"%displayName%\",\"description\":\"%description%\",\"version\":\"0.0.1\",\"engines\":{\"vscode\":\"^1.42.0\"},\"categories\":[\"Other\"],\"enableProposedApi\":true,\"activationEvents\":[\"onAuthenticationRequest:microsoft\"],\"extensionKind\":[\"ui\",\"workspace\",\"web\"],\"contributes\":{\"authentication\":[{\"label\":\"Microsoft\",\"id\":\"microsoft\"}]},\"aiKey\":\"AIF-d9b70cd4-b9f9-4d70-929b-a071c400b217\",\"main\":\"./out/extension.js\",\"browser\":\"./dist/browser/extension.js\",\"scripts\":{\"vscode:prepublish\":\"npm run compile\",\"compile\":\"gulp compile-extension:microsoft-authentication\",\"compile-web\":\"npx webpack-cli --config extension-browser.webpack.config --mode none\",\"watch\":\"gulp watch-extension:microsoft-authentication\",\"watch-web\":\"npx webpack-cli --config extension-browser.webpack.config --mode none --watch --info-verbosity verbose\"},\"devDependencies\":{\"@types/node\":\"^12.19.9\",\"@types/node-fetch\":\"^2.5.7\",\"@types/randombytes\":\"^2.0.0\",\"@types/sha.js\":\"^2.4.0\",\"@types/uuid\":\"8.0.0\"},\"dependencies\":{\"buffer\":\"^5.6.0\",\"node-fetch\":\"2.6.1\",\"randombytes\":\"github:rmacfarlane/randombytes#b28d4ecee46262801ea09f15fa1f1513a05c5971\",\"sha.js\":\"2.4.11\",\"stream\":\"0.0.2\",\"uuid\":\"^8.2.0\",\"vscode-extension-telemetry\":\"0.1.1\",\"vscode-nls\":\"^4.1.1\"},\"repository\":{\"type\":\"git\",\"url\":\"https://github.com/microsoft/vscode.git\"}}");
+module.exports = JSON.parse("{\"name\":\"microsoft-authentication\",\"publisher\":\"vscode\",\"license\":\"MIT\",\"displayName\":\"%displayName%\",\"description\":\"%description%\",\"version\":\"0.0.1\",\"engines\":{\"vscode\":\"^1.42.0\"},\"categories\":[\"Other\"],\"enableProposedApi\":true,\"activationEvents\":[\"onAuthenticationRequest:microsoft\"],\"extensionKind\":[\"ui\",\"workspace\",\"web\"],\"contributes\":{\"authentication\":[{\"label\":\"Microsoft\",\"id\":\"microsoft\"}]},\"aiKey\":\"AIF-d9b70cd4-b9f9-4d70-929b-a071c400b217\",\"main\":\"./out/extension.js\",\"browser\":\"./dist/browser/extension.js\",\"scripts\":{\"vscode:prepublish\":\"npm run compile\",\"compile\":\"gulp compile-extension:microsoft-authentication\",\"compile-web\":\"npx webpack-cli --config extension-browser.webpack.config --mode none\",\"watch\":\"gulp watch-extension:microsoft-authentication\",\"watch-web\":\"npx webpack-cli --config extension-browser.webpack.config --mode none --watch --info-verbosity verbose\"},\"devDependencies\":{\"@types/node\":\"^12.19.9\",\"@types/node-fetch\":\"^2.5.7\",\"@types/randombytes\":\"^2.0.0\",\"@types/sha.js\":\"^2.4.0\",\"@types/uuid\":\"8.0.0\"},\"dependencies\":{\"buffer\":\"^5.6.0\",\"node-fetch\":\"2.6.1\",\"randombytes\":\"github:rmacfarlane/randombytes#b28d4ecee46262801ea09f15fa1f1513a05c5971\",\"sha.js\":\"2.4.11\",\"stream\":\"0.0.2\",\"uuid\":\"^8.2.0\",\"vscode-extension-telemetry\":\"0.1.7\",\"vscode-nls\":\"^4.1.1\"},\"repository\":{\"type\":\"git\",\"url\":\"https://github.com/microsoft/vscode.git\"}}");
 
 /***/ })
 /******/ ])));

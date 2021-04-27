@@ -99,8 +99,8 @@ const browser_1 = __webpack_require__(1);
 const jsonServer_1 = __webpack_require__(55);
 const messageReader = new browser_1.BrowserMessageReader(self);
 const messageWriter = new browser_1.BrowserMessageWriter(self);
-const connection = browser_1.createConnection(messageReader, messageWriter);
-jsonServer_1.startServer(connection, {});
+const connection = (0, browser_1.createConnection)(messageReader, messageWriter);
+(0, jsonServer_1.startServer)(connection, {});
 
 
 /***/ }),
@@ -8446,7 +8446,7 @@ var ForceValidateRequest;
 const workspaceContext = {
     resolveRelativePath: (relativePath, resource) => {
         const base = resource.substr(0, resource.lastIndexOf('/') + 1);
-        return requests_1.resolvePath(base, relativePath);
+        return (0, requests_1.resolvePath)(base, relativePath);
     }
 };
 function startServer(connection, runtime) {
@@ -8474,7 +8474,7 @@ function startServer(connection, runtime) {
         };
     }
     // create the JSON language service
-    let languageService = vscode_json_languageservice_1.getLanguageService({
+    let languageService = (0, vscode_json_languageservice_1.getLanguageService)({
         workspaceContext,
         contributions: [],
         clientCapabilities: vscode_json_languageservice_1.ClientCapabilities.LATEST
@@ -8496,7 +8496,7 @@ function startServer(connection, runtime) {
     connection.onInitialize((params) => {
         var _a, _b, _c, _d, _e, _f;
         const handledProtocols = (_a = params.initializationOptions) === null || _a === void 0 ? void 0 : _a.handledSchemaProtocols;
-        languageService = vscode_json_languageservice_1.getLanguageService({
+        languageService = (0, vscode_json_languageservice_1.getLanguageService)({
             schemaRequestService: getSchemaRequestService(handledProtocols),
             workspaceContext,
             contributions: [],
@@ -8558,7 +8558,7 @@ function startServer(connection, runtime) {
                     else {
                         warning = { features: { [name]: name } };
                         warning.timeout = setTimeout(() => {
-                            connection.sendNotification(ResultLimitReachedNotification.type, `${requests_1.basename(uri)}: For performance reasons, ${Object.keys(warning.features).join(' and ')} have been limited to ${resultLimit} items.`);
+                            connection.sendNotification(ResultLimitReachedNotification.type, `${(0, requests_1.basename)(uri)}: For performance reasons, ${Object.keys(warning.features).join(' and ')} have been limited to ${resultLimit} items.`);
                             warning.timeout = undefined;
                         }, 2000);
                         pendingWarnings[uri] = warning;
@@ -8704,7 +8704,7 @@ function startServer(connection, runtime) {
                 }
             });
         }, error => {
-            connection.console.error(runner_1.formatError(`Error while validating ${textDocument.uri}`, error));
+            connection.console.error((0, runner_1.formatError)(`Error while validating ${textDocument.uri}`, error));
         });
     }
     connection.onDidChangeWatchedFiles((change) => {
@@ -8719,7 +8719,7 @@ function startServer(connection, runtime) {
             documents.all().forEach(triggerValidation);
         }
     });
-    const jsonDocuments = languageModelCache_1.getLanguageModelCache(10, 60, document => languageService.parseJSONDocument(document));
+    const jsonDocuments = (0, languageModelCache_1.getLanguageModelCache)(10, 60, document => languageService.parseJSONDocument(document));
     documents.onDidClose(e => {
         jsonDocuments.onDocumentRemoved(e.document);
     });
@@ -8730,7 +8730,7 @@ function startServer(connection, runtime) {
         return jsonDocuments.get(document);
     }
     connection.onCompletion((textDocumentPosition, token) => {
-        return runner_1.runSafeAsync(async () => {
+        return (0, runner_1.runSafeAsync)(async () => {
             const document = documents.get(textDocumentPosition.textDocument.uri);
             if (document) {
                 const jsonDocument = getJSONDocument(document);
@@ -8740,7 +8740,7 @@ function startServer(connection, runtime) {
         }, null, `Error while computing completions for ${textDocumentPosition.textDocument.uri}`, token);
     });
     connection.onHover((textDocumentPositionParams, token) => {
-        return runner_1.runSafeAsync(async () => {
+        return (0, runner_1.runSafeAsync)(async () => {
             const document = documents.get(textDocumentPositionParams.textDocument.uri);
             if (document) {
                 const jsonDocument = getJSONDocument(document);
@@ -8750,7 +8750,7 @@ function startServer(connection, runtime) {
         }, null, `Error while computing hover for ${textDocumentPositionParams.textDocument.uri}`, token);
     });
     connection.onDocumentSymbol((documentSymbolParams, token) => {
-        return runner_1.runSafe(() => {
+        return (0, runner_1.runSafe)(() => {
             const document = documents.get(documentSymbolParams.textDocument.uri);
             if (document) {
                 const jsonDocument = getJSONDocument(document);
@@ -8766,7 +8766,7 @@ function startServer(connection, runtime) {
         }, [], `Error while computing document symbols for ${documentSymbolParams.textDocument.uri}`, token);
     });
     connection.onDocumentRangeFormatting((formatParams, token) => {
-        return runner_1.runSafe(() => {
+        return (0, runner_1.runSafe)(() => {
             const document = documents.get(formatParams.textDocument.uri);
             if (document) {
                 const edits = languageService.format(document, formatParams.range, formatParams.options);
@@ -8780,7 +8780,7 @@ function startServer(connection, runtime) {
         }, [], `Error while formatting range for ${formatParams.textDocument.uri}`, token);
     });
     connection.onDocumentColor((params, token) => {
-        return runner_1.runSafeAsync(async () => {
+        return (0, runner_1.runSafeAsync)(async () => {
             const document = documents.get(params.textDocument.uri);
             if (document) {
                 const onResultLimitExceeded = limitExceededWarnings.onResultLimitExceeded(document.uri, resultLimit, 'document colors');
@@ -8791,7 +8791,7 @@ function startServer(connection, runtime) {
         }, [], `Error while computing document colors for ${params.textDocument.uri}`, token);
     });
     connection.onColorPresentation((params, token) => {
-        return runner_1.runSafe(() => {
+        return (0, runner_1.runSafe)(() => {
             const document = documents.get(params.textDocument.uri);
             if (document) {
                 const jsonDocument = getJSONDocument(document);
@@ -8801,7 +8801,7 @@ function startServer(connection, runtime) {
         }, [], `Error while computing color presentations for ${params.textDocument.uri}`, token);
     });
     connection.onFoldingRanges((params, token) => {
-        return runner_1.runSafe(() => {
+        return (0, runner_1.runSafe)(() => {
             const document = documents.get(params.textDocument.uri);
             if (document) {
                 const onRangeLimitExceeded = limitExceededWarnings.onResultLimitExceeded(document.uri, foldingRangeLimit, 'folding ranges');
@@ -8811,7 +8811,7 @@ function startServer(connection, runtime) {
         }, null, `Error while computing folding ranges for ${params.textDocument.uri}`, token);
     });
     connection.onSelectionRanges((params, token) => {
-        return runner_1.runSafe(() => {
+        return (0, runner_1.runSafe)(() => {
             const document = documents.get(params.textDocument.uri);
             if (document) {
                 const jsonDocument = getJSONDocument(document);
@@ -8821,7 +8821,7 @@ function startServer(connection, runtime) {
         }, [], `Error while computing selection ranges for ${params.textDocument.uri}`, token);
     });
     connection.onDocumentLinks((params, token) => {
-        return runner_1.runSafeAsync(async () => {
+        return (0, runner_1.runSafeAsync)(async () => {
             const document = documents.get(params.textDocument.uri);
             if (document) {
                 const jsonDocument = getJSONDocument(document);

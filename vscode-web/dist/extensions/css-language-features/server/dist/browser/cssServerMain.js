@@ -99,8 +99,8 @@ const browser_1 = __webpack_require__(1);
 const cssServer_1 = __webpack_require__(55);
 const messageReader = new browser_1.BrowserMessageReader(self);
 const messageWriter = new browser_1.BrowserMessageWriter(self);
-const connection = browser_1.createConnection(messageReader, messageWriter);
-cssServer_1.startServer(connection, {});
+const connection = (0, browser_1.createConnection)(messageReader, messageWriter);
+(0, cssServer_1.startServer)(connection, {});
 
 
 /***/ }),
@@ -8436,7 +8436,7 @@ function startServer(connection, runtime) {
     // Make the text document manager listen on the connection
     // for open, change and close text document events
     documents.listen(connection);
-    const stylesheets = languageModelCache_1.getLanguageModelCache(10, 60, document => getLanguageService(document).parseStylesheet(document));
+    const stylesheets = (0, languageModelCache_1.getLanguageModelCache)(10, 60, document => getLanguageService(document).parseStylesheet(document));
     documents.onDidClose(e => {
         stylesheets.onDocumentRemoved(e.document);
     });
@@ -8461,7 +8461,7 @@ function startServer(connection, runtime) {
                 workspaceFolders.push({ name: '', uri: vscode_uri_1.URI.file(params.rootPath).toString() });
             }
         }
-        requestService = requests_1.getRequestService(((_a = params.initializationOptions) === null || _a === void 0 ? void 0 : _a.handledSchemas) || ['file'], connection, runtime);
+        requestService = (0, requests_1.getRequestService)(((_a = params.initializationOptions) === null || _a === void 0 ? void 0 : _a.handledSchemas) || ['file'], connection, runtime);
         function getClientCapability(name, def) {
             const keys = name.split('.');
             let c = params.capabilities;
@@ -8476,9 +8476,9 @@ function startServer(connection, runtime) {
         const snippetSupport = !!getClientCapability('textDocument.completion.completionItem.snippetSupport', false);
         scopedSettingsSupport = !!getClientCapability('workspace.configuration', false);
         foldingRangeLimit = getClientCapability('textDocument.foldingRange.rangeLimit', Number.MAX_VALUE);
-        languageServices.css = vscode_css_languageservice_1.getCSSLanguageService({ fileSystemProvider: requestService, clientCapabilities: params.capabilities });
-        languageServices.scss = vscode_css_languageservice_1.getSCSSLanguageService({ fileSystemProvider: requestService, clientCapabilities: params.capabilities });
-        languageServices.less = vscode_css_languageservice_1.getLESSLanguageService({ fileSystemProvider: requestService, clientCapabilities: params.capabilities });
+        languageServices.css = (0, vscode_css_languageservice_1.getCSSLanguageService)({ fileSystemProvider: requestService, clientCapabilities: params.capabilities });
+        languageServices.scss = (0, vscode_css_languageservice_1.getSCSSLanguageService)({ fileSystemProvider: requestService, clientCapabilities: params.capabilities });
+        languageServices.less = (0, vscode_css_languageservice_1.getLESSLanguageService)({ fileSystemProvider: requestService, clientCapabilities: params.capabilities });
         const capabilities = {
             textDocumentSync: vscode_languageserver_1.TextDocumentSyncKind.Incremental,
             completionProvider: snippetSupport ? { resolveProvider: false, triggerCharacters: ['/', '-', ':'] } : undefined,
@@ -8570,30 +8570,30 @@ function startServer(connection, runtime) {
             // Send the computed diagnostics to VSCode.
             connection.sendDiagnostics({ uri: textDocument.uri, diagnostics });
         }, e => {
-            connection.console.error(runner_1.formatError(`Error while validating ${textDocument.uri}`, e));
+            connection.console.error((0, runner_1.formatError)(`Error while validating ${textDocument.uri}`, e));
         });
     }
     function updateDataProviders(dataPaths) {
-        dataProvidersReady = customData_1.fetchDataProviders(dataPaths, requestService).then(customDataProviders => {
+        dataProvidersReady = (0, customData_1.fetchDataProviders)(dataPaths, requestService).then(customDataProviders => {
             for (const lang in languageServices) {
                 languageServices[lang].setDataProviders(true, customDataProviders);
             }
         });
     }
     connection.onCompletion((textDocumentPosition, token) => {
-        return runner_1.runSafeAsync(async () => {
+        return (0, runner_1.runSafeAsync)(async () => {
             const document = documents.get(textDocumentPosition.textDocument.uri);
             if (document) {
                 const [settings,] = await Promise.all([getDocumentSettings(document), dataProvidersReady]);
                 const styleSheet = stylesheets.get(document);
-                const documentContext = documentContext_1.getDocumentContext(document.uri, workspaceFolders);
+                const documentContext = (0, documentContext_1.getDocumentContext)(document.uri, workspaceFolders);
                 return getLanguageService(document).doComplete2(document, textDocumentPosition.position, styleSheet, documentContext, settings === null || settings === void 0 ? void 0 : settings.completion);
             }
             return null;
         }, null, `Error while computing completions for ${textDocumentPosition.textDocument.uri}`, token);
     });
     connection.onHover((textDocumentPosition, token) => {
-        return runner_1.runSafeAsync(async () => {
+        return (0, runner_1.runSafeAsync)(async () => {
             const document = documents.get(textDocumentPosition.textDocument.uri);
             if (document) {
                 const [settings,] = await Promise.all([getDocumentSettings(document), dataProvidersReady]);
@@ -8604,7 +8604,7 @@ function startServer(connection, runtime) {
         }, null, `Error while computing hover for ${textDocumentPosition.textDocument.uri}`, token);
     });
     connection.onDocumentSymbol((documentSymbolParams, token) => {
-        return runner_1.runSafeAsync(async () => {
+        return (0, runner_1.runSafeAsync)(async () => {
             const document = documents.get(documentSymbolParams.textDocument.uri);
             if (document) {
                 await dataProvidersReady;
@@ -8615,7 +8615,7 @@ function startServer(connection, runtime) {
         }, [], `Error while computing document symbols for ${documentSymbolParams.textDocument.uri}`, token);
     });
     connection.onDefinition((documentDefinitionParams, token) => {
-        return runner_1.runSafeAsync(async () => {
+        return (0, runner_1.runSafeAsync)(async () => {
             const document = documents.get(documentDefinitionParams.textDocument.uri);
             if (document) {
                 await dataProvidersReady;
@@ -8626,7 +8626,7 @@ function startServer(connection, runtime) {
         }, null, `Error while computing definitions for ${documentDefinitionParams.textDocument.uri}`, token);
     });
     connection.onDocumentHighlight((documentHighlightParams, token) => {
-        return runner_1.runSafeAsync(async () => {
+        return (0, runner_1.runSafeAsync)(async () => {
             const document = documents.get(documentHighlightParams.textDocument.uri);
             if (document) {
                 await dataProvidersReady;
@@ -8637,11 +8637,11 @@ function startServer(connection, runtime) {
         }, [], `Error while computing document highlights for ${documentHighlightParams.textDocument.uri}`, token);
     });
     connection.onDocumentLinks(async (documentLinkParams, token) => {
-        return runner_1.runSafeAsync(async () => {
+        return (0, runner_1.runSafeAsync)(async () => {
             const document = documents.get(documentLinkParams.textDocument.uri);
             if (document) {
                 await dataProvidersReady;
-                const documentContext = documentContext_1.getDocumentContext(document.uri, workspaceFolders);
+                const documentContext = (0, documentContext_1.getDocumentContext)(document.uri, workspaceFolders);
                 const stylesheet = stylesheets.get(document);
                 return getLanguageService(document).findDocumentLinks2(document, stylesheet, documentContext);
             }
@@ -8649,7 +8649,7 @@ function startServer(connection, runtime) {
         }, [], `Error while computing document links for ${documentLinkParams.textDocument.uri}`, token);
     });
     connection.onReferences((referenceParams, token) => {
-        return runner_1.runSafeAsync(async () => {
+        return (0, runner_1.runSafeAsync)(async () => {
             const document = documents.get(referenceParams.textDocument.uri);
             if (document) {
                 await dataProvidersReady;
@@ -8660,7 +8660,7 @@ function startServer(connection, runtime) {
         }, [], `Error while computing references for ${referenceParams.textDocument.uri}`, token);
     });
     connection.onCodeAction((codeActionParams, token) => {
-        return runner_1.runSafeAsync(async () => {
+        return (0, runner_1.runSafeAsync)(async () => {
             const document = documents.get(codeActionParams.textDocument.uri);
             if (document) {
                 await dataProvidersReady;
@@ -8671,7 +8671,7 @@ function startServer(connection, runtime) {
         }, [], `Error while computing code actions for ${codeActionParams.textDocument.uri}`, token);
     });
     connection.onDocumentColor((params, token) => {
-        return runner_1.runSafeAsync(async () => {
+        return (0, runner_1.runSafeAsync)(async () => {
             const document = documents.get(params.textDocument.uri);
             if (document) {
                 await dataProvidersReady;
@@ -8682,7 +8682,7 @@ function startServer(connection, runtime) {
         }, [], `Error while computing document colors for ${params.textDocument.uri}`, token);
     });
     connection.onColorPresentation((params, token) => {
-        return runner_1.runSafeAsync(async () => {
+        return (0, runner_1.runSafeAsync)(async () => {
             const document = documents.get(params.textDocument.uri);
             if (document) {
                 await dataProvidersReady;
@@ -8693,7 +8693,7 @@ function startServer(connection, runtime) {
         }, [], `Error while computing color presentations for ${params.textDocument.uri}`, token);
     });
     connection.onRenameRequest((renameParameters, token) => {
-        return runner_1.runSafeAsync(async () => {
+        return (0, runner_1.runSafeAsync)(async () => {
             const document = documents.get(renameParameters.textDocument.uri);
             if (document) {
                 await dataProvidersReady;
@@ -8704,7 +8704,7 @@ function startServer(connection, runtime) {
         }, null, `Error while computing renames for ${renameParameters.textDocument.uri}`, token);
     });
     connection.onFoldingRanges((params, token) => {
-        return runner_1.runSafeAsync(async () => {
+        return (0, runner_1.runSafeAsync)(async () => {
             const document = documents.get(params.textDocument.uri);
             if (document) {
                 await dataProvidersReady;
@@ -8714,7 +8714,7 @@ function startServer(connection, runtime) {
         }, null, `Error while computing folding ranges for ${params.textDocument.uri}`, token);
     });
     connection.onSelectionRanges((params, token) => {
-        return runner_1.runSafeAsync(async () => {
+        return (0, runner_1.runSafeAsync)(async () => {
             const document = documents.get(params.textDocument.uri);
             const positions = params.positions;
             if (document) {
@@ -44094,10 +44094,10 @@ function getDocumentContext(documentUri, workspaceFolders) {
     function getRootFolder() {
         for (let folder of workspaceFolders) {
             let folderURI = folder.uri;
-            if (!strings_1.endsWith(folderURI, '/')) {
+            if (!(0, strings_1.endsWith)(folderURI, '/')) {
                 folderURI = folderURI + '/';
             }
-            if (strings_1.startsWith(documentUri, folderURI)) {
+            if ((0, strings_1.startsWith)(documentUri, folderURI)) {
                 return folderURI;
             }
         }
@@ -44181,7 +44181,7 @@ function fetchDataProviders(dataPaths, requestService) {
             return parseCSSData(content);
         }
         catch (e) {
-            return vscode_css_languageservice_1.newCSSDataProvider({ version: 1 });
+            return (0, vscode_css_languageservice_1.newCSSDataProvider)({ version: 1 });
         }
     });
     return Promise.all(providers);
@@ -44193,9 +44193,9 @@ function parseCSSData(source) {
         rawData = JSON.parse(source);
     }
     catch (err) {
-        return vscode_css_languageservice_1.newCSSDataProvider({ version: 1 });
+        return (0, vscode_css_languageservice_1.newCSSDataProvider)({ version: 1 });
     }
-    return vscode_css_languageservice_1.newCSSDataProvider({
+    return (0, vscode_css_languageservice_1.newCSSDataProvider)({
         version: rawData.version || 1,
         properties: rawData.properties || [],
         atDirectives: rawData.atDirectives || [],

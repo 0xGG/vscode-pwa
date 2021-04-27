@@ -107,7 +107,7 @@ function activate(context) {
         const newLanguageClient = (id, name, clientOptions) => {
             return new browser_1.LanguageClient(id, name, clientOptions, worker);
         };
-        htmlClient_1.startClient(context, newLanguageClient, { TextDecoder });
+        (0, htmlClient_1.startClient)(context, newLanguageClient, { TextDecoder });
     }
     catch (e) {
         console.log(e);
@@ -167,7 +167,7 @@ function startClient(context, newLanguageClient, runtime) {
     let documentSelector = ['html', 'handlebars'];
     let embeddedLanguages = { css: true, javascript: true };
     let rangeFormatting = undefined;
-    const customDataSource = customData_1.getCustomDataSource(context.subscriptions);
+    const customDataSource = (0, customData_1.getCustomDataSource)(context.subscriptions);
     // Options to control the language client
     let clientOptions = {
         documentSelector,
@@ -217,7 +217,7 @@ function startClient(context, newLanguageClient, runtime) {
             let param = client.code2ProtocolConverter.asTextDocumentPositionParams(document, position);
             return client.sendRequest(TagCloseRequest.type, param);
         };
-        disposable = tagClosing_1.activateTagClosing(tagRequestor, { html: true, handlebars: true }, 'html.autoClosingTags');
+        disposable = (0, tagClosing_1.activateTagClosing)(tagRequestor, { html: true, handlebars: true }, 'html.autoClosingTags');
         toDispose.push(disposable);
         disposable = client.onTelemetry(e => {
             var _a;
@@ -283,7 +283,7 @@ function startClient(context, newLanguageClient, runtime) {
     }
     vscode_1.languages.setLanguageConfiguration('html', {
         indentationRules: {
-            increaseIndentPattern: /<(?!\?|(?:area|base|br|col|frame|hr|html|img|input|link|meta|param)\b|[^>]*\/>)([-_\.A-Za-z0-9]+)(?=\s|>)\b[^>]*>(?!.*<\/\1>)|<!--(?!.*-->)|\{[^}"']*$/,
+            increaseIndentPattern: /<(?!\?|(?:area|base|br|col|frame|hr|html|img|input|keygen|link|menuitem|meta|param|source|track|wbr)\b|[^>]*\/>)([-_\.A-Za-z0-9]+)(?=\s|>)\b[^>]*>(?!.*<\/\1>)|<!--(?!.*-->)|\{[^}"']*$/,
             decreaseIndentPattern: /^\s*(<\/(?!html)[-_\.A-Za-z0-9]+\b[^>]*>|-->|\})/
         },
         wordPattern: /(-?\d*\.\d\w*)|([^\`\~\!\@\$\^\&\*\(\)\=\+\[\{\]\}\\\|\;\:\'\"\,\.\<\>\/\s]+)/g,
@@ -15195,7 +15195,7 @@ function getCustomDataPathsInAllWorkspaces() {
         if (Array.isArray(paths)) {
             for (const path of paths) {
                 if (typeof path === 'string') {
-                    dataPaths.push(requests_1.resolvePath(rootFolder, path).toString());
+                    dataPaths.push((0, requests_1.resolvePath)(rootFolder, path).toString());
                 }
             }
         }
@@ -15223,7 +15223,7 @@ function getCustomDataPathsFromAllExtensions() {
         const customData = (_c = (_b = (_a = extension.packageJSON) === null || _a === void 0 ? void 0 : _a.contributes) === null || _b === void 0 ? void 0 : _b.html) === null || _c === void 0 ? void 0 : _c.customData;
         if (Array.isArray(customData)) {
             for (const rp of customData) {
-                dataPaths.push(requests_1.joinPath(extension.extensionUri, rp).toString());
+                dataPaths.push((0, requests_1.joinPath)(extension.extensionUri, rp).toString());
             }
         }
     }

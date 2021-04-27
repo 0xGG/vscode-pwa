@@ -125,7 +125,7 @@ function registerSettingsCompletions() {
 function registerVariableCompletions(pattern) {
     return vscode.languages.registerCompletionItemProvider({ language: 'jsonc', pattern }, {
         provideCompletionItems(document, position, _token) {
-            const location = jsonc_parser_1.getLocation(document.getText(), document.offsetAt(position));
+            const location = (0, jsonc_parser_1.getLocation)(document.getText(), document.offsetAt(position));
             if (!location.isAtPropertyKey && location.previousNode && location.previousNode.type === 'string') {
                 const indexOf$ = document.lineAt(position.line).text.indexOf('$');
                 const startPosition = indexOf$ >= 0 ? new vscode.Position(position.line, indexOf$) : position;
@@ -159,11 +159,11 @@ function registerExtensionsCompletions() {
 function registerExtensionsCompletionsInExtensionsDocument() {
     return vscode.languages.registerCompletionItemProvider({ pattern: '**/extensions.json' }, {
         provideCompletionItems(document, position, _token) {
-            const location = jsonc_parser_1.getLocation(document.getText(), document.offsetAt(position));
+            const location = (0, jsonc_parser_1.getLocation)(document.getText(), document.offsetAt(position));
             const range = document.getWordRangeAtPosition(position) || new vscode.Range(position, position);
             if (location.path[0] === 'recommendations') {
-                const extensionsContent = jsonc_parser_1.parse(document.getText());
-                return extensionsProposals_1.provideInstalledExtensionProposals(extensionsContent && extensionsContent.recommendations || [], '', range, false);
+                const extensionsContent = (0, jsonc_parser_1.parse)(document.getText());
+                return (0, extensionsProposals_1.provideInstalledExtensionProposals)(extensionsContent && extensionsContent.recommendations || [], '', range, false);
             }
             return [];
         }
@@ -172,11 +172,11 @@ function registerExtensionsCompletionsInExtensionsDocument() {
 function registerExtensionsCompletionsInWorkspaceConfigurationDocument() {
     return vscode.languages.registerCompletionItemProvider({ pattern: '**/*.code-workspace' }, {
         provideCompletionItems(document, position, _token) {
-            const location = jsonc_parser_1.getLocation(document.getText(), document.offsetAt(position));
+            const location = (0, jsonc_parser_1.getLocation)(document.getText(), document.offsetAt(position));
             const range = document.getWordRangeAtPosition(position) || new vscode.Range(position, position);
             if (location.path[0] === 'extensions' && location.path[1] === 'recommendations') {
-                const extensionsContent = jsonc_parser_1.parse(document.getText())['extensions'];
-                return extensionsProposals_1.provideInstalledExtensionProposals(extensionsContent && extensionsContent.recommendations || [], '', range, false);
+                const extensionsContent = (0, jsonc_parser_1.parse)(document.getText())['extensions'];
+                return (0, extensionsProposals_1.provideInstalledExtensionProposals)(extensionsContent && extensionsContent.recommendations || [], '', range, false);
             }
             return [];
         }
@@ -189,7 +189,7 @@ vscode.languages.registerDocumentSymbolProvider({ pattern: '**/launch.json', lan
         let lastProperty = '';
         let startOffset = 0;
         let depthInObjects = 0;
-        jsonc_parser_1.visit(document.getText(), {
+        (0, jsonc_parser_1.visit)(document.getText(), {
             onObjectProperty: (property, _offset, _length) => {
                 lastProperty = property;
             },
@@ -229,7 +229,7 @@ function registerContextKeyCompletions() {
     ]);
     return vscode.languages.registerCompletionItemProvider([...paths.keys()], {
         async provideCompletionItems(document, position, token) {
-            const location = jsonc_parser_1.getLocation(document.getText(), document.offsetAt(position));
+            const location = (0, jsonc_parser_1.getLocation)(document.getText(), document.offsetAt(position));
             if (location.isAtPropertyKey) {
                 return;
             }
@@ -1942,7 +1942,7 @@ class SettingsDocument {
         this.document = document;
     }
     provideCompletionItems(position, _token) {
-        const location = jsonc_parser_1.getLocation(this.document.getText(), this.document.offsetAt(position));
+        const location = (0, jsonc_parser_1.getLocation)(this.document.getText(), this.document.offsetAt(position));
         const range = this.document.getWordRangeAtPosition(position) || new vscode.Range(position, position);
         // window.title
         if (location.path[0] === 'window.title') {
@@ -1967,19 +1967,19 @@ class SettingsDocument {
         if (location.path[0] === 'settingsSync.ignoredExtensions') {
             let ignoredExtensions = [];
             try {
-                ignoredExtensions = jsonc_parser_1.parse(this.document.getText())['settingsSync.ignoredExtensions'];
+                ignoredExtensions = (0, jsonc_parser_1.parse)(this.document.getText())['settingsSync.ignoredExtensions'];
             }
             catch (e) { /* ignore error */ }
-            return extensionsProposals_1.provideInstalledExtensionProposals(ignoredExtensions, '', range, true);
+            return (0, extensionsProposals_1.provideInstalledExtensionProposals)(ignoredExtensions, '', range, true);
         }
         // remote.extensionKind
         if (location.path[0] === 'remote.extensionKind' && location.path.length === 2 && location.isAtPropertyKey) {
             let alreadyConfigured = [];
             try {
-                alreadyConfigured = Object.keys(jsonc_parser_1.parse(this.document.getText())['remote.extensionKind']);
+                alreadyConfigured = Object.keys((0, jsonc_parser_1.parse)(this.document.getText())['remote.extensionKind']);
             }
             catch (e) { /* ignore error */ }
-            return extensionsProposals_1.provideInstalledExtensionProposals(alreadyConfigured, `: [\n\t"ui"\n]`, range, true);
+            return (0, extensionsProposals_1.provideInstalledExtensionProposals)(alreadyConfigured, `: [\n\t"ui"\n]`, range, true);
         }
         return this.provideLanguageOverridesCompletionItems(location, position);
     }

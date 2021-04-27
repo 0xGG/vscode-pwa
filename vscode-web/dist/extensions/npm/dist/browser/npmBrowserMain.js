@@ -99,7 +99,7 @@ exports.deactivate = exports.activate = void 0;
 const httpRequest = __webpack_require__(1);
 const jsonContributions_1 = __webpack_require__(2);
 async function activate(context) {
-    context.subscriptions.push(jsonContributions_1.addJSONProviders(httpRequest.xhr, false));
+    context.subscriptions.push((0, jsonContributions_1.addJSONProviders)(httpRequest.xhr, false));
 }
 exports.activate = activate;
 function deactivate() {
@@ -180,7 +180,7 @@ class JSONHoverProvider {
     }
     provideHover(document, position, _token) {
         const offset = document.offsetAt(position);
-        const location = jsonc_parser_1.getLocation(document.getText(), offset);
+        const location = (0, jsonc_parser_1.getLocation)(document.getText(), offset);
         if (!location.previousNode) {
             return null;
         }
@@ -222,7 +222,7 @@ class JSONCompletionItemProvider {
         const items = [];
         let isIncomplete = false;
         const offset = document.offsetAt(position);
-        const location = jsonc_parser_1.getLocation(document.getText(), offset);
+        const location = (0, jsonc_parser_1.getLocation)(document.getText(), offset);
         const node = location.previousNode;
         if (node && node.offset <= offset && offset <= node.offset + node.length && (node.type === 'property' || node.type === 'string' || node.type === 'number' || node.type === 'boolean' || node.type === 'null')) {
             overwriteRange = new vscode_1.Range(document.positionAt(node.offset), document.positionAt(node.offset + node.length));
@@ -245,7 +245,7 @@ class JSONCompletionItemProvider {
         };
         let collectPromise = null;
         if (location.isAtPropertyKey) {
-            const scanner = jsonc_parser_1.createScanner(document.getText(), true);
+            const scanner = (0, jsonc_parser_1.createScanner)(document.getText(), true);
             const addValue = !location.previousNode || !this.hasColonAfter(scanner, location.previousNode.offset + location.previousNode.length);
             const isLast = this.isLast(scanner, document.offsetAt(position));
             collectPromise = this.jsonContribution.collectPropertySuggestions(document.uri, location, currentWord, addValue, isLast, collector);
@@ -2395,7 +2395,7 @@ class PackageJSONContribution {
     npmView(pack, resource) {
         return new Promise((resolve, _reject) => {
             const args = ['view', '--json', pack, 'description', 'dist-tags.latest', 'homepage', 'version'];
-            let cwd = resource && resource.scheme === 'file' ? path_1.dirname(resource.fsPath) : undefined;
+            let cwd = resource && resource.scheme === 'file' ? (0, path_1.dirname)(resource.fsPath) : undefined;
             cp.execFile(process.platform === 'win32' ? 'npm.cmd' : 'npm', args, { cwd }, (error, stdout) => {
                 if (!error) {
                     try {

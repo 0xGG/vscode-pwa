@@ -572,7 +572,7 @@ exports.Delayer = Delayer;
 Object.defineProperty(exports, "__esModule", { value: true });
 const vscode = __webpack_require__(2);
 const vscode_nls_1 = __webpack_require__(8);
-const localize = vscode_nls_1.loadMessageBundle();
+const localize = (0, vscode_nls_1.loadMessageBundle)();
 class MergeConflictCodeLensProvider {
     constructor(trackerService) {
         this.tracker = trackerService.createTracker('codelens');
@@ -744,7 +744,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const vscode = __webpack_require__(2);
 const contentProvider_1 = __webpack_require__(10);
 const vscode_nls_1 = __webpack_require__(8);
-const localize = vscode_nls_1.loadMessageBundle();
+const localize = (0, vscode_nls_1.loadMessageBundle)();
 var NavigationDirection;
 (function (NavigationDirection) {
     NavigationDirection[NavigationDirection["Forwards"] = 0] = "Forwards";
@@ -1087,7 +1087,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
  *--------------------------------------------------------------------------------------------*/
 const vscode = __webpack_require__(2);
 const vscode_nls_1 = __webpack_require__(8);
-const localize = vscode_nls_1.loadMessageBundle();
+const localize = (0, vscode_nls_1.loadMessageBundle)();
 class MergeDecorator {
     constructor(context, trackerService) {
         this.context = context;

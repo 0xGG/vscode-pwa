@@ -115,7 +115,7 @@ function activate(context) {
                 });
             }
         };
-        jsonClient_1.startClient(context, newLanguageClient, { http });
+        (0, jsonClient_1.startClient)(context, newLanguageClient, { http });
     }
     catch (e) {
         console.log(e);
@@ -445,7 +445,7 @@ function getSchemaAssociations(_context) {
                     if (Array.isArray(fileMatch) && typeof url === 'string') {
                         let uri = url;
                         if (uri[0] === '.' && uri[1] === '/') {
-                            uri = requests_1.joinPath(extension.extensionUri, uri).toString();
+                            uri = (0, requests_1.joinPath)(extension.extensionUri, uri).toString();
                         }
                         fileMatch = fileMatch.map(fm => {
                             if (fm[0] === '%') {
@@ -556,11 +556,11 @@ function getSchemaId(schema, folderUri) {
     let url = schema.url;
     if (!url) {
         if (schema.schema) {
-            url = schema.schema.id || `vscode://schemas/custom/${encodeURIComponent(hash_1.hash(schema.schema).toString(16))}`;
+            url = schema.schema.id || `vscode://schemas/custom/${encodeURIComponent((0, hash_1.hash)(schema.schema).toString(16))}`;
         }
     }
     else if (folderUri && (url[0] === '.' || url[0] === '/')) {
-        url = requests_1.joinPath(folderUri, url).toString();
+        url = (0, requests_1.joinPath)(folderUri, url).toString();
     }
     return url;
 }

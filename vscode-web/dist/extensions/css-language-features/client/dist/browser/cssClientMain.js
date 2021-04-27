@@ -107,7 +107,7 @@ function activate(context) {
         const newLanguageClient = (id, name, clientOptions) => {
             return new browser_1.LanguageClient(id, name, clientOptions, worker);
         };
-        cssClient_1.startClient(context, newLanguageClient, { TextDecoder });
+        (0, cssClient_1.startClient)(context, newLanguageClient, { TextDecoder });
     }
     catch (e) {
         console.log(e);
@@ -145,7 +145,7 @@ var CustomDataChangedNotification;
 })(CustomDataChangedNotification || (CustomDataChangedNotification = {}));
 const localize = nls.loadMessageBundle();
 function startClient(context, newLanguageClient, runtime) {
-    const customDataSource = customData_1.getCustomDataSource(context.subscriptions);
+    const customDataSource = (0, customData_1.getCustomDataSource)(context.subscriptions);
     let documentSelector = ['css', 'scss', 'less'];
     // Options to control the language client
     let clientOptions = {
@@ -198,7 +198,7 @@ function startClient(context, newLanguageClient, runtime) {
         customDataSource.onDidChange(() => {
             client.sendNotification(CustomDataChangedNotification.type, customDataSource.uris);
         });
-        requests_1.serveFileSystemRequests(client, runtime);
+        (0, requests_1.serveFileSystemRequests)(client, runtime);
     });
     let disposable = client.start();
     // Push the disposable to the context's subscriptions so that the

@@ -113,9 +113,9 @@ const security_1 = __webpack_require__(310);
 const slugify_1 = __webpack_require__(8);
 const telemetryReporter_1 = __webpack_require__(311);
 function activate(context) {
-    const telemetryReporter = telemetryReporter_1.loadDefaultTelemetryReporter();
+    const telemetryReporter = (0, telemetryReporter_1.loadDefaultTelemetryReporter)();
     context.subscriptions.push(telemetryReporter);
-    const contributions = markdownExtensions_1.getMarkdownExtensionContributions(context);
+    const contributions = (0, markdownExtensions_1.getMarkdownExtensionContributions)(context);
     context.subscriptions.push(contributions);
     const cspArbiter = new security_1.ExtensionContentSecurityPolicyArbiter(context.globalState, context.workspaceState);
     const engine = new markdownEngine_1.MarkdownEngine(contributions, slugify_1.githubSlugifier);
@@ -284,14 +284,14 @@ class OpenDocumentLinkCommand {
         if (didOpen) {
             return;
         }
-        if (path_1.extname(targetResource.path) === '') {
+        if ((0, path_1.extname)(targetResource.path) === '') {
             await this.tryOpen(engine, targetResource.with({ path: targetResource.path + '.md' }), args, column);
             return;
         }
     }
     static async tryOpen(engine, resource, args, column) {
         const tryUpdateForActiveFile = async () => {
-            if (vscode.window.activeTextEditor && file_1.isMarkdownFile(vscode.window.activeTextEditor.document)) {
+            if (vscode.window.activeTextEditor && (0, file_1.isMarkdownFile)(vscode.window.activeTextEditor.document)) {
                 if (vscode.window.activeTextEditor.document.uri.fsPath === resource.fsPath) {
                     await this.tryRevealLine(engine, vscode.window.activeTextEditor, args.fragment);
                     return true;
@@ -372,7 +372,7 @@ async function resolveLinkToMarkdownFile(path) {
         // Noop
     }
     // If no extension, try with `.md` extension
-    if (path_1.extname(path) === '') {
+    if ((0, path_1.extname)(path) === '') {
         return tryResolveLinkToMarkdownFile(path + '.md');
     }
     return undefined;
@@ -387,7 +387,7 @@ async function tryResolveLinkToMarkdownFile(path) {
     catch (_a) {
         return undefined;
     }
-    if (file_1.isMarkdownFile(document)) {
+    if ((0, file_1.isMarkdownFile)(document)) {
         return document.uri;
     }
     return undefined;
@@ -1210,7 +1210,7 @@ class ShowPreviewSecuritySelectorCommand {
             const source = vscode.Uri.parse(resource);
             this.previewSecuritySelector.showSecuritySelectorForResource(source.query ? vscode.Uri.parse(source.query) : source);
         }
-        else if (vscode.window.activeTextEditor && file_1.isMarkdownFile(vscode.window.activeTextEditor.document)) {
+        else if (vscode.window.activeTextEditor && (0, file_1.isMarkdownFile)(vscode.window.activeTextEditor.document)) {
             this.previewSecuritySelector.showSecuritySelectorForResource(vscode.window.activeTextEditor.document.uri);
         }
     }
@@ -1314,10 +1314,10 @@ const openDocumentLink_1 = __webpack_require__(4);
 const links_1 = __webpack_require__(19);
 const localize = nls.loadMessageBundle();
 function parseLink(document, link) {
-    const externalSchemeUri = links_1.getUriForLinkWithKnownExternalScheme(link);
+    const externalSchemeUri = (0, links_1.getUriForLinkWithKnownExternalScheme)(link);
     if (externalSchemeUri) {
         // Normalize VS Code links to target currently running version
-        if (links_1.isOfScheme(links_1.Schemes.vscode, link) || links_1.isOfScheme(links_1.Schemes['vscode-insiders'], link)) {
+        if ((0, links_1.isOfScheme)(links_1.Schemes.vscode, link) || (0, links_1.isOfScheme)(links_1.Schemes['vscode-insiders'], link)) {
             return { uri: vscode.Uri.parse(link).with({ scheme: vscode.env.uriScheme }) };
         }
         return { uri: externalSchemeUri };
@@ -2015,7 +2015,7 @@ const localize = nls.loadMessageBundle();
  */
 const previewStrings = {
     cspAlertMessageText: localize('preview.securityMessage.text', 'Some content has been disabled in this document'),
-    cspAlertMessageTitle: localize('preview.securityMessage.title', 'Potentially unsafe or insecure content has been disabled in the markdown preview. Change the Markdown preview security setting to allow insecure content or enable scripts'),
+    cspAlertMessageTitle: localize('preview.securityMessage.title', 'Potentially unsafe or insecure content has been disabled in the Markdown preview. Change the Markdown preview security setting to allow insecure content or enable scripts'),
     cspAlertMessageLabel: localize('preview.securityMessage.label', 'Content Disabled Security Warning')
 };
 function escapeAttribute(value) {
@@ -2311,7 +2311,7 @@ class MarkdownPreviewManager extends dispose_1.Disposable {
         this.trackActive(preview);
         preview.onDidChangeViewState(() => {
             // Remove other dynamic previews in our column
-            dispose_1.disposeAll(Array.from(this._dynamicPreviews).filter(otherPreview => preview !== otherPreview && preview.matches(otherPreview)));
+            (0, dispose_1.disposeAll)(Array.from(this._dynamicPreviews).filter(otherPreview => preview !== otherPreview && preview.matches(otherPreview)));
         });
         return preview;
     }
@@ -2415,7 +2415,7 @@ class TopmostLineMonitor extends dispose_1.Disposable {
         this._onChanged = this._register(new vscode.EventEmitter());
         this.onDidChanged = this._onChanged.event;
         this._register(vscode.window.onDidChangeTextEditorVisibleRanges(event => {
-            if (file_1.isMarkdownFile(event.textEditor.document)) {
+            if ((0, file_1.isMarkdownFile)(event.textEditor.document)) {
                 const line = getVisibleLine(event.textEditor);
                 if (typeof line === 'number') {
                     this.updateLine(event.textEditor.document.uri, line);
@@ -2736,7 +2736,7 @@ class MarkdownPreview extends dispose_1.Disposable {
         // Create new file watchers.
         const root = vscode.Uri.joinPath(this._resource, '../');
         for (const src of srcs) {
-            const uri = url_1.urlToUri(src, root);
+            const uri = (0, url_1.urlToUri)(src, root);
             if (uri && uri.scheme === 'file' && !this._fileWatchersBySrc.has(src)) {
                 const watcher = vscode.workspace.createFileSystemWatcher(uri.fsPath);
                 watcher.onDidChange(() => {
@@ -2765,7 +2765,7 @@ class MarkdownPreview extends dispose_1.Disposable {
         else if (!this._resource.scheme || this._resource.scheme === 'file') {
             baseRoots.push(vscode.Uri.file(path.dirname(this._resource.fsPath)));
         }
-        return baseRoots.map(root => resources_1.normalizeResource(this._resource, root));
+        return baseRoots.map(root => (0, resources_1.normalizeResource)(this._resource, root));
     }
     async onDidClickPreviewLink(href) {
         let [hrefPath, fragment] = decodeURIComponent(href).split('#');
@@ -2782,7 +2782,7 @@ class MarkdownPreview extends dispose_1.Disposable {
         const config = vscode.workspace.getConfiguration('markdown', this.resource);
         const openLinks = config.get('preview.openMarkdownLinks', 'inPreview');
         if (openLinks === 'inPreview') {
-            const markdownLink = await openDocumentLink_1.resolveLinkToMarkdownFile(hrefPath);
+            const markdownLink = await (0, openDocumentLink_1.resolveLinkToMarkdownFile)(hrefPath);
             if (markdownLink) {
                 this.delegate.openPreviewLinkToMarkdownFile(markdownLink, fragment);
                 return;
@@ -2792,7 +2792,7 @@ class MarkdownPreview extends dispose_1.Disposable {
     }
     //#region WebviewResourceProvider
     asWebviewUri(resource) {
-        return this._webviewPanel.webview.asWebviewUri(resources_1.normalizeResource(this._resource, resource));
+        return this._webviewPanel.webview.asWebviewUri((0, resources_1.normalizeResource)(this._resource, resource));
     }
     get cspSource() {
         return this._webviewPanel.webview.cspSource;
@@ -2887,8 +2887,8 @@ class DynamicMarkdownPreview extends dispose_1.Disposable {
             if (typeof (editor === null || editor === void 0 ? void 0 : editor.viewColumn) === 'undefined') {
                 return;
             }
-            if (file_1.isMarkdownFile(editor.document) && !this._locked && !this._preview.isPreviewOf(editor.document.uri)) {
-                const line = topmostLineMonitor_1.getVisibleLine(editor);
+            if ((0, file_1.isMarkdownFile)(editor.document) && !this._locked && !this._preview.isPreviewOf(editor.document.uri)) {
+                const line = (0, topmostLineMonitor_1.getVisibleLine)(editor);
                 this.update(editor.document.uri, line ? new StartingScrollLine(line) : undefined);
             }
         }));
@@ -3386,7 +3386,7 @@ class MarkdownPreviewConfiguration {
                 }
             }
         }
-        return arrays_1.equals(this.styles, otherConfig.styles);
+        return (0, arrays_1.equals)(this.styles, otherConfig.styles);
     }
 }
 exports.MarkdownPreviewConfiguration = MarkdownPreviewConfiguration;
@@ -3499,7 +3499,7 @@ class VSCodeWorkspaceMarkdownDocumentProvider extends dispose_1.Disposable {
             this._onDidDeleteMarkdownDocumentEmitter.fire(resource);
         }, null, this._disposables);
         vscode.workspace.onDidChangeTextDocument(e => {
-            if (file_1.isMarkdownFile(e.document)) {
+            if ((0, file_1.isMarkdownFile)(e.document)) {
                 this._onDidChangeMarkdownDocumentEmitter.fire(e.document);
             }
         }, null, this._disposables);
@@ -3560,7 +3560,7 @@ class MarkdownWorkspaceSymbolProvider extends dispose_1.Disposable {
         }
     }
     getSymbols(document) {
-        return lazy_1.lazy(async () => {
+        return (0, lazy_1.lazy)(async () => {
             return this._symbolProvider.provideDocumentSymbolInformation(document);
         });
     }
@@ -5706,7 +5706,7 @@ function isString(value) {
 }
 class Logger {
     constructor() {
-        this.outputChannel = lazy_1.lazy(() => vscode.window.createOutputChannel('Markdown'));
+        this.outputChannel = (0, lazy_1.lazy)(() => vscode.window.createOutputChannel('Markdown'));
         this.updateConfiguration();
     }
     log(message, data) {
@@ -5916,7 +5916,7 @@ class MarkdownEngine {
             const src = token.attrGet('src');
             if (src) {
                 (_a = env.containingImages) === null || _a === void 0 ? void 0 : _a.push({ src });
-                const imgHash = hash_1.hash(src);
+                const imgHash = (0, hash_1.hash)(src);
                 token.attrSet('id', `image-hash-${imgHash}`);
             }
             if (original) {
@@ -5942,11 +5942,11 @@ class MarkdownEngine {
         md.normalizeLink = (link) => {
             try {
                 // Normalize VS Code schemes to target the current version
-                if (links_1.isOfScheme(links_1.Schemes.vscode, link) || links_1.isOfScheme(links_1.Schemes['vscode-insiders'], link)) {
+                if ((0, links_1.isOfScheme)(links_1.Schemes.vscode, link) || (0, links_1.isOfScheme)(links_1.Schemes['vscode-insiders'], link)) {
                     return normalizeLink(vscode.Uri.parse(link).with({ scheme: vscode.env.uriScheme }).toString());
                 }
                 // Support file:// links
-                if (links_1.isOfScheme(links_1.Schemes.file, link)) {
+                if ((0, links_1.isOfScheme)(links_1.Schemes.file, link)) {
                     // Ensure link is relative by prepending `/` so that it uses the <base> element URI
                     // when resolving the absolute URL
                     return normalizeLink('/' + link.replace(/^file:/, 'file'));
@@ -5988,8 +5988,8 @@ class MarkdownEngine {
         const validateLink = md.validateLink;
         md.validateLink = (link) => {
             return validateLink(link)
-                || links_1.isOfScheme(links_1.Schemes.vscode, link)
-                || links_1.isOfScheme(links_1.Schemes['vscode-insiders'], link)
+                || (0, links_1.isOfScheme)(links_1.Schemes.vscode, link)
+                || (0, links_1.isOfScheme)(links_1.Schemes['vscode-insiders'], link)
                 || /^data:image\/.*?;/.test(link);
         };
     }

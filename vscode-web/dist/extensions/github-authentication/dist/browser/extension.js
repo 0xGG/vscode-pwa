@@ -215,7 +215,7 @@ class GitHubAuthenticationProvider {
     }
     async getSessions(scopes) {
         return scopes
-            ? this._sessions.filter(session => utils_1.arrayEquals(session.scopes, scopes))
+            ? this._sessions.filter(session => (0, utils_1.arrayEquals)(session.scopes, scopes))
             : this._sessions;
     }
     async verifySessions() {
@@ -331,7 +331,7 @@ class GitHubAuthenticationProvider {
     async tokenToSession(token, scopes) {
         const userInfo = await this._githubServer.getUserInfo(token);
         return {
-            id: uuid_1.v4(),
+            id: (0, uuid_1.v4)(),
             accessToken: token,
             account: { label: userInfo.accountName, id: userInfo.id },
             scopes
@@ -1278,7 +1278,7 @@ class GitHubServer {
                 return;
             }
             try {
-                const result = await node_fetch_1.default(`https://${AUTH_RELAY_SERVER}/token?code=${code}&state=${query.state}`, {
+                const result = await (0, node_fetch_1.default)(`https://${AUTH_RELAY_SERVER}/token?code=${code}&state=${query.state}`, {
                     method: 'POST',
                     headers: {
                         Accept: 'application/json'
@@ -1304,7 +1304,7 @@ class GitHubServer {
     async login(scopes) {
         logger_1.default.info('Logging in...');
         this.updateStatusBarItem(true);
-        const state = uuid_1.v4();
+        const state = (0, uuid_1.v4)();
         const callbackUri = await vscode.env.asExternalUri(vscode.Uri.parse(`${vscode.env.uriScheme}://vscode.github-authentication/did-authenticate`));
         if (this.isTestEnvironment(callbackUri)) {
             const token = await vscode.window.showInputBox({ prompt: 'GitHub Personal Access Token', ignoreFocusOut: true });
@@ -1337,16 +1337,18 @@ class GitHubServer {
         // before completing it.
         let codeExchangePromise = this._codeExchangePromises.get(scopes);
         if (!codeExchangePromise) {
-            codeExchangePromise = utils_1.promiseFromEvent(exports.uriHandler.event, this.exchangeCodeForToken(scopes));
+            codeExchangePromise = (0, utils_1.promiseFromEvent)(exports.uriHandler.event, this.exchangeCodeForToken(scopes));
             this._codeExchangePromises.set(scopes, codeExchangePromise);
         }
         return Promise.race([
             codeExchangePromise.promise,
-            utils_1.promiseFromEvent(onDidManuallyProvideToken.event, (token) => {
+            (0, utils_1.promiseFromEvent)(onDidManuallyProvideToken.event, (token, resolve, reject) => {
                 if (!token) {
-                    throw new Error('Cancelled');
+                    reject('Cancelled');
                 }
-                return token;
+                else {
+                    resolve(token);
+                }
             }).promise
         ]).finally(() => {
             this._pendingStates.delete(scopes);
@@ -1389,7 +1391,7 @@ class GitHubServer {
     async getScopes(token) {
         try {
             logger_1.default.info('Getting token scopes...');
-            const result = await node_fetch_1.default('https://api.github.com', {
+            const result = await (0, node_fetch_1.default)('https://api.github.com', {
                 headers: {
                     Authorization: `token ${token}`,
                     'User-Agent': 'Visual-Studio-Code'
@@ -1413,7 +1415,7 @@ class GitHubServer {
         let result;
         try {
             logger_1.default.info('Getting user info...');
-            result = await node_fetch_1.default('https://api.github.com/user', {
+            result = await (0, node_fetch_1.default)('https://api.github.com/user', {
                 headers: {
                     Authorization: `token ${token}`,
                     'User-Agent': 'Visual-Studio-Code'
@@ -1436,7 +1438,7 @@ class GitHubServer {
     }
     async checkIsEdu(token) {
         try {
-            const result = await node_fetch_1.default('https://education.github.com/api/user', {
+            const result = await (0, node_fetch_1.default)('https://education.github.com/api/user', {
                 headers: {
                     Authorization: `token ${token}`,
                     'faculty-check-preview': 'true',
@@ -1623,7 +1625,7 @@ exports.default = TelemetryReporter;
 /* 21 */
 /***/ (function(module) {
 
-module.exports = JSON.parse("{\"name\":\"github-authentication\",\"displayName\":\"%displayName%\",\"description\":\"%description%\",\"publisher\":\"vscode\",\"license\":\"MIT\",\"version\":\"0.0.1\",\"engines\":{\"vscode\":\"^1.41.0\"},\"enableProposedApi\":true,\"categories\":[\"Other\"],\"extensionKind\":[\"ui\",\"workspace\",\"web\"],\"activationEvents\":[\"onAuthenticationRequest:github\"],\"contributes\":{\"commands\":[{\"command\":\"github.provide-token\",\"title\":\"Manually Provide Token\"}],\"menus\":{\"commandPalette\":[{\"command\":\"github.provide-token\",\"when\":\"false\"}]},\"authentication\":[{\"label\":\"GitHub\",\"id\":\"github\"}]},\"aiKey\":\"AIF-d9b70cd4-b9f9-4d70-929b-a071c400b217\",\"main\":\"./out/extension.js\",\"browser\":\"./dist/browser/extension.js\",\"scripts\":{\"compile\":\"gulp compile-extension:github-authentication\",\"compile-web\":\"npx webpack-cli --config extension-browser.webpack.config --mode none\",\"watch\":\"gulp watch-extension:github-authentication\",\"watch-web\":\"npx webpack-cli --config extension-browser.webpack.config --mode none --watch --info-verbosity verbose\",\"vscode:prepublish\":\"npm run compile\"},\"dependencies\":{\"node-fetch\":\"2.6.1\",\"uuid\":\"8.1.0\",\"vscode-extension-telemetry\":\"0.1.1\",\"vscode-nls\":\"^4.1.2\"},\"devDependencies\":{\"@types/node\":\"^12.19.9\",\"@types/node-fetch\":\"^2.5.7\",\"@types/uuid\":\"8.0.0\"},\"repository\":{\"type\":\"git\",\"url\":\"https://github.com/microsoft/vscode.git\"}}");
+module.exports = JSON.parse("{\"name\":\"github-authentication\",\"displayName\":\"%displayName%\",\"description\":\"%description%\",\"publisher\":\"vscode\",\"license\":\"MIT\",\"version\":\"0.0.1\",\"engines\":{\"vscode\":\"^1.41.0\"},\"enableProposedApi\":true,\"categories\":[\"Other\"],\"extensionKind\":[\"ui\",\"workspace\",\"web\"],\"activationEvents\":[\"onAuthenticationRequest:github\"],\"contributes\":{\"commands\":[{\"command\":\"github.provide-token\",\"title\":\"Manually Provide Token\"}],\"menus\":{\"commandPalette\":[{\"command\":\"github.provide-token\",\"when\":\"false\"}]},\"authentication\":[{\"label\":\"GitHub\",\"id\":\"github\"}]},\"aiKey\":\"AIF-d9b70cd4-b9f9-4d70-929b-a071c400b217\",\"main\":\"./out/extension.js\",\"browser\":\"./dist/browser/extension.js\",\"scripts\":{\"compile\":\"gulp compile-extension:github-authentication\",\"compile-web\":\"npx webpack-cli --config extension-browser.webpack.config --mode none\",\"watch\":\"gulp watch-extension:github-authentication\",\"watch-web\":\"npx webpack-cli --config extension-browser.webpack.config --mode none --watch --info-verbosity verbose\",\"vscode:prepublish\":\"npm run compile\"},\"dependencies\":{\"node-fetch\":\"2.6.1\",\"uuid\":\"8.1.0\",\"vscode-extension-telemetry\":\"0.1.7\",\"vscode-nls\":\"^4.1.2\"},\"devDependencies\":{\"@types/node\":\"^12.19.9\",\"@types/node-fetch\":\"^2.5.7\",\"@types/uuid\":\"8.0.0\"},\"repository\":{\"type\":\"git\",\"url\":\"https://github.com/microsoft/vscode.git\"}}");
 
 /***/ })
 /******/ ])));
