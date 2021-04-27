@@ -4978,7 +4978,7 @@ vary@~1.1.2:
   resolved "https://registry.npmjs.org/vary/-/vary-1.1.2.tgz#2299f02c6ded30d4a5961b0b9f74524a18f634fc"
   integrity sha1-IpnwLG3tMNSllhsLn3RSShj2NPw=
 
-vscode-oniguruma@^1.4.0:
+vscode-oniguruma@^1.5.1:
   version "1.5.1"
   resolved "https://registry.npmjs.org/vscode-oniguruma/-/vscode-oniguruma-1.5.1.tgz#9ca10cd3ada128bd6380344ea28844243d11f695"
   integrity sha512-JrBZH8DCC262TEYcYdeyZusiETu0Vli0xFgdRwNJjDcObcRjbmJP+IFcA3ScBwIXwgFHYKbAgfxtM/Cl+3Spjw==
@@ -4993,15 +4993,15 @@ vscode-test@^1.5.0:
     rimraf "^3.0.2"
     unzipper "^0.10.11"
 
-vscode-textmate@^5.2.0:
+vscode-textmate@^5.4.0:
   version "5.4.0"
   resolved "https://registry.npmjs.org/vscode-textmate/-/vscode-textmate-5.4.0.tgz#4b25ffc1f14ac3a90faf9a388c67a01d24257cd7"
   integrity sha512-c0Q4zYZkcLizeYJ3hNyaVUM2AA8KDhNCA3JvXY8CeZSJuBdAy3bAvSbv46RClC4P3dSO9BdwhnKEx2zOo6vP/w==
 
-vscode-web@^1.54.1:
-  version "1.54.1"
-  resolved "https://registry.npmjs.org/vscode-web/-/vscode-web-1.54.1.tgz#e16b461ca30f0ec4938fdc8d56b9afe5c4602357"
-  integrity sha512-mwg4+KjJsCGpOJxIIjnLJXmprjH/n8V0hrBX3/PUe8UIrjh0W4LdOmEqre261sYWLP8VeN28gdAGkSpUyHvwkg==
+vscode-web@^1.55.0:
+  version "1.55.0"
+  resolved "https://registry.npmjs.org/vscode-web/-/vscode-web-1.55.0.tgz#ef93b604bde01a0286730bf1370eef00bc581166"
+  integrity sha512-g81YYPxxyt2Ju2AdEXq+wBx2h6nayvANGJ0GR50In5/qbzfdykWsHn8SilJgJIl+0rMpTE/zrMHyMQiGTT+OCg==
 
 watchpack@^2.0.0:
   version "2.1.1"

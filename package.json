@@ -15,9 +15,9 @@
   },
   "dependencies": {
     "semver-umd": "^5.5.7",
-    "vscode-oniguruma": "^1.4.0",
-    "vscode-textmate": "^5.2.0",
-    "vscode-web": "^1.54.1"
+    "vscode-oniguruma": "^1.5.1",
+    "vscode-textmate": "^5.4.0",
+    "vscode-web": "^1.55.0"
   },
   "devDependencies": {
     "@types/glob": "^7.1.3",
