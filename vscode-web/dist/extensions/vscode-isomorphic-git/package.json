@@ -119,6 +119,11 @@
         "command": "isomorphic-git.fetch",
         "title": "Fetch",
         "category": "isomorphic-git"
+      },
+      {
+        "command": "isomorphic-git.merge",
+        "title": "Merge Branch",
+        "category": "isomorphic-git"
       }
     ],
     "menus": {
@@ -156,6 +161,11 @@
         {
           "command": "isomorphic-git.checkout",
           "group": "1_header@5",
+          "when": "scmProvider == isomorphic-git"
+        },
+        {
+          "command": "isomorphic-git.merge",
+          "group": "1_header@6",
           "when": "scmProvider == isomorphic-git"
         }
       ],
@@ -256,7 +266,8 @@
     "test-watch": "tsc -watch -p ./",
     "pretest": "yarn run test-compile && yarn run lint",
     "lint": "eslint src --ext ts",
-    "test": "node ./out/test/runTest.js"
+    "test": "node ./out/test/runTest.js",
+    "postinstall": "patch-package"
   },
   "devDependencies": {
     "@types/es6-promisify": "^6.0.0",
@@ -269,6 +280,7 @@
     "eslint": "^7.19.0",
     "glob": "^7.1.6",
     "mocha": "^8.2.1",
+    "patch-package": "^6.4.7",
     "path-browserify": "^1.0.1",
     "ts-loader": "^8.0.14",
     "typescript": "^4.1.3",
